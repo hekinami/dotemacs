@@ -27,4 +27,7 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
                        (cons feature time)
                        t))))))
 
+(require 'cl)
+(require 'cl-lib)
+
 (provide 'init-infra)

@@ -4,6 +4,9 @@
   (require 'init-infra)
   (require 'init-utils)
   (require 'init-packages)
+  (require 'init-ui)
+  (require 'init-editing)
+  (require 'init-orgnization)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)
