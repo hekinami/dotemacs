@@ -2,3 +2,4 @@
 elpa/*
 .proxy
 .proxy.disable
+auto-save-list/*
