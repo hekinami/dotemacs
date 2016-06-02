@@ -25,6 +25,15 @@
         )
   )
 
+(defun bibo/get-tools-dir ()  
+  (let ((dir (concat user-emacs-directory
+                     (file-name-as-directory "tools"))))
+    (unless (file-exists-p dir)
+      (make-directory dir)
+      ) dir
+        )
+  )
+
 (provide 'init-utils)
 
 
