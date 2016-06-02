@@ -15,11 +15,39 @@
 (require-package 'org-bullets)
 (require 'org-bullets)
 (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
+
+(setq org-hide-leading-stars t)
+(setq org-startup-indented nil)
+(setq org-cycle-separator-lines 0)
+
+(setq org-catch-invisible-edits 'smart)
+(setq org-agenda-window-setup 'other-window)
+(defun org-switch-to-buffer-other-window (&rest args)
+  ;; override the original one
+  (apply 'pop-to-buffer-same-window args))
+
 (add-hook 'org-mode-hook (lambda ()
                            (org-bullets-mode 1)
                            (bibo/timestamp-format-setting)
                            (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
                            ))
+
+;;; modify columns font to mono
+;;; the reason is that origin function use default face to decide the font family, which may not be mono
+(advice-add 'org-columns-display-here :around
+	    (lambda (orig-fun &rest args)
+	      (let ((temp-family (face-attribute 'default :family)))
+		(set-face-attribute 'default nil :family bibo/monofont-family)
+		(set-face-attribute 'header-line nil :family bibo/monofont-family)
+		(apply orig-fun args)
+		(set-face-attribute 'default nil :family temp-family)
+		)
+	      ))
+
+;; table
+(setq table-html-th-rows 1)
+(setq table-html-table-attribute "")
+(setq table-inhibit-auto-fill-paragraph t)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -33,15 +61,20 @@
 (setq org-agenda-skip-deadline-if-done nil)
 (setq org-agenda-span 'day)
 (setq org-agenda-sorting-strategy '(todo-state-down deadline-up scheduled-up))
-(setq org-deadline-warning-days 3)
 
 (add-hook 'org-agenda-mode-hook (lambda ()
                                   (bibo/timestamp-format-setting)
                                   (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
+				  (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                   ))
 
 (setq org-directory (concat (bibo/get-contents-dir) (file-name-as-directory "gtd")))
 (setq org-agenda-files `(,(concat (bibo/get-contents-dir) (file-name-as-directory "gtd"))))
+
+(setq org-deadline-warning-days 3)
+(setq org-log-into-drawer t)
+(setq org-enforce-todo-dependencies t)
+(setq org-enforce-todo-checkbox-dependencies t)
 (require 'org-habit)
 
 ;;; ------------------------------------------------------------
@@ -93,10 +126,21 @@
 
 (require-package 'calfw)
 (require-package 'cal-china-x)
+(require 'calfw-org)
+(require 'calfw-ical)
 (require 'cal-china-x)
 (setq mark-holidays-in-calendar t)
 (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
 (setq calendar-holidays cal-china-x-important-holidays)
+
+(add-hook 'cfw:calendar-mode-hook (lambda ()
+                                    (when (equal bibo/current-theme-name "molokai")
+                                      (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
+                                      (set-face-attribute 'cfw:face-toolbar nil :background nil))
+				    (bibo/timestamp-format-setting)
+				    (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
+                                    ) 
+          )
 
 (set-time-zone-rule "GMT-8")
 (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
@@ -104,7 +148,7 @@
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; notification
+;;; todochiku
 ;;;
 ;;; ------------------------------------------------------------
 (require-package 'todochiku)
@@ -129,7 +173,7 @@ This would be better done through a customization probably."
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; noting
+;;; deft
 ;;;
 ;;; ------------------------------------------------------------
 (require-package 'deft)
@@ -201,12 +245,57 @@ This would be better done through a customization probably."
 
 ;;; ------------------------------------------------------------
 ;;;
+;;; appointment
+;;;
+;;; ------------------------------------------------------------
+(require 'appt)
+(appt-activate t)
+
+(setq appt-message-warning-time 10)
+(setq appt-display-interval (1+ appt-message-warning-time)) ; disable multiple reminders
+(setq appt-display-mode-line nil)
+
+; use appointment data from org-mode
+(defun bibo/org-agenda-to-appt ()
+  (interactive)
+  (setq appt-time-msg-list nil)
+  (org-agenda-to-appt))
+
+; run when starting Emacs and everyday at 12:05am
+(bibo/org-agenda-to-appt)
+(run-at-time "12:05am" (* 24 3600) 'bibo/org-agenda-to-appt)
+
+; automatically update appointments when TODO.txt is saved
+(add-hook 'after-save-hook
+          '(lambda ()
+             (if (string= (buffer-file-name) (expand-file-name
+                                              (concat (bibo/get-contents-dir) "gtd/event.gtd.org")))
+                 (bibo/org-agenda-to-appt))))
+
+;;; ------------------------------------------------------------
+;;;
+;;; projects
+;;;
+;;; ------------------------------------------------------------
+(setq org-projects-base (concat (bibo/get-contents-dir) (file-name-as-directory "org")))
+(setq org-projects-publish (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+
+;;; ------------------------------------------------------------
+;;;
 ;;; export and publish
 ;;;
 ;;; ------------------------------------------------------------
 (define-key org-mode-map "\C-cp" 'org-publish-current-project)
+(setq org-tpl-directory (concat (bibo/get-stuff-dir) (file-name-as-directory "orgtemplate")))
 
-
-
+(setq org-html-head-include-default-style nil)
+(setq org-html-head-include-scripts nil)
+(setq org-html-doctype "html5")
+(setq org-publish-timestamp-directory (concat (bibo/get-runtimes-dir) "org-timestamps"))
+(setq org-id-locations-file (concat (bibo/get-runtimes-dir) "org-id-locations"))
+(setq org-export-with-sub-superscripts nil)
+(setq org-html-htmlize-output-type 'inline-css)
+(setq org-export-headline-levels 4)
+(setq org-src-fontify-natively t)
 
 (provide 'init-orgnization)

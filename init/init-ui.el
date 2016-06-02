@@ -15,6 +15,7 @@
 ;;; ------------------------------------------------------------
 (require-package 'molokai-theme)
 (load-theme 'molokai t)
+(setq bibo/current-theme-name "molokai")
 
 ;;; ------------------------------------------------------------
 ;;;
