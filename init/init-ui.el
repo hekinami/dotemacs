@@ -49,6 +49,8 @@
 (setq visible-bell t)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
+(fset 'yes-or-no-p 'y-or-n-p)
+(ffap-bindings)
 
 (global-set-key (kbd "<f10>") 'menu-bar-mode)
 

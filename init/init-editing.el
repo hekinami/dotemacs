@@ -1,5 +1,25 @@
 ;;; ------------------------------------------------------------
 ;;;
+;;; environment
+;;;
+;;; ------------------------------------------------------------
+(setq user-full-name "Zou Bibo")
+(setq user-mail-address "hekinami@amiunique.net")
+
+(setq savehist-file (concat (bibo/get-runtimes-dir) "history"))
+(setq auto-save-list-file-prefix (concat (bibo/get-runtimes-dir) "auto-save-list/.saves-"))
+(global-auto-revert-mode)
+(setq make-backup-files nil)
+(auto-compression-mode t)
+(auto-image-file-mode t)
+(setq auto-save-mode -1)
+(desktop-save-mode 0)
+
+(require-package 'undo-tree)
+(global-undo-tree-mode)
+
+;;; ------------------------------------------------------------
+;;;
 ;;; encoding
 ;;;
 ;;; ------------------------------------------------------------
