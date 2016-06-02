@@ -1,5 +1,15 @@
 ;;; ------------------------------------------------------------
 ;;;
+;;; customable vairables
+;;;
+;;; ------------------------------------------------------------
+(defcustom bibo/monofont-family (if *is-windows* "YaHei Consolas Hybrid" "WenQuanYi Zen Hei Mono")
+  "the proper MONO font"
+  :type 'string
+  :group 'bibo)
+
+;;; ------------------------------------------------------------
+;;;
 ;;; theme
 ;;;
 ;;; ------------------------------------------------------------
@@ -152,5 +162,20 @@
 (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
 (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
 (push '("*js*" :position bottom :width 20) popwin:special-display-config)
+
+;;; ------------------------------------------------------------
+;;;
+;;; utility
+;;;
+;;; ------------------------------------------------------------
+(defun bibo/use-buffer-face-mode-with-fontfamily (fontfamily) 
+  (setq buffer-face-mode-face `(:font ,(font-spec :family fontfamily)))
+  (buffer-face-mode)
+  )
+
+(defun bibo/timestamp-format-setting ()
+  (set (make-local-variable 'system-time-locale) "C")
+  (set (make-local-variable 'system-messages-locale) "C")
+  )
 
 (provide 'init-ui)
