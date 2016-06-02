@@ -20,7 +20,7 @@
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; agenda
+;;; agenda & gtd
 ;;;
 ;;; ------------------------------------------------------------
 (setq org-agenda-overriding-columns-format "%25ITEM %TODO %CATEGORY %3PRIORITY %20TAGS")
@@ -31,6 +31,9 @@
 (setq org-agenda-span 'day)
 (setq org-agenda-sorting-strategy '(todo-state-down deadline-up scheduled-up))
 
+(setq org-directory (concat (bibo/get-contents-dir) (file-name-as-directory "gtd")))
+(setq org-agenda-files `(,(concat (bibo/get-contents-dir) (file-name-as-directory "gtd"))))
+(require 'org-habit)
 
 ;;; ------------------------------------------------------------
 ;;;

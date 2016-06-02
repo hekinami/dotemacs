@@ -4,3 +4,4 @@ elpa/*
 .proxy.disable
 auto-save-list/*
 runtimes/*
+contents/*
