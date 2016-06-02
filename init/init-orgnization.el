@@ -15,8 +15,11 @@
 (require-package 'org-bullets)
 (require 'org-bullets)
 (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
-(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-
+(add-hook 'org-mode-hook (lambda ()
+                           (org-bullets-mode 1)
+                           (bibo/timestamp-format-setting)
+                           (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
+                           ))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -30,6 +33,12 @@
 (setq org-agenda-skip-deadline-if-done nil)
 (setq org-agenda-span 'day)
 (setq org-agenda-sorting-strategy '(todo-state-down deadline-up scheduled-up))
+(setq org-deadline-warning-days 3)
+
+(add-hook 'org-agenda-mode-hook (lambda ()
+                                  (bibo/timestamp-format-setting)
+                                  (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
+                                  ))
 
 (setq org-directory (concat (bibo/get-contents-dir) (file-name-as-directory "gtd")))
 (setq org-agenda-files `(,(concat (bibo/get-contents-dir) (file-name-as-directory "gtd"))))
@@ -70,15 +79,26 @@
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; canlendar
+;;; canlendar & date/time
 ;;;
 ;;; ------------------------------------------------------------
+(setq diary-file (concat (bibo/get-runtimes-dir) "diary"))
+(unless (file-exists-p diary-file) (write-region nil nil diary-file))
+(setq view-diary-entries-initially t)
+(setq mark-diary-entries-in-calendar t)
+(setq number-of-diary-entries 7)
+
+(add-hook 'diary-display-hook 'fancy-diary-display)
+(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+
 (require-package 'calfw)
 (require-package 'cal-china-x)
 (require 'cal-china-x)
 (setq mark-holidays-in-calendar t)
 (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
 (setq calendar-holidays cal-china-x-important-holidays)
+
+(set-time-zone-rule "GMT-8")
 
 
 ;;; ------------------------------------------------------------
