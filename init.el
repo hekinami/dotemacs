@@ -1,5 +1,10 @@
 (add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
 
+(let ((proxy-file (expand-file-name ".proxy" user-emacs-directory)))
+  (and (file-exists-p proxy-file)
+       (load-file proxy-file))
+  )
+
 (let ((loading-start-time (current-time)))
   (require 'init-infra)
   (require 'init-utils)
