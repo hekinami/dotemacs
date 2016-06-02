@@ -99,6 +99,7 @@
 (setq calendar-holidays cal-china-x-important-holidays)
 
 (set-time-zone-rule "GMT-8")
+(setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
 
 
 ;;; ------------------------------------------------------------
@@ -186,6 +187,17 @@ This would be better done through a customization probably."
 
 (define-key org-mode-map "\C-cs" 'bibo/org-screenshot)
                                         ;(define-key org-mode-map "\C-cd" 'z/delete-file-in-point)
+
+;;; ------------------------------------------------------------
+;;;
+;;; capture
+;;;
+;;; ------------------------------------------------------------
+(let ((template-file (expand-file-name ".org-capture-templates" user-emacs-directory)))
+  (when (file-exists-p template-file)
+    (load-file template-file)
+    )
+  )
 
 ;;; ------------------------------------------------------------
 ;;;
