@@ -1,7 +1,3 @@
-(defconst *is-windows* (string= system-type "windows-nt"))
-(defconst *is-linux* (string= system-type "gnu/linux"))
-(defconst *is-mac* (string= system-type "darwin"))
-
 ;;; customization group for bibo's
 (defgroup bibo nil
   "Bibo's customization."

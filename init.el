@@ -1,3 +1,7 @@
+(defconst *is-windows* (string= system-type "windows-nt"))
+(defconst *is-linux* (string= system-type "gnu/linux"))
+(defconst *is-mac* (string= system-type "darwin"))
+
 (add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
 
 (let ((loading-start-time (current-time)))
