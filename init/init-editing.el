@@ -1,5 +1,39 @@
 ;;; ------------------------------------------------------------
 ;;;
+;;; encoding
+;;;
+;;; ------------------------------------------------------------
+(set-language-environment 'utf-8)
+(setq encoding 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-buffer-file-coding-system 'utf-8)
+(setq default-buffer-file-coding-system 'utf-8)
+(setq coding-system-for-read 'utf-8)
+
+(when *is-windows*
+  (set-clipboard-coding-system 'gb18030)
+  (setq file-name-coding-system 'gb18030)
+  
+  (add-hook
+   'shell-mode-hook
+   '(lambda ()
+      (set-buffer-process-coding-system 'gb18030 'gb18030)))
+  (add-hook
+   'eshell-mode-hook
+   '(lambda ()
+      (set-buffer-process-coding-system 'gb18030 'gb18030)))
+  )
+
+(when *is-linux*
+  (set-clipboard-coding-system 'utf-8)
+  (setq file-name-coding-system 'utf-8)
+  )
+
+;;; ------------------------------------------------------------
+;;;
 ;;; buffer
 ;;;
 ;;; ------------------------------------------------------------
