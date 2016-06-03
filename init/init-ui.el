@@ -47,6 +47,16 @@
 (global-set-key (kbd "C-x C-a f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "C-x C-a m") 'toggle-frame-maximized)
 
+(set-frame-parameter nil 'alpha '(100 100))
+(defun bibo/toggle-transparency ()
+  (interactive)
+  (if (/=
+       (cadr (frame-parameter nil 'alpha))
+       100)
+      (set-frame-parameter nil 'alpha '(100 100))
+    (set-frame-parameter nil 'alpha '(85 50))))
+(global-set-key (kbd "C-x C-a t") 'bibo/toggle-transparency)
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; miscellaneous
@@ -60,8 +70,6 @@
 (setq visible-bell t)
 (setq inhibit-startup-message t)
 (setq initial-scratch-message nil)
-(fset 'yes-or-no-p 'y-or-n-p)
-(ffap-bindings)
 
 (global-set-key (kbd "<f10>") 'menu-bar-mode)
 
@@ -75,6 +83,22 @@
 (highlight-tail-mode 1)
 
 (setq blink-cursor-blinks 0)
+
+(setq hcz-set-cursor-color-color "")
+(setq hcz-set-cursor-color-buffer "")
+(defun hcz-set-cursor-color-according-to-mode ()
+  "change cursor color according to some minor modes."
+  ;; set-cursor-color is somewhat costly, so we only call it when needed:
+  (let ((color
+	 (if buffer-read-only "blue"
+	   (if overwrite-mode "red"
+	     "white"))))
+    (unless (and
+	     (string= color hcz-set-cursor-color-color)
+	     (string= (buffer-name) hcz-set-cursor-color-buffer))
+      (set-cursor-color (setq hcz-set-cursor-color-color color))
+      (setq hcz-set-cursor-color-buffer (buffer-name)))))
+(add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -102,11 +126,7 @@
 ;;; modeline
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'spacemacs-theme)
-(require-package 'spaceline)
-(require 'spaceline-config)
-(spaceline-spacemacs-theme)
-(setq spaceline-minor-modes-separator nil)
+(set-face-attribute 'mode-line nil  :height 100)
 
 (require-package 'smart-mode-line)
 (require-package 'smart-mode-line-powerline-theme)
@@ -116,6 +136,12 @@
 (setq powerline-default-separator 'wave)
 (setq sml/mode-width 5)
 (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
+
+(require-package 'spacemacs-theme)
+(require-package 'spaceline)
+(require 'spaceline-config)
+(spaceline-spacemacs-theme)
+(setq spaceline-minor-modes-separator nil)
 
 (require-package 'diminish)
 (eval-after-load "highlight-tail" '(diminish 'highlight-tail-mode))
@@ -163,6 +189,87 @@
 (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
 (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
 (push '("*js*" :position bottom :width 20) popwin:special-display-config)
+
+(global-unset-key (kbd "C-z"))
+(global-set-key (kbd "C-z p") popwin:keymap)
+
+;;; http://www.emacswiki.org/emacs/TransposeWindows
+(defun swap-window-positions (&optional arg)         ; Stephen Gildea
+   "*Swap the positions of this window and the next one."
+   (interactive "p")
+   (let ((other-window (next-window (selected-window) 'no-minibuf)))
+     (let ((other-window-buffer (window-buffer other-window))
+           (other-window-hscroll (window-hscroll other-window))
+           (other-window-point (window-point other-window))
+           (other-window-start (window-start other-window)))
+       (set-window-buffer other-window (current-buffer))
+       (set-window-hscroll other-window (window-hscroll (selected-window)))
+       (set-window-point other-window (point))
+       (set-window-start other-window (window-start (selected-window)))
+       (set-window-buffer (selected-window) other-window-buffer)
+       (set-window-hscroll (selected-window) other-window-hscroll)
+       (set-window-point (selected-window) other-window-point)
+       (set-window-start (selected-window) other-window-start))
+     ;;(select-window other-window)
+     (if (= 4 arg)
+	 (select-window other-window))
+     )
+   )
+
+(global-set-key (kbd "C-x \\") 'swap-window-positions)
+(global-set-key (kbd "C-x |") 'toggle-window-split)
+
+;;; http://www.emacswiki.org/emacs/ToggleWindowSplit
+(defun toggle-window-split ()
+  (interactive)
+  (if (= (count-windows) 2)
+      (let* ((this-win-buffer (window-buffer))
+	     (next-win-buffer (window-buffer (next-window)))
+	     (this-win-edges (window-edges (selected-window)))
+	     (next-win-edges (window-edges (next-window)))
+	     (this-win-2nd (not (and (<= (car this-win-edges)
+					 (car next-win-edges))
+				     (<= (cadr this-win-edges)
+					 (cadr next-win-edges)))))
+	     (splitter
+	      (if (= (car this-win-edges)
+		     (car (window-edges (next-window))))
+		  'split-window-horizontally
+		'split-window-vertically)))
+	(delete-other-windows)
+	(let ((first-win (selected-window)))
+	  (funcall splitter)
+	  (if this-win-2nd (other-window 1))
+	  (set-window-buffer (selected-window) this-win-buffer)
+	  (set-window-buffer (next-window) next-win-buffer)
+	  (select-window first-win)
+	  (if this-win-2nd (other-window 1))))))
+
+(defun z/pop-window-into-frame ()
+  (interactive)
+  (let ((buffer (current-buffer)))
+    (unless (one-window-p)
+      (delete-window))
+    (display-buffer-pop-up-frame buffer nil)))
+
+(defun z/toggle-window-dedicated ()
+  (interactive)
+  (unless (boundp 'z/window-dedicated-p)
+    (make-local-variable 'z/window-dedicated-p)
+    (setq z/window-dedicated-p nil)
+    )
+  
+  (if z/window-dedicated-p
+      (progn
+	(set-window-dedicated-p (selected-window) nil)
+	(setq z/window-dedicated-p nil)
+	(message "window is not dedicated")
+	)
+    (set-window-dedicated-p (selected-window) t)
+    (setq z/window-dedicated-p t)
+    (message "window is dedicated")
+    )
+  )
 
 ;;; ------------------------------------------------------------
 ;;;

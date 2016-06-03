@@ -244,7 +244,22 @@ This would be better done through a customization probably."
   )
 
 (define-key org-mode-map "\C-cs" 'bibo/org-screenshot)
-                                        ;(define-key org-mode-map "\C-cd" 'z/delete-file-in-point)
+
+(defun bibo/org-delete-linked-file-in-point ()
+  "delete a file in point if exists."
+  (interactive)
+  (let* ((raw-string (or (thing-at-point 'filename) "neverexists"))
+	 (rel-filename (replace-regexp-in-string "^file:" "" raw-string))
+	 (full-name (expand-file-name rel-filename)))
+    (if (file-exists-p full-name)
+	(if (y-or-n-p (format "delete %s " full-name))
+	    (delete-file full-name))
+      (message "no file can be deleted")
+      )
+    )
+  )
+
+(define-key org-mode-map "\C-cd" 'bibo/org-delete-linked-file-in-point)
 
 ;;; ------------------------------------------------------------
 ;;;

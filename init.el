@@ -14,8 +14,10 @@
   (require 'init-utils)
   (require 'init-packages)
   (require 'init-ui)
+  (require 'init-framework)
   (require 'init-editing)
   (require 'init-orgnization)
+  (require 'init-system)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)

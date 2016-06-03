@@ -1,6 +1,6 @@
 ;;; ------------------------------------------------------------
 ;;;
-;;; environment
+;;; miscellaneous
 ;;;
 ;;; ------------------------------------------------------------
 (setq user-full-name "Zou Bibo")
@@ -8,6 +8,7 @@
 
 (setq savehist-file (concat (bibo/get-runtimes-dir) "history"))
 (setq auto-save-list-file-prefix (concat (bibo/get-runtimes-dir) "auto-save-list/.saves-"))
+(setq tramp-persistency-file-name (concat (bibo/get-runtimes-dir) "tramp"))
 (global-auto-revert-mode)
 (setq make-backup-files nil)
 (auto-compression-mode t)
@@ -17,6 +18,23 @@
 
 (require-package 'undo-tree)
 (global-undo-tree-mode)
+
+(fset 'yes-or-no-p 'y-or-n-p)
+(ffap-bindings)
+
+(setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks"))
+
+(global-set-key (kbd "C-c r") 'replace-regexp)
+(global-set-key (kbd "C-c $") 'toggle-truncate-lines)
+
+(setq-default indent-tabs-mode nil)
+(require-package 'aggressive-indent)
+(global-aggressive-indent-mode 1)
+
+(electric-pair-mode)
+
+(require-package 'fancy-narrow)
+(fancy-narrow-mode)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -101,14 +119,8 @@ BUFFER may be either a buffer or its name (a string)."
 (setq ido-ignore-buffers '("gtd.org$" "\\*"))
 (setq ido-save-directory-list-file (concat (bibo/get-runtimes-dir) "ido.last"))
 
-;;; ------------------------------------------------------------
-;;;
-;;; miscellaneous
-;;;
-;;; ------------------------------------------------------------
-(setq auto-save-mode -1)
-
-(global-set-key (kbd "C-c r") 'replace-regexp)
+(global-set-key (kbd "C-x C-b") 'bs-show)
+(global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
 
 ;;; ------------------------------------------------------------
 ;;;

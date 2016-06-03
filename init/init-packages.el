@@ -22,4 +22,6 @@ re-downloaded in order to locate PACKAGE."
 	)
       )
 
+(require-package 'try)
+
 (provide 'init-packages)
