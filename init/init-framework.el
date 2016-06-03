@@ -1,4 +1,6 @@
 (require-package 'which-key)
+(setq httpd-port 3721)
+(setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
 
 ;;; ------------------------------------------------------------
 ;;;

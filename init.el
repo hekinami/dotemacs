@@ -19,6 +19,8 @@
   (require 'init-orgnization)
   (require 'init-system)
 
+  (require 'init-javascript)
+
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)
        (load-file custom-file)) 
