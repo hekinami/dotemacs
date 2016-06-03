@@ -89,6 +89,20 @@
 (setq org-crypt-key "bibo")
 (setq auto-save-default nil)
 
+;;; ------------------------------------------------------------
+;;;
+;;; refile
+;;;
+;;; ------------------------------------------------------------
+(add-hook 'org-mode-hook (lambda ()
+			   (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
+			     (make-variable-buffer-local 'org-refile-targets)
+			     (setq org-refile-targets (quote ((nil :maxlevel . 2)
+							      (org-agenda-files :maxlevel . 2))))
+			     )
+			   ))
+(setq org-refile-use-outline-path 'file)
+(setq org-refile-allow-creating-parent-nodes 'confirm)
 
 ;;; ------------------------------------------------------------
 ;;;
