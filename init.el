@@ -20,6 +20,7 @@
   (require 'init-system)
 
   (require 'init-javascript)
+  (require 'init-lisp)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)

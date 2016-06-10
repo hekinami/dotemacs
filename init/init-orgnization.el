@@ -156,6 +156,50 @@
                                     ) 
           )
 
+(defun bibo/open-calendar ()
+  (interactive)
+  (let* ((sources (list (cfw:org-create-source "Green"))))
+    (when (boundp 'bibo/ical-source-list) ; bibo/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
+      (setcdr sources bibo/ical-source-list)
+      )
+    (cfw:open-calendar-buffer :contents-sources sources)
+    )
+  )
+
+;;; redefine the original dispatcher
+(defun org-agenda-view-mode-dispatch ()
+  "Call one of the view mode commands."
+  (interactive)
+  (message "View:  [d]ay        [w]eek       [m]onth   [y]ear   [SPC]reset  [q]uit/abort
+      time[G]rid   [[]inactive  [f]ollow      [l]og    [L]og-all   [c]lockcheck
+      [a]rch-trees [A]rch-files clock[R]eport include[D]iary       [E]ntryText
+      [i]cfw-view")
+  (let ((a (read-char-exclusive)))
+    (cl-case a
+      (?\  (call-interactively 'org-agenda-reset-view))
+      (?d (call-interactively 'org-agenda-day-view))
+      (?w (call-interactively 'org-agenda-week-view))
+      (?m (call-interactively 'org-agenda-month-view))
+      (?y (call-interactively 'org-agenda-year-view))
+      (?l (call-interactively 'org-agenda-log-mode))
+      (?L (org-agenda-log-mode '(4)))
+      (?c (org-agenda-log-mode 'clockcheck))
+      ((?F ?f) (call-interactively 'org-agenda-follow-mode))
+      (?a (call-interactively 'org-agenda-archives-mode))
+      (?A (org-agenda-archives-mode 'files))
+      ((?R ?r) (call-interactively 'org-agenda-clockreport-mode))
+      ((?E ?e) (call-interactively 'org-agenda-entry-text-mode))
+      (?G (call-interactively 'org-agenda-toggle-time-grid))
+      (?D (call-interactively 'org-agenda-toggle-diary))
+      (?\! (call-interactively 'org-agenda-toggle-deadlines))
+      (?i (call-interactively 'bibo/open-calendar))
+      (?\[ (let ((org-agenda-include-inactive-timestamps t))
+             (org-agenda-check-type t 'timeline 'agenda)
+             (org-agenda-redo))
+           (message "Display now includes inactive timestamps as well"))
+      (?q (message "Abort"))
+      (otherwise (error "Invalid key" )))))
+
 (set-time-zone-rule "GMT-8")
 (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
 

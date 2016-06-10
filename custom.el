@@ -1,0 +1,2 @@
+(setq bibo/ical-source-list (list (cfw:ical-create-source "Oracle" "http://stbeehive.oracle.com/caldav/st/home/bibo.zou%40oracle.com/icalendar/MyCalendar.ics" "Orange")
+                                  (cfw:ical-create-source "MS Live" "https://sharing.calendar.live.com/calendar/private/6bb9c89d-34e2-41b0-96a7-61e8814311db/192f9239-5695-46e2-9741-70bbd842bed3/cid-4076c1738475ecf1/calendar.ics" "Yellow")))
