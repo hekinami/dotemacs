@@ -346,15 +346,41 @@ This would be better done through a customization probably."
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; projects
+;;; projects and publish
 ;;;
 ;;; ------------------------------------------------------------
 (setq org-projects-base (concat (bibo/get-contents-dir) (file-name-as-directory "org")))
 (setq org-projects-publish (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
 
+;;; use a .org-project file in each project directory to define a project
+;;; org-publish-project-alist would be set just before we try to publish
+(advice-add 'org-publish-current-project :around (lambda (orig-fun &rest args)
+                                                   (if (file-exists-p ".org-project")
+                                                       (progn
+                                                         (setq org-publish-project-alist ())
+                                                         (load-file ".org-project")
+                                                         (apply orig-fun args)
+                                                         (setq org-publish-project-alist ()))
+                                                     (message "no .org-project definition found.")
+                                                     )
+                                                   ))
+
+(defun bibo/org-init-project-directory (&optional template)
+  "for now, use default template only"
+  (interactive)
+  (if (file-exists-p ".org-project")
+      (message ".org-project file already existed.")
+    (progn
+      (copy-file (concat org-tpl-directory "default/.org-project") ".org-project" )
+      (message ".org-project file created.")
+      ))
+  )
+
+(define-key org-mode-map "\C-ci" 'bibo/org-init-project-directory)
+
 ;;; ------------------------------------------------------------
 ;;;
-;;; export and publish
+;;; export
 ;;;
 ;;; ------------------------------------------------------------
 (define-key org-mode-map "\C-cp" 'org-publish-current-project)
