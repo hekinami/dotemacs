@@ -119,7 +119,6 @@
 (when *is-windows*
   ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
   (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "tools/sounder.exe"))))
-(setq org-pomodoro-sound (expand-file-name (concat (bibo/get-stuff-dir) "sound/bell.wav")))
 
 (global-set-key (kbd "<f11>") 'org-pomodoro)
 
