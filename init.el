@@ -22,6 +22,7 @@
   (require 'init-javascript)
   (require 'init-lisp)
   (require 'init-python)
+  (require 'init-web)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)
