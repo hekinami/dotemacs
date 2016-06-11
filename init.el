@@ -18,6 +18,7 @@
   (require 'init-editing)
   (require 'init-orgnization)
   (require 'init-system)
+  (require 'init-information)
 
   (require 'init-development)
   (require 'init-javascript)

@@ -126,14 +126,12 @@
 ;;; modeline
 ;;;
 ;;; ------------------------------------------------------------
-(set-face-attribute 'mode-line nil  :height 100)
-
 (require-package 'smart-mode-line)
 (require-package 'smart-mode-line-powerline-theme)
 (setq sml/no-confirm-load-theme t)
 (sml/setup)
 (sml/apply-theme 'powerline)
-(setq powerline-default-separator 'wave)
+(setq powerline-default-separator 'arrow-fade)
 (setq sml/mode-width 5)
 (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
 
@@ -142,6 +140,7 @@
 (require 'spaceline-config)
 (spaceline-spacemacs-theme)
 (setq spaceline-minor-modes-separator nil)
+(set-face-attribute 'mode-line nil  :height 100)
 
 (require-package 'diminish)
 (eval-after-load "highlight-tail" '(diminish 'highlight-tail-mode))
@@ -152,6 +151,12 @@
 (eval-after-load "hideshow" '(diminish 'hs-minor-mode "ⓗs"))
 (eval-after-load "paredit" '(diminish 'paredit-mode "ⓟe"))
 (eval-after-load "eldoc" '(diminish 'eldoc-mode "ⓔl"))
+
+;;; adjustment for vc-mode modeline face
+(set-face-attribute 'sml/vc nil :background "black")
+(set-face-attribute 'sml/vc nil :foreground "lawn green")
+(set-face-attribute 'sml/vc-edited nil :background "black")
+(set-face-attribute 'sml/vc-edited nil :foreground "red3")
 
 ;;; ------------------------------------------------------------
 ;;;
