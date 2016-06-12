@@ -486,4 +486,29 @@ This would be better done through a customization probably."
 (defun org-thunderlink-store-link ()
   "to be implement")
 
+;;; ------------------------------------------------------------
+;;;
+;;; email
+;;;
+;;; ------------------------------------------------------------
+(require-package 'wanderlust)
+
+;;; set following variables in custom.el
+;; wl-smtp-connection-type
+;; wl-smtp-posting-port
+;; wl-smtp-authenticate-type
+;; wl-smtp-posting-user
+;; wl-smtp-posting-server
+;; wl-local-domain
+;; wl-message-id-domain
+;;
+;; elmo-passwd-alist-save will save all of your Wanderlust passwords to ~/.elmo/passwd.
+
+(setq wl-folders-file (concat user-emacs-directory ".wl-folder"))
+(add-hook 'wl-summary-mode-hook (lambda nil
+                                  (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
+
+(add-hook 'mime-view-mode-hook (lambda nil
+                                 (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
+
 (provide 'init-orgnization)

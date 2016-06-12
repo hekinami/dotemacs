@@ -3,6 +3,7 @@ elpa/*
 .proxy
 .proxy.disable
 .org-capture-templates
+.wl-folder
 auto-save-list/*
 runtimes/*
 contents/*

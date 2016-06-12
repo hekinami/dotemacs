@@ -10,3 +10,11 @@
   (setq racer-rust-src-path "D:/development/rustc-1.9.0/src")
   (setq racer-cmd "D:/HOME/.cargo/bin/racer")
   )
+
+(setq wl-smtp-connection-type 'ssl
+      wl-smtp-posting-port 465
+      wl-smtp-authenticate-type "plain"
+      wl-smtp-posting-user "zoubibo@amiunique.net"
+      wl-smtp-posting-server "smtp.exmail.qq.com"
+      wl-local-domain "smtp.exmail.qq.com"
+      wl-message-id-domain "smtp.exmail.qq.com")
