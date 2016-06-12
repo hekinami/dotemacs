@@ -25,6 +25,7 @@
   (require 'init-lisp)
   (require 'init-python)
   (require 'init-web)
+  (require 'init-rust)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)
