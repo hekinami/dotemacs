@@ -4,6 +4,7 @@ elpa/*
 .proxy.disable
 .org-capture-templates
 .wl-folder
+custom.el
 auto-save-list/*
 runtimes/*
 contents/*
