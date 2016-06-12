@@ -1,0 +1,10 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: backbone router
+# key: bbr
+# binding: direct-keybinding
+# --
+Backbone.Router.extend({
+    routes: {
+        $0
+    }
+});

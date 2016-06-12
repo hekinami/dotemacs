@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: backbone model
+# key: bbm
+# binding: direct-keybinding
+# --
+Backbone.Model.extend({
+        $0        
+});

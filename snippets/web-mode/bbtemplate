@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: backbone template
+# key: bbt
+# --
+<script type="text/template" id="$1">
+        $0
+</script>

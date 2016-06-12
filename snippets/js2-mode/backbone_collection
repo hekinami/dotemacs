@@ -1,0 +1,8 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: backbone collection
+# key: bbc
+# binding: direct-keybinding
+# --
+Backbone.Collection.extend({
+        $0
+});

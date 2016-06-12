@@ -1,0 +1,14 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: backbone application frame
+# key: bba
+# binding: direct-keybinding
+# --
+window.App = {
+    Models: {},
+    Collections: {},
+    Views: {},
+
+    start: function() {
+        $0
+    }
+};
