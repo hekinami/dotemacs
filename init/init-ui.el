@@ -158,9 +158,10 @@
 (eval-after-load "eldoc" '(diminish 'eldoc-mode "ⓔl"))
 
 ;;; adjustment for vc-mode modeline face
-(set-face-attribute 'sml/vc nil :background "black")
+(set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+(set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
 (set-face-attribute 'sml/vc nil :foreground "lawn green")
-(set-face-attribute 'sml/vc-edited nil :background "black")
+(set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
 (set-face-attribute 'sml/vc-edited nil :foreground "red3")
 
 ;;; ------------------------------------------------------------
