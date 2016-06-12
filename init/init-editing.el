@@ -141,4 +141,15 @@ BUFFER may be either a buffer or its name (a string)."
 (define-key global-map (kbd "M-z") 'avy-goto-word-1)
 (define-key global-map (kbd "M-/") 'avy-goto-char)
 
+;;; ------------------------------------------------------------
+;;;
+;;; server
+;;;
+;;; ------------------------------------------------------------
+(setq server-auth-dir (if *is-windows* (concat (file-name-as-directory (getenv "USERPROFILE") ) (file-name-as-directory "emacserver"))
+                        (concat (bibo/get-runtimes-dir) "emacsserver")))
+(unless (and (functionp 'server-running-p)
+	     (server-running-p))
+  (server-start))
+
 (provide 'init-editing)
