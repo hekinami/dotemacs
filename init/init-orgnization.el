@@ -398,7 +398,7 @@ This would be better done through a customization probably."
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; simple-httpd
+;;; org-protocol
 ;;;
 ;;; ------------------------------------------------------------
 (require 'org-protocol)
@@ -429,6 +429,10 @@ This would be better done through a customization probably."
 (global-set-key (kbd "<f8>") (lambda nil
                                (interactive)
                                (browse-url "http://localhost:3721")))
+(advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
+                                                  (httpd-stop)
+                                                  (apply orig-fun args)
+                                                  ))
 
 ;;; ------------------------------------------------------------
 ;;;
