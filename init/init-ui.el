@@ -73,6 +73,9 @@
 
 (global-set-key (kbd "<f10>") 'menu-bar-mode)
 
+(require-package 'sr-speedbar)
+(global-set-key (kbd "C-z s") 'sr-speedbar-toggle)
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; cursor
