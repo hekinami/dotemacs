@@ -150,6 +150,11 @@ BUFFER may be either a buffer or its name (a string)."
 	     (server-running-p))
   (server-start))
 
+;;; ------------------------------------------------------------
+;;;
+;;; multiple cursors
+;;;
+;;; ------------------------------------------------------------
 (require-package 'multiple-cursors)
 (setq mc/list-file (concat (bibo/get-runtimes-dir) ".mc-lists.el"))
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
