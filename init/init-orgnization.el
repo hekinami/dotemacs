@@ -396,4 +396,16 @@ This would be better done through a customization probably."
 (setq org-export-headline-levels 4)
 (setq org-src-fontify-natively t)
 
+;;; ------------------------------------------------------------
+;;;
+;;; simple-httpd
+;;;
+;;; ------------------------------------------------------------
+(setq httpd-port 3721)
+(setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+(httpd-start)
+(global-set-key (kbd "<f8>") (lambda nil
+                               (interactive)
+                               (browse-url "http://localhost:3721")))
+
 (provide 'init-orgnization)
