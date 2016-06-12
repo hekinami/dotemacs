@@ -22,8 +22,6 @@
 (fset 'yes-or-no-p 'y-or-n-p)
 (ffap-bindings)
 
-(setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks"))
-
 (global-set-key (kbd "C-c r") 'replace-regexp)
 (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
 
@@ -120,6 +118,7 @@ BUFFER may be either a buffer or its name (a string)."
 (setq ido-save-directory-list-file (concat (bibo/get-runtimes-dir) "ido.last"))
 
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
 
 ;;; ------------------------------------------------------------
 ;;;

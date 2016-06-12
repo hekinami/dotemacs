@@ -408,4 +408,12 @@ This would be better done through a customization probably."
                                (interactive)
                                (browse-url "http://localhost:3721")))
 
+;;; ------------------------------------------------------------
+;;;
+;;; bookmark
+;;;
+;;; ------------------------------------------------------------
+(setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks"))
+(global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
+
 (provide 'init-orgnization)

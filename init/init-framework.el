@@ -44,11 +44,13 @@
 ;;;
 ;;; ------------------------------------------------------------
 (require-package 'helm)
+
 (global-set-key (kbd "M-x") 'helm-M-x)
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
-(set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
-(set-face-attribute 'helm-source-header nil :background nil)
-(set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :background))
+
+(add-hook 'helm-minibuffer-set-up-hook (lambda ()
+					 (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
+					 (set-face-attribute 'helm-source-header nil :background nil)
+					 (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
+					 ))
 
 (provide 'init-framework)
