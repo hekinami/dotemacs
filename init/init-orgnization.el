@@ -454,7 +454,8 @@ This would be better done through a customization probably."
 (setq bbdb-file (concat (bibo/get-contents-dir) "bbdb"))
 (setq bbdb-phone-style nil)
 
-
+(add-hook 'bbdb-mode-hook (lambda nil
+                            (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; thunderbird interaction
