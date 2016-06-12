@@ -38,4 +38,14 @@
 (setq yas-prompt-functions '(yas-ido-prompt yas-completing-prompt yas-x-prompt yas-dropdown-prompt yas-no-prompt))
 (setq yas-triggers-in-field t)
 
+;;; ------------------------------------------------------------
+;;;
+;;; helm
+;;;
+;;; ------------------------------------------------------------
+(require-package 'helm)
+(global-set-key (kbd "M-x") 'helm-M-x)
+(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
+
 (provide 'init-framework)

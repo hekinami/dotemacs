@@ -119,7 +119,6 @@ BUFFER may be either a buffer or its name (a string)."
 (setq ido-ignore-buffers '("gtd.org$" "\\*"))
 (setq ido-save-directory-list-file (concat (bibo/get-runtimes-dir) "ido.last"))
 
-(global-set-key (kbd "C-x C-b") 'bs-show)
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
 
 ;;; ------------------------------------------------------------
@@ -153,6 +152,7 @@ BUFFER may be either a buffer or its name (a string)."
   (server-start))
 
 (require-package 'multiple-cursors)
+(setq mc/list-file (concat (bibo/get-runtimes-dir) ".mc-lists.el"))
 (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)

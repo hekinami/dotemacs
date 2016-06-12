@@ -62,6 +62,8 @@
 ;;; miscellaneous
 ;;;
 ;;; ------------------------------------------------------------
+(global-unset-key (kbd "C-z"))
+
 (tool-bar-mode -1)
 (scroll-bar-mode -1)
 (menu-bar-mode -1)
@@ -198,7 +200,6 @@
 (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
 (push '("*js*" :position bottom :width 20) popwin:special-display-config)
 
-(global-unset-key (kbd "C-z"))
 (global-set-key (kbd "C-z p") popwin:keymap)
 
 ;;; http://www.emacswiki.org/emacs/TransposeWindows
