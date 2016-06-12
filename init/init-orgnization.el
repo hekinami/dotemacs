@@ -401,6 +401,28 @@ This would be better done through a customization probably."
 ;;; simple-httpd
 ;;;
 ;;; ------------------------------------------------------------
+(require 'org-protocol)
+
+;; Save following snippet to .reg file to register protocal in windows
+;; ------------
+;; REGEDIT4
+
+;; [HKEY_CLASSES_ROOT\org-protocol]
+;; @="URL:Org Protocol"
+;; "URL Protocol"=""
+;; [HKEY_CLASSES_ROOT\org-protocol\shell]
+;; [HKEY_CLASSES_ROOT\org-protocol\shell\open]
+;; [HKEY_CLASSES_ROOT\org-protocol\shell\open\command]
+;; @="\"C:\\Programme\\Emacs\\emacs\\bin\\emacsclientw.exe\" \"%1\""
+;; ------------
+
+;; http://kb.mozillazine.org/Register_protocol#Windows
+
+;;; ------------------------------------------------------------
+;;;
+;;; simple-httpd
+;;;
+;;; ------------------------------------------------------------
 (setq httpd-port 3721)
 (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
 (httpd-start)
@@ -415,5 +437,53 @@ This would be better done through a customization probably."
 ;;; ------------------------------------------------------------
 (setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks"))
 (global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
+
+;;; ------------------------------------------------------------
+;;;
+;;; bbdb
+;;;
+;;; ------------------------------------------------------------
+(require-package 'bbdb)
+(require-package 'bbdb-china)
+(require-package 'bbdb-vcard)
+
+(setq bbdb-file (concat (bibo/get-contents-dir) "bbdb"))
+(setq bbdb-phone-style nil)
+
+
+;;; ------------------------------------------------------------
+;;;
+;;; thunderbird interaction
+;;;
+;;; ------------------------------------------------------------
+;;; install https://github.com/poohsen/thunderlink to thunderbird
+
+;; Save following snippet to .reg file to register protocal in windows
+;; ------------
+;; REGEDIT4
+
+;; [HKEY_CLASSES_ROOT\thunderlink]
+;; @="URL:thunderlink Protocol"
+;; "URL Protocol"=""
+
+;; [HKEY_CLASSES_ROOT\thunderlink\shell]
+
+;; [HKEY_CLASSES_ROOT\thunderlink\shell\open]
+
+;; [HKEY_CLASSES_ROOT\thunderlink\shell\open\command]
+;; @="\"C:\\Program Files (x86)\\Mozilla Thunderbird\\thunderbird.exe\" -thunderlink \"%1\""
+;; ------------
+
+;; http://kb.mozillazine.org/Register_protocol#Windows
+
+(org-add-link-type "thunderlink" 'org-thunderlink-open)
+;; (add-hook 'org-store-link-functions 'org-thunderlink-store-link)
+
+(defun org-thunderlink-open (path)
+  "visit the thunderlink on path"
+  (browse-url (concat "thunderlink:" path)))
+
+(defun org-thunderlink-store-link ()
+  "to be implement")
 
 (provide 'init-orgnization)
