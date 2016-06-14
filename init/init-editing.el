@@ -162,4 +162,14 @@ BUFFER may be either a buffer or its name (a string)."
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
 
+;;; ------------------------------------------------------------
+;;;
+;;; bm.el
+;;;
+;;; ------------------------------------------------------------
+(require-package 'bm)
+(global-set-key (kbd "<C-f2>") 'bm-toggle)
+(global-set-key (kbd "<f2>")   'bm-next)
+(global-set-key (kbd "<S-f2>") 'bm-previous)
+
 (provide 'init-editing)

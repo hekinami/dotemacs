@@ -22,8 +22,6 @@
 ;;; ------------------------------------------------------------
 (setq eshell-directory-name (concat (bibo/get-runtimes-dir) (file-name-as-directory "eshell")))
 
-(global-set-key (kbd "<f2>") 'eshell)
-
 (add-hook 'eshell-mode-hook (lambda ()
                               (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
                               (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
