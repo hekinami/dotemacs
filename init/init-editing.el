@@ -168,8 +168,10 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (require-package 'bm)
+(require-package 'helm-bm)
 (global-set-key (kbd "<C-f2>") 'bm-toggle)
 (global-set-key (kbd "<f2>")   'bm-next)
 (global-set-key (kbd "<S-f2>") 'bm-previous)
+(global-set-key (kbd "<C-S-f2>") 'helm-bm)
 
 (provide 'init-editing)
