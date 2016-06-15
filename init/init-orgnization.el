@@ -118,7 +118,7 @@
 (setq org-pomodoro-format "P:%s")
 (when *is-windows*
   ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
-  (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "tools/sounder.exe"))))
+  (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "/sounder.exe"))))
 
 (global-set-key (kbd "<f11>") 'org-pomodoro)
 
