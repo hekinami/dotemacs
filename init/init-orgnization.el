@@ -238,6 +238,7 @@ This would be better done through a customization probably."
 (setq deft-default-extension "org")
 (setq deft-extensions '("org"))
 (setq deft-directory (concat (bibo/get-contents-dir) "deft"))
+(setq deft-new-file-format "%Y-%m-%dT%H%M")
 (add-hook 'deft-mode-hook (lambda nil
                             (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
 (global-set-key [f9] 'deft)
