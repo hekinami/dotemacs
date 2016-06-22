@@ -44,6 +44,10 @@
 ;;;
 ;;; ------------------------------------------------------------
 (require-package 'helm)
+(require 'helm-config)
+
+(global-set-key (kbd "C-c h") 'helm-command-prefix)
+(global-unset-key (kbd "C-x c"))
 
 (global-set-key (kbd "M-x") 'helm-M-x)
 
@@ -52,5 +56,10 @@
 					 (set-face-attribute 'helm-source-header nil :background nil)
 					 (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
 					 ))
+
+(setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks")) ; must be set before enable helm-mode
+(global-set-key (kbd "C-x r l") 'helm-filtered-bookmarks)
+
+(helm-mode 1)
 
 (provide 'init-framework)
