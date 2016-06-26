@@ -424,6 +424,7 @@ This would be better done through a customization probably."
 ;;; simple-httpd
 ;;;
 ;;; ------------------------------------------------------------
+(require-package 'simple-httpd)
 (setq url-cache-directory (concat (bibo/get-runtimes-dir) "url/cache"))
 (setq httpd-port 3721)
 (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
