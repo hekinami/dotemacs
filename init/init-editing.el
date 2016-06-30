@@ -20,7 +20,7 @@
 (global-undo-tree-mode)
 
 (fset 'yes-or-no-p 'y-or-n-p)
-(ffap-bindings)
+(global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 (global-set-key (kbd "C-c r") 'replace-regexp)
 (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
