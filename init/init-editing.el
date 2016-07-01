@@ -118,7 +118,8 @@ BUFFER may be either a buffer or its name (a string)."
 (setq ido-save-directory-list-file (concat (bibo/get-runtimes-dir) "ido.last"))
 
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
-(global-set-key (kbd "C-x C-b") 'helm-buffers-list)
+(global-set-key (kbd "C-x C-b") 'bs-show)
+(global-set-key (kbd "C-x b") 'helm-buffers-list)
 
 ;;; ------------------------------------------------------------
 ;;;
