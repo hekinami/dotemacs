@@ -1,4 +1,4 @@
- ;;; ------------------------------------------------------------
+;;; ------------------------------------------------------------
 ;;;
 ;;; miscellaneous
 ;;;
@@ -240,5 +240,20 @@ BUFFER may be either a buffer or its name (a string)."
 
 (add-hook 'find-file-root-hook 'find-file-root-header-warning)
 (global-set-key [(control x) (control r)] 'find-file-root)
+
+;;; ------------------------------------------------------------
+;;;
+;;; swoop
+;;;
+;;; ------------------------------------------------------------
+
+(require-package 'swoop)
+(global-set-key (kbd "C-o")   'swoop)
+(global-set-key (kbd "M-o")   'swoop-pcre-regexp)
+(global-set-key (kbd "C-S-o") 'swoop-back-to-last-position)
+(define-key swoop-map (kbd "C-o") 'swoop-multi-from-swoop)
+
+(setq swoop-use-target-magnifier: nil)
+(setq swoop-font-size-change: nil)
 
 (provide 'init-editing)
