@@ -33,6 +33,11 @@
                                  web-mode-block-padding 0
                                  web-mode-comment-style 2
                                  web-mode-enable-auto-pairing nil)
+                           (setq-local
+                            electric-pair-pairs
+                            (append electric-pair-pairs '((?% . ?%))))
+                           (setq web-mode-enable-current-column-highlight t)
+                           (setq web-mode-enable-current-element-highlight t)
                            (emmet-mode)
                            (setq emmet-preview-default t)
                            (auto-complete-mode)
