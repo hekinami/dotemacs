@@ -84,4 +84,25 @@
 (eval-after-load 'css-mode
   '(define-key css-mode-map (kbd "C-c b") 'web-beautify-css))
 
+;;; redefine the django engine keywords with new ones
+(setq web-mode-django-keywords
+      (regexp-opt
+       '("and" "as" "assign"
+         "break"
+         "cache" "call" "case" "context" "continue"
+         "do"
+         "flush" "from"
+         "ignore" "import" "in" "is"
+         "layout" "load"
+         "missing"
+         "none" "not"
+         "or"
+         "pluralize"
+         "random"
+         "set" ;#504
+         "unless" "use"
+         "var"
+         "with"                         ; new added
+         )))
+
 (provide 'init-web)
