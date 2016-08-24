@@ -264,4 +264,13 @@ BUFFER may be either a buffer or its name (a string)."
 (setq swoop-use-target-magnifier: nil)
 (setq swoop-font-size-change: nil)
 
+;;; ------------------------------------------------------------
+;;;
+;;; ciel
+;;;
+;;; ------------------------------------------------------------
+(require-package 'ciel)
+(global-set-key "\C-ci" 'ciel-ci)
+(global-set-key "\C-co" 'ciel-co)
+
 (provide 'init-editing)
