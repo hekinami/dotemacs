@@ -130,6 +130,18 @@ BUFFER may be either a buffer or its name (a string)."
 
 ;;; ------------------------------------------------------------
 ;;;
+;;; bs-configurations
+;;;
+;;; ------------------------------------------------------------
+(eval-after-load "bs"
+  '(progn
+     (setcar bs-configurations '("onlyfiles" nil nil "\\(gtd\\.org\\)\\|\\(diary\\)$" bs-visits-non-file bs-sort-buffer-interns-are-last))
+     (setq bs-default-configuration "onlyfiles")
+     )
+  )
+
+;;; ------------------------------------------------------------
+;;;
 ;;; navigation
 ;;;
 ;;; ------------------------------------------------------------
