@@ -9,5 +9,6 @@
 (add-hook 'racer-mode-hook #'eldoc-mode)
 
 (require-package 'toml-mode)
+(add-to-list 'auto-mode-alist '("Cargo.lock\\'" . toml-mode))
 
 (provide 'init-rust)
