@@ -16,7 +16,7 @@ re-downloaded in order to locate PACKAGE."
 
 (setq package-archives
       '(
-	("melpa" . "http://melpa.milkbox.net/packages/")
+	("melpa" . "http://melpa.org/packages/")
 	("org" . "http://orgmode.org/elpa/")
 	("melpa-stable" . "http://stable.melpa.org/packages/")
 	)
