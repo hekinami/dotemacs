@@ -19,6 +19,7 @@
   (require 'init-orgnization)
   (require 'init-system)
   (require 'init-information)
+  (require 'init-erc)
 
   (require 'init-development)
   (require 'init-javascript)
