@@ -535,4 +535,7 @@ a communication channel."
 (add-hook 'mime-view-mode-hook (lambda nil
                                  (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
 
+(require-package 'ob-restclient)
+(require 'ob-restclient)
+
 (provide 'init-orgnization)
