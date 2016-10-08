@@ -285,4 +285,11 @@ BUFFER may be either a buffer or its name (a string)."
 (global-set-key "\C-ci" 'ciel-ci)
 (global-set-key "\C-co" 'ciel-co)
 
+;;; ------------------------------------------------------------
+;;;
+;;; markdown
+;;;
+;;; ------------------------------------------------------------
+(require-package 'markdown-mode)
+
 (provide 'init-editing)
