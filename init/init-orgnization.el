@@ -538,4 +538,12 @@ a communication channel."
 (require-package 'ob-restclient)
 (require 'ob-restclient)
 
+;;; ------------------------------------------------------------
+;;;
+;;; gnuplot
+;;;
+;;; ------------------------------------------------------------
+(require-package 'gnuplot)
+(require 'ob-gnuplot)
+
 (provide 'init-orgnization)

@@ -14,6 +14,7 @@
 ;;; xwidget webkit
 ;;;
 ;;; ------------------------------------------------------------
+(require 'xwidget)
 (define-key xwidget-webkit-mode-map [mouse-5] 'xwidget-webkit-scroll-up)
 (define-key xwidget-webkit-mode-map [mouse-4] 'xwidget-webkit-scroll-down)
 
