@@ -292,4 +292,11 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; ------------------------------------------------------------
 (require-package 'markdown-mode)
 
+;;; ------------------------------------------------------------
+;;;
+;;; dockerfile
+;;;
+;;; ------------------------------------------------------------
+(require-package 'dockerfile-mode)
+
 (provide 'init-editing)
