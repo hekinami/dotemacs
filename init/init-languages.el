@@ -68,8 +68,11 @@
 (require-package 'jedi)
 
 (setq python-environment-directory (concat (bibo/get-runtimes-dir) ".python-environments"))
-(setq jedi:environment-root "python3dev")
+(setq jedi:environment-root "py3jedi")
 (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "--always-copy" "--quiet"))
+(when *is-linux*
+  (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+  )
 (setq jedi:setup-keys t)
 (setq jedi:complete-on-dot t)
 (setq jedi:tooltip-method nil)
@@ -82,6 +85,9 @@
 
 
 (require-package 'traad)
+;; https://github.com/abingham/emacs-traad/issues/6
+(setq venv-location (concat (bibo/get-runtimes-dir) ".python-environments"))
+(setq traad-environment-name "py3traad")
 (setq traad-server-program "traad")
 (setq traad-auto-revert t)
 
@@ -109,6 +115,15 @@
 
 ;;; ------------------------------------------------------------
 ;;;
+;;; ruby
+;;;
+;;; ------------------------------------------------------------
+(require-package 'robe)
+(add-hook 'robe-mode-hook 'ac-robe-setup)
+(add-hook 'ruby-mode-hook 'robe-mode)
+
+;;; ------------------------------------------------------------
+;;;
 ;;; go
 ;;;
 ;;; ------------------------------------------------------------
@@ -119,5 +134,11 @@
             (setq standard-indent 4)
             (setq indent-tabs-mode nil)))
 
+;;; ------------------------------------------------------------
+;;;
+;;; yaml
+;;;
+;;; ------------------------------------------------------------
+(require-package 'yaml-mode)
 
 (provide 'init-languages)
