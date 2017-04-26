@@ -12,8 +12,6 @@
 ;;; appearance
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'org-bullets)
-(require 'org-bullets)
 (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
 
 (setq org-hide-leading-stars t)
@@ -75,6 +73,7 @@
 (setq org-log-into-drawer t)
 (setq org-enforce-todo-dependencies t)
 (setq org-enforce-todo-checkbox-dependencies t)
+(setq org-agenda-skip-scheduled-if-deadline-is-shown t)
 (require 'org-habit)
 
 ;;; ------------------------------------------------------------
@@ -122,7 +121,6 @@
 
 (global-set-key (kbd "<f11>") 'org-pomodoro)
 
-
 ;;; ------------------------------------------------------------
 ;;;
 ;;; canlendar & date/time
@@ -134,7 +132,7 @@
 (setq mark-diary-entries-in-calendar t)
 (setq number-of-diary-entries 7)
 
-(add-hook 'diary-display-hook 'fancy-diary-display)
+(add-hook 'diary-display-hook 'diary-fancy-display)
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
 (require-package 'calfw)
@@ -545,5 +543,20 @@ a communication channel."
 ;;; ------------------------------------------------------------
 (require-package 'gnuplot)
 (require 'ob-gnuplot)
+
+
+;;; ------------------------------------------------------------
+;;;
+;;; babel
+;;;
+;;; ------------------------------------------------------------
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (emacs-lisp . t)
+   (shell . t)
+   (restclient . t)
+   ))
 
 (provide 'init-orgnization)
