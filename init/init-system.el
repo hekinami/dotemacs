@@ -6,6 +6,7 @@
 (require 'dired-x)
 
 (require-package 'dired-single)
+(require-package 'dired-k)
 
 (defun my-dired-init ()
   "Bunch of stuff to run for dired, either immediately or when it's
@@ -15,7 +16,8 @@
   (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
   (define-key dired-mode-map "^"
     (function
-     (lambda nil (interactive) (dired-single-buffer "..")))))
+     (lambda nil (interactive) (dired-single-buffer ".."))))
+  (define-key dired-mode-map (kbd "K") 'dired-k))
 
 ;; if dired's already loaded, then the keymap will be bound
 (if (boundp 'dired-mode-map)
