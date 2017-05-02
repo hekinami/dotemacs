@@ -544,6 +544,14 @@ a communication channel."
 (require-package 'gnuplot)
 (require 'ob-gnuplot)
 
+;;; ------------------------------------------------------------
+;;;
+;;; ledger
+;;;
+;;; ------------------------------------------------------------
+(require-package 'ledger-mode)
+(add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
+(setq ledger-reconcile-default-commodity "CNY") 
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -557,6 +565,7 @@ a communication channel."
    (emacs-lisp . t)
    (shell . t)
    (restclient . t)
+   (ledger . t)
    ))
 
 (provide 'init-orgnization)
