@@ -109,6 +109,11 @@
 (add-hook 'rust-mode-hook #'racer-mode)
 (add-hook 'rust-mode-hook #'ac-racer-setup)
 (add-hook 'racer-mode-hook #'eldoc-mode)
+(add-hook 'rust-mode-hook (lambda ()
+                            (if (not (string-match "go" compile-command))
+                                (set (make-local-variable 'compile-command)
+                                     "cargo run"))
+                            ))
 
 (require-package 'toml-mode)
 (add-to-list 'auto-mode-alist '("Cargo.lock\\'" . toml-mode))
@@ -127,12 +132,27 @@
 ;;; go
 ;;;
 ;;; ------------------------------------------------------------
+;;; configuration based on http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
+;;; go get github.com/rogpeppe/godef
+;;; go get -u github.com/nsf/gocode
+
 (require-package 'go-mode)
+(require-package 'go-autocomplete)
+(with-eval-after-load 'go-mode
+  (require 'go-autocomplete))
+
 (add-hook 'go-mode-hook
           (lambda ()
             (setq tab-width 4)
             (setq standard-indent 4)
-            (setq indent-tabs-mode nil)))
+            (setq indent-tabs-mode nil)
+            (local-set-key (kbd "C-c .") 'godef-jump)
+            (local-set-key (kbd "C-c ,") 'pop-tag-mark)
+            (auto-complete-mode 1)
+            (if (not (string-match "go" compile-command))
+                (set (make-local-variable 'compile-command)
+                     "go build -v && go test -v && go vet"))
+            ))
 
 ;;; ------------------------------------------------------------
 ;;;
