@@ -1,0 +1,40 @@
+;; -*- mode: emacs-lisp -*-
+(let* ((source-directory (file-name-directory (buffer-file-name)))
+       (project-name (car (last (split-string  source-directory "/") 2)))
+       (target-directory (concat org-projects-publish project-name))
+       (component-inherit (concat project-name "-inherit"))
+       (component-static (concat project-name "-static"))
+       (component-note (concat project-name "-note"))
+       )
+  (setq org-publish-project-alist
+        (list
+         (list component-inherit
+               :base-directory (concat org-tpl-directory "vintage/")
+               :base-extension "css\\|js\\|png"
+               :publishing-directory target-directory
+               :publishing-function 'org-publish-attachment
+               :recursive t
+               )
+         (list component-static
+               :base-directory source-directory
+               :base-extension "css\\|js\\|png"
+               :publishing-directory target-directory
+               :publishing-function 'org-publish-attachment
+               :recursive t
+               )
+         (list component-note
+               :base-directory source-directory
+               :base-extension "org"
+               :publishing-directory target-directory
+               :publishing-function 'org-html-publish-to-html
+               :html-head (concat "<link rel=\"stylesheet\" href=\"./styles/normalize.css\" />\n"
+                                  "<link rel=\"stylesheet\" href=\"./styles/default.css\" />\n"
+                                  "<link rel=\"stylesheet\" href=\"./styles/styles.css\" />\n"
+                                  )
+               )
+         (list project-name
+               :components (list component-inherit component-static component-note))
+         )
+        )
+  )
+
