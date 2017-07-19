@@ -369,10 +369,17 @@ This would be better done through a customization probably."
   (interactive)
   (if (file-exists-p ".org-project")
       (message ".org-project file already existed.")
-    (progn
-      (copy-file (concat org-tpl-directory "default/.org-project") ".org-project" )
-      (message ".org-project file created.")
-      ))
+    (let* ((template-candidates (cl-remove-if (lambda (x)
+                                                (or (string= "." x)
+                                                    (string= ".." x))
+                                                )
+                                              (directory-files org-tpl-directory)))
+           (template (helm-comp-read "Select template: " template-candidates)))
+      (progn
+        (copy-file (concat org-tpl-directory (concat template "/.org-project")) ".org-project" )
+        (message ".org-project file created.")
+        ))
+    )
   )
 
 (define-key org-mode-map "\C-ci" 'bibo/org-init-project-directory)
