@@ -24,14 +24,14 @@
 ;;; ------------------------------------------------------------
 (setq frame-title-format "[%F]")
 
-(when *is-windows*
+(when (and (display-graphic-p) *is-windows*) 
   (set-frame-font "Courier New-12")
   (let ((fontset (frame-parameter nil 'font)))
     (set-fontset-font fontset 'gb18030 (font-spec :family "YaHei Consolas Hybrid"))
     (set-fontset-font fontset 'kana (font-spec :family "MS Gothic"))
     ))
 
-(when *is-linux*
+(when (and (display-graphic-p) *is-linux*)
   (set-frame-font "Courier 10 Pitch-12:style=Regular")
   (let ((fontset (frame-parameter nil 'font)))
     (set-fontset-font fontset 'gb18030 (font-spec :family "WenQuanYi Zen Hei Mono"))
