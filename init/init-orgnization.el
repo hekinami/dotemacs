@@ -206,25 +206,25 @@
 ;;; todochiku
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'todochiku)
-(if *is-windows*
-    (setq todochiku-command "C:/Program Files (x86)/full phat/Snarl/tools/heysnarl.exe")
-  )
-(require 'todochiku)
-;;; overwrite the origin one
-(defun todochiku-get-arguments (title message icon sticky)
-  "Gets todochiku arguments.
-This would be better done through a customization probably."
-  (cl-case system-type
-    ('windows-nt (list (concat "notify" 
-                               "?title=" (encode-coding-string title 'gb18030)
-                               "&text=" (encode-coding-string message 'gb18030)
-                               "&icon=" icon 
-                               (when sticky "&timeout=0")))) ; modified this line for Snarl R3.1
-    ('darwin (list title (if sticky "-s" "") "-m" message "--image" icon ))
-    (t (list "-i" icon "-t"
-             (if sticky "0" (int-to-string (* 1000 todochiku-timeout)))
-             title message))))
+;; (require-package 'todochiku)
+;; (if *is-windows*
+;;     (setq todochiku-command "C:/Program Files (x86)/full phat/Snarl/tools/heysnarl.exe")
+;;   )
+;; (require 'todochiku)
+;; ;;; overwrite the origin one
+;; (defun todochiku-get-arguments (title message icon sticky)
+;;   "Gets todochiku arguments.
+;; This would be better done through a customization probably."
+;;   (cl-case system-type
+;;     ('windows-nt (list (concat "notify" 
+;;                                "?title=" (encode-coding-string title 'gb18030)
+;;                                "&text=" (encode-coding-string message 'gb18030)
+;;                                "&icon=" icon 
+;;                                (when sticky "&timeout=0")))) ; modified this line for Snarl R3.1
+;;     ('darwin (list title (if sticky "-s" "") "-m" message "--image" icon ))
+;;     (t (list "-i" icon "-t"
+;;              (if sticky "0" (int-to-string (* 1000 todochiku-timeout)))
+;;              title message))))
 
 ;;; ------------------------------------------------------------
 ;;;
