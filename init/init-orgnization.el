@@ -382,7 +382,7 @@
     )
   )
 
-(define-key org-mode-map "\C-ci" 'bibo/org-init-project-directory)
+(define-key org-mode-map "\C-c\C-xh" 'bibo/org-init-project-directory)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -395,6 +395,7 @@
 (setq org-html-head-include-default-style nil)
 (setq org-html-head-include-scripts nil)
 (setq org-html-doctype "html5")
+(setq org-html-html5-fancy t)
 (setq org-publish-timestamp-directory (concat (bibo/get-runtimes-dir) "org-timestamps"))
 (setq org-id-locations-file (concat (bibo/get-runtimes-dir) "org-id-locations"))
 (setq org-export-with-sub-superscripts nil)
