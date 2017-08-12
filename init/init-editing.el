@@ -181,6 +181,8 @@ BUFFER may be either a buffer or its name (a string)."
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
+(define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
 
 ;;; ------------------------------------------------------------
 ;;;
