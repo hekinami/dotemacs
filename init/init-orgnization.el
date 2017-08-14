@@ -488,6 +488,9 @@ a communication channel."
                       ("\\.pdf\\'" . "xreader %s")
                       ("\\.jpg\\'" . "xviewer %s")))
 
+;;; beamer
+(require 'ox-beamer)
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; org-protocol
