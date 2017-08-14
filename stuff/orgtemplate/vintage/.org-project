@@ -30,6 +30,7 @@
                :html-head (concat "<link rel=\"stylesheet\" href=\"./styles/normalize.css\" />\n"
                                   "<link rel=\"stylesheet\" href=\"./styles/default.css\" />\n"
                                   "<link rel=\"stylesheet\" href=\"./styles/styles.css\" />\n"
+                                  "<script src=\"./scripts/script.js\"></script>\n"
                                   )
                )
          (list project-name
