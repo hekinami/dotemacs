@@ -113,6 +113,11 @@
                             (if (not (string-match "rust" compile-command))
                                 (set (make-local-variable 'compile-command)
                                      "cargo run"))
+                            ;; workaround to prevent completion menu open after type space
+                            (ac-define-source racer
+                              '((prefix . ac-racer--prefix)
+                                (candidates . ac-racer--candidates)
+                                (requires . 1)))
                             ))
 
 (require-package 'toml-mode)
