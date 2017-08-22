@@ -110,7 +110,7 @@
 (add-hook 'rust-mode-hook #'ac-racer-setup)
 (add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'rust-mode-hook (lambda ()
-                            (if (not (string-match "go" compile-command))
+                            (if (not (string-match "rust" compile-command))
                                 (set (make-local-variable 'compile-command)
                                      "cargo run"))
                             ))
