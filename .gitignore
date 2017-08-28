@@ -8,3 +8,5 @@ custom.el
 auto-save-list/*
 runtimes/*
 contents/*
+request/*
+url/*
