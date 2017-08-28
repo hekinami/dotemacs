@@ -106,19 +106,22 @@
 
 ;;; set racer-rust-src-path, racer-cmd in custom.el
 
-(add-hook 'rust-mode-hook #'racer-mode)
-(add-hook 'rust-mode-hook #'ac-racer-setup)
-(add-hook 'racer-mode-hook #'eldoc-mode)
 (add-hook 'rust-mode-hook (lambda ()
+                            (racer-mode)
                             (if (not (string-match "rust" compile-command))
                                 (set (make-local-variable 'compile-command)
                                      "cargo run"))
-                            ;; workaround to prevent completion menu open after type space
-                            (ac-define-source racer
-                              '((prefix . ac-racer--prefix)
-                                (candidates . ac-racer--candidates)
-                                (requires . 1)))
                             ))
+
+(add-hook 'racer-mode-hook (lambda ()
+                             (eldoc-mode)
+                             (ac-racer-setup)
+                             ;; workaround to prevent completion menu open after type space
+                             (ac-define-source racer
+                               '((prefix . ac-racer--prefix)
+                                 (candidates . ac-racer--candidates)
+                                 (requires . 1)))
+                             ))
 
 (require-package 'toml-mode)
 (add-to-list 'auto-mode-alist '("Cargo.lock\\'" . toml-mode))
