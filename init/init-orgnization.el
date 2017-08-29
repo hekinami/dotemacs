@@ -64,20 +64,20 @@
   (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
   )
 
-;; ;;; modify columns font to mono
-;; ;;; the reason is that origin function use default face to decide the font family, which may not be mono
-;; (advice-add 'org-columns-display-here :around
-;; 	    (lambda (orig-fun &rest args)
-;; 	      (let ((temp-family (face-attribute 'default :family)))
-;; 		(set-face-attribute 'default nil :family bibo/monofont-family)
-;; 		(set-face-attribute 'header-line nil :family bibo/monofont-family)
-;; 		(apply orig-fun args)
-;; 		(set-face-attribute 'default nil :family temp-family)
-;; 		)
-;; 	      ))
+;;; modify columns font to mono
+;;; the reason is that origin function use default face to decide the font family, which may not be mono
+(advice-add 'org-columns-display-here :around
+	    (lambda (orig-fun &rest args)
+	      (let ((temp-family (face-attribute 'default :family)))
+		(set-face-attribute 'default nil :family bibo/monofont-family)
+		(set-face-attribute 'header-line nil :family bibo/monofont-family)
+		(apply orig-fun args)
+		(set-face-attribute 'default nil :family temp-family)
+		)
+	      ))
 
 
-;; (require 'org-habit)
+(require 'org-habit)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -95,20 +95,20 @@
   (setq auto-save-default nil)
   )
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; refile
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (add-hook 'org-mode-hook (lambda ()
-;; 			   (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
-;; 			     (make-variable-buffer-local 'org-refile-targets)
-;; 			     (setq org-refile-targets (quote ((nil :maxlevel . 2)
-;; 							      (org-agenda-files :maxlevel . 2))))
-;; 			     )
-;; 			   ))
-;; (setq org-refile-use-outline-path 'file)
-;; (setq org-refile-allow-creating-parent-nodes 'confirm)
+;;; ------------------------------------------------------------
+;;;
+;;; refile
+;;;
+;;; ------------------------------------------------------------
+(add-hook 'org-mode-hook (lambda ()
+			   (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
+			     (make-variable-buffer-local 'org-refile-targets)
+			     (setq org-refile-targets (quote ((nil :maxlevel . 2)
+							      (org-agenda-files :maxlevel . 2))))
+			     )
+			   ))
+(setq org-refile-use-outline-path 'file)
+(setq org-refile-allow-creating-parent-nodes 'confirm)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -129,95 +129,95 @@
     ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
     (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "/sounder.exe")))))
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; canlendar & date/time
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (setq diary-file (concat (bibo/get-runtimes-dir) "diary"))
-;; (unless (file-exists-p diary-file) (write-region nil nil diary-file))
-;; (setq view-diary-entries-initially t)
-;; (setq mark-diary-entries-in-calendar t)
-;; (setq mark-holidays-in-calendar t)
-;; (setq number-of-diary-entries 7)
+;;; ------------------------------------------------------------
+;;;
+;;; canlendar & date/time
+;;;
+;;; ------------------------------------------------------------
+(setq diary-file (concat (bibo/get-runtimes-dir) "diary"))
+(unless (file-exists-p diary-file) (write-region nil nil diary-file))
+(setq view-diary-entries-initially t)
+(setq mark-diary-entries-in-calendar t)
+(setq mark-holidays-in-calendar t)
+(setq number-of-diary-entries 7)
 
-;; (add-hook 'diary-display-hook 'diary-fancy-display)
-;; (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+(add-hook 'diary-display-hook 'diary-fancy-display)
+(add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
-;; (use-package calfw
-;;   :defer t
-;;   :commands cfw:org-create-source
-;;   :init
-;;   (require-package 'calfw)
-;;   :config
-;;   (add-hook 'cfw:calendar-mode-hook (lambda ()
-;;                                       (when (equal bibo/current-theme-name "molokai")
-;;                                         (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
-;;                                         (set-face-attribute 'cfw:face-toolbar nil :background nil))
-;;                                       (bibo/timestamp-format-setting)
-;;                                       (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
-;;                                       ) 
-;;             ))
+(use-package calfw
+  :defer t
+  :commands cfw:org-create-source
+  :init
+  (require-package 'calfw)
+  :config
+  (add-hook 'cfw:calendar-mode-hook (lambda ()
+                                      (when (equal bibo/current-theme-name "molokai")
+                                        (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
+                                        (set-face-attribute 'cfw:face-toolbar nil :background nil))
+                                      (bibo/timestamp-format-setting)
+                                      (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
+                                      ) 
+            ))
 
-;; (use-package cal-china-x
-;;   :defer t
-;;   :init
-;;   (require-package 'cal-china-x)
-;;   :config
-;;   (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
-;;   (setq calendar-holidays cal-china-x-important-holidays))
+(use-package cal-china-x
+  :defer t
+  :init
+  (require-package 'cal-china-x)
+  :config
+  (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
+  (setq calendar-holidays cal-china-x-important-holidays))
 
-;; (use-package calfw-ical
-;;   :defer t
-;;   :init
-;;   (require-package 'calfw-ical))
+(use-package calfw-ical
+  :defer t
+  :init
+  (require-package 'calfw-ical))
 
-;; (defun bibo/open-calendar ()
-;;   (interactive)
-;;   (let* ((sources (list (cfw:org-create-source "Green"))))
-;;     (when (boundp 'bibo/ical-source-list) ; bibo/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
-;;       (setcdr sources bibo/ical-source-list)
-;;       )
-;;     (cfw:open-calendar-buffer :contents-sources sources)
-;;     )
-;;   )
+(defun bibo/open-calendar ()
+  (interactive)
+  (let* ((sources (list (cfw:org-create-source "Green"))))
+    (when (boundp 'bibo/ical-source-list) ; bibo/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
+      (setcdr sources bibo/ical-source-list)
+      )
+    (cfw:open-calendar-buffer :contents-sources sources)
+    )
+  )
 
-;; ;;; redefine the original dispatcher
-;; (defun org-agenda-view-mode-dispatch ()
-;;   "Call one of the view mode commands."
-;;   (interactive)
-;;   (message "View:  [d]ay        [w]eek       [m]onth   [y]ear   [SPC]reset  [q]uit/abort
-;;       time[G]rid   [[]inactive  [f]ollow      [l]og    [L]og-all   [c]lockcheck
-;;       [a]rch-trees [A]rch-files clock[R]eport include[D]iary       [E]ntryText
-;;       [i]cfw-view")
-;;   (let ((a (read-char-exclusive)))
-;;     (cl-case a
-;;       (?\  (call-interactively 'org-agenda-reset-view))
-;;       (?d (call-interactively 'org-agenda-day-view))
-;;       (?w (call-interactively 'org-agenda-week-view))
-;;       (?m (call-interactively 'org-agenda-month-view))
-;;       (?y (call-interactively 'org-agenda-year-view))
-;;       (?l (call-interactively 'org-agenda-log-mode))
-;;       (?L (org-agenda-log-mode '(4)))
-;;       (?c (org-agenda-log-mode 'clockcheck))
-;;       ((?F ?f) (call-interactively 'org-agenda-follow-mode))
-;;       (?a (call-interactively 'org-agenda-archives-mode))
-;;       (?A (org-agenda-archives-mode 'files))
-;;       ((?R ?r) (call-interactively 'org-agenda-clockreport-mode))
-;;       ((?E ?e) (call-interactively 'org-agenda-entry-text-mode))
-;;       (?G (call-interactively 'org-agenda-toggle-time-grid))
-;;       (?D (call-interactively 'org-agenda-toggle-diary))
-;;       (?\! (call-interactively 'org-agenda-toggle-deadlines))
-;;       (?i (call-interactively 'bibo/open-calendar))
-;;       (?\[ (let ((org-agenda-include-inactive-timestamps t))
-;;              (org-agenda-check-type t 'timeline 'agenda)
-;;              (org-agenda-redo))
-;;            (message "Display now includes inactive timestamps as well"))
-;;       (?q (message "Abort"))
-;;       (otherwise (error "Invalid key" )))))
+;;; redefine the original dispatcher
+(defun org-agenda-view-mode-dispatch ()
+  "Call one of the view mode commands."
+  (interactive)
+  (message "View:  [d]ay        [w]eek       [m]onth   [y]ear   [SPC]reset  [q]uit/abort
+      time[G]rid   [[]inactive  [f]ollow      [l]og    [L]og-all   [c]lockcheck
+      [a]rch-trees [A]rch-files clock[R]eport include[D]iary       [E]ntryText
+      [i]cfw-view")
+  (let ((a (read-char-exclusive)))
+    (cl-case a
+      (?\  (call-interactively 'org-agenda-reset-view))
+      (?d (call-interactively 'org-agenda-day-view))
+      (?w (call-interactively 'org-agenda-week-view))
+      (?m (call-interactively 'org-agenda-month-view))
+      (?y (call-interactively 'org-agenda-year-view))
+      (?l (call-interactively 'org-agenda-log-mode))
+      (?L (org-agenda-log-mode '(4)))
+      (?c (org-agenda-log-mode 'clockcheck))
+      ((?F ?f) (call-interactively 'org-agenda-follow-mode))
+      (?a (call-interactively 'org-agenda-archives-mode))
+      (?A (org-agenda-archives-mode 'files))
+      ((?R ?r) (call-interactively 'org-agenda-clockreport-mode))
+      ((?E ?e) (call-interactively 'org-agenda-entry-text-mode))
+      (?G (call-interactively 'org-agenda-toggle-time-grid))
+      (?D (call-interactively 'org-agenda-toggle-diary))
+      (?\! (call-interactively 'org-agenda-toggle-deadlines))
+      (?i (call-interactively 'bibo/open-calendar))
+      (?\[ (let ((org-agenda-include-inactive-timestamps t))
+             (org-agenda-check-type t 'timeline 'agenda)
+             (org-agenda-redo))
+           (message "Display now includes inactive timestamps as well"))
+      (?q (message "Abort"))
+      (otherwise (error "Invalid key" )))))
 
-;; (set-time-zone-rule "GMT-8")
-;; (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
+(set-time-zone-rule "GMT-8")
+(setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
 
 
 ;; ;;; ------------------------------------------------------------

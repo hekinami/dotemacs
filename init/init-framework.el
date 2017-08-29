@@ -29,6 +29,7 @@
 ;;; yasnippet
 ;;;
 ;;; ------------------------------------------------------------
+(add-hook 'after-init-hook 'yas-global-mode)
 (use-package yasnippet
   :bind
   (:map yas-minor-mode-map
@@ -44,7 +45,6 @@
           yas-completing-prompt
           yas-x-prompt yas-dropdown-prompt yas-no-prompt))
   (setq yas-triggers-in-field t)
-  (yas-global-mode)
   (yas-reload-all))
 
 ;;; ------------------------------------------------------------
