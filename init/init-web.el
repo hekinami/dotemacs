@@ -23,35 +23,36 @@
 	)
       )
 
-(add-hook 'web-mode-hook (lambda ()
-                           (setq web-mode-markup-indent-offset 4
-                                 web-mode-css-indent-offset 4
-                                 web-mode-code-indent-offset 4
-                                 web-mode-indent-style 2
-                                 web-mode-style-padding 1
-                                 web-mode-script-padding 1
-                                 web-mode-block-padding 0
-                                 web-mode-comment-style 2
-                                 web-mode-enable-auto-pairing nil)
-                           (setq-local
-                            electric-pair-pairs
-                            (append electric-pair-pairs '((?% . ?%))))
-                           (setq web-mode-enable-current-column-highlight t)
-                           (setq web-mode-enable-current-element-highlight t)
-                           (emmet-mode)
-                           (setq emmet-preview-default t)
-                           (auto-complete-mode)
-                           (require 'ac-html)
-                           (add-to-list 'web-mode-ac-sources-alist
-                                        '("html" . (
-                                                    ;; attribute-value better to be first
-                                                    ac-source-html-attribute-value
-                                                    ac-source-html-tag
-                                                    ac-source-html-attribute)))
+(add-hook 'web-mode-hook
+          (lambda ()
+            (setq web-mode-markup-indent-offset 4
+                  web-mode-css-indent-offset 4
+                  web-mode-code-indent-offset 4
+                  web-mode-indent-style 2
+                  web-mode-style-padding 1
+                  web-mode-script-padding 1
+                  web-mode-block-padding 0
+                  web-mode-comment-style 2
+                  web-mode-enable-auto-pairing nil)
+            (setq-local
+             electric-pair-pairs
+             (append electric-pair-pairs '((?% . ?%))))
+            (setq web-mode-enable-current-column-highlight t)
+            (setq web-mode-enable-current-element-highlight t)
+            (emmet-mode)
+            (setq emmet-preview-default t)
+            (auto-complete-mode)
+            (require 'ac-html)
+            (add-to-list 'web-mode-ac-sources-alist
+                         '("html" . (
+                                     ;; attribute-value better to be first
+                                     ac-source-html-attribute-value
+                                     ac-source-html-tag
+                                     ac-source-html-attribute)))
 
-                           (add-to-list 'web-mode-ac-sources-alist
-                                        '("css" . (ac-source-css-property)))
-                           ))
+            (add-to-list 'web-mode-ac-sources-alist
+                         '("css" . (ac-source-css-property)))
+            ))
 
 (add-hook 'css-mode-hook 'emmet-mode)
 (require-package 'less-css-mode)

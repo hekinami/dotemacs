@@ -39,9 +39,10 @@
   (require-package 'yasnippet)
   :config
   (setq yas-also-auto-indent-first-line t)
-  (setq yas-prompt-functions '(yas-ido-prompt
-                               yas-completing-prompt
-                               yas-x-prompt yas-dropdown-prompt yas-no-prompt))
+  (setq yas-prompt-functions
+        '(yas-ido-prompt
+          yas-completing-prompt
+          yas-x-prompt yas-dropdown-prompt yas-no-prompt))
   (setq yas-triggers-in-field t)
   (yas-global-mode)
   (yas-reload-all))
@@ -65,11 +66,12 @@
   :config
   (require 'helm-config)
   (add-hook
-   'helm-minibuffer-set-up-hook (lambda ()
-                                  (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
-                                  (set-face-attribute 'helm-source-header nil :background nil)
-                                  (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
-                                  ))
+   'helm-minibuffer-set-up-hook
+   (lambda ()
+     (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
+     (set-face-attribute 'helm-source-header nil :background nil)
+     (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
+     ))
   (helm-mode 1))
 
 (provide 'init-framework)

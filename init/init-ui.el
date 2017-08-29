@@ -88,15 +88,13 @@
 ;;; cursor
 ;;;
 ;;; ------------------------------------------------------------
-;; (require-package 'highlight-tail)
-;; (setq highlight-tail-timer 0.01)
-;; (highlight-tail-mode 1)
+(add-hook 'after-init-hook 'highlight-tail-mode)
 (use-package highlight-tail
+  :defer t
   :init
   (require-package 'highlight-tail)
   :config
-  (setq highlight-tail-timer 0.01)
-  (highlight-tail-mode 1))
+  (setq highlight-tail-timer 0.01))
 
 (setq blink-cursor-blinks 0)
 
@@ -121,12 +119,12 @@
 ;;; scrollbar
 ;;;
 ;;; ------------------------------------------------------------
+(add-hook 'after-init-hook 'global-yascroll-bar-mode)
 (use-package yascroll
+  :defer t
   :init
-  (require-package 'yascroll)
-  :config
-  (scroll-bar-mode -1)
-  (global-yascroll-bar-mode))
+  (require-package 'yascroll))
+(scroll-bar-mode -1)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -145,100 +143,121 @@
 ;;; modeline
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'smart-mode-line)
-(require-package 'smart-mode-line-powerline-theme)
-(setq sml/no-confirm-load-theme t)
-(sml/setup)
-(sml/apply-theme 'powerline)
-(setq powerline-default-separator 'arrow-fade)
-(setq sml/mode-width 5)
-(add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
+(add-hook 'after-init-hook 'sml/setup)
+(use-package smart-mode-line
+  :defer t
+  :init
+  (require-package 'smart-mode-line)
+  :config
+  (setq sml/no-confirm-load-theme t)
+  (setq sml/mode-width 5)
+  (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
+  (set-face-attribute 'mode-line nil  :height 100)
 
-(require-package 'spacemacs-theme)
-(require-package 'spaceline)
-(require 'spaceline-config)
-(spaceline-spacemacs-theme)
-(setq spaceline-minor-modes-separator nil)
-(set-face-attribute 'mode-line nil  :height 100)
+  (use-package smart-mode-line-powerline-theme
+    :defer t
+    :init
+    (require-package 'smart-mode-line-powerline-theme)
+    :config
+    (setq powerline-default-separator 'arrow-fade))
+  (sml/apply-theme 'powerline)
 
-(require-package 'diminish)
-(eval-after-load "highlight-tail" '(diminish 'highlight-tail-mode))
-(eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode))
-(eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
-(eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
-(eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
-(eval-after-load "hideshow" '(diminish 'hs-minor-mode "ⓗs"))
-(eval-after-load "paredit" '(diminish 'paredit-mode "ⓟe"))
-(eval-after-load "eldoc" '(diminish 'eldoc-mode "ⓔl"))
+  (use-package spacemacs-theme
+    :defer t
+    :init
+    (require-package 'spacemacs-theme))
 
-;;; adjustment for vc-mode modeline face
-(set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
-(set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
-(set-face-attribute 'sml/vc nil :foreground "lawn green")
-(set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
-(set-face-attribute 'sml/vc-edited nil :foreground "red3")
+  (use-package spaceline
+    :defer t
+    :init
+    (require-package 'spaceline)
+    :config
+    (setq spaceline-minor-modes-separator nil))
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+    ;;; adjustment for vc-mode modeline face
+  (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+  (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
+  (set-face-attribute 'sml/vc nil :foreground "lawn green")
+  (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
+  (set-face-attribute 'sml/vc-edited nil :foreground "red3")
+  )
+
+(use-package diminish
+  :init
+  (require-package 'diminish)
+  :config
+  (eval-after-load "highlight-tail" '(diminish 'highlight-tail-mode))
+  (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode))
+  (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
+  (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
+  (eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
+  (eval-after-load "hideshow" '(diminish 'hs-minor-mode "ⓗs"))
+  (eval-after-load "paredit" '(diminish 'paredit-mode "ⓟe"))
+  (eval-after-load "eldoc" '(diminish 'eldoc-mode "ⓔl")))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; window
 ;;;
 ;;; ------------------------------------------------------------
-;; (require-package 'popwin)
-;; (require 'popwin)
-;; (popwin-mode 1)
-;; ;; | Key    | Command                               |
-;; ;; |--------+---------------------------------------|
-;; ;; | b      | popwin:popup-buffer                   |
-;; ;; | l      | popwin:popup-last-buffer              |
-;; ;; | o      | popwin:display-buffer                 |
-;; ;; | C-b    | popwin:switch-to-last-buffer          |
-;; ;; | C-p    | popwin:original-pop-to-last-buffer    |
-;; ;; | C-o    | popwin:original-display-last-buffer   |
-;; ;; | SPC    | popwin:select-popup-window            |
-;; ;; | s      | popwin:stick-popup-window             |
-;; ;; | 0      | popwin:close-popup-window             |
-;; ;; | f, C-f | popwin:find-file                      |
-;; ;; | e      | popwin:messages                       |
-;; ;; | C-u    | popwin:universal-display              |
-;; ;; | 1      | popwin:one-window                     |
+(add-hook 'after-init-hook 'popwin-mode)
+(use-package popwin
+  ;; | Key    | Command                               |
+  ;; |--------+---------------------------------------|
+  ;; | b      | popwin:popup-buffer                   |
+  ;; | l      | popwin:popup-last-buffer              |
+  ;; | o      | popwin:display-buffer                 |
+  ;; | C-b    | popwin:switch-to-last-buffer          |
+  ;; | C-p    | popwin:original-pop-to-last-buffer    |
+  ;; | C-o    | popwin:original-display-last-buffer   |
+  ;; | SPC    | popwin:select-popup-window            |
+  ;; | s      | popwin:stick-popup-window             |
+  ;; | 0      | popwin:close-popup-window             |
+  ;; | f, C-f | popwin:find-file                      |
+  ;; | e      | popwin:messages                       |
+  ;; | C-u    | popwin:universal-display              |
+  ;; | 1      | popwin:one-window                     |
+  :init
+  (require-package 'popwin)
+  :config
+  (push '("*Backtrace*" :height 15) popwin:special-display-config)
+  (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
+  (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
+  (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
+  (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+  (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+  (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
+  (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
+  (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
+  (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
+  (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
+  (push '("*js*" :position bottom :width 20) popwin:special-display-config)
+  (bind-key "C-z p" popwin:keymap)
+  )
 
-;; (push '("*Backtrace*" :height 15) popwin:special-display-config)
-;; (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
-;; (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
-;; (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
-;; (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
-;; (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
-;; (push '("*js*" :position bottom :width 20) popwin:special-display-config)
-
-;; (global-set-key (kbd "C-z p") popwin:keymap)
-
-;; ;;; http://www.emacswiki.org/emacs/TransposeWindows
-;; (defun swap-window-positions (&optional arg)         ; Stephen Gildea
-;;    "*Swap the positions of this window and the next one."
-;;    (interactive "p")
-;;    (let ((other-window (next-window (selected-window) 'no-minibuf)))
-;;      (let ((other-window-buffer (window-buffer other-window))
-;;            (other-window-hscroll (window-hscroll other-window))
-;;            (other-window-point (window-point other-window))
-;;            (other-window-start (window-start other-window)))
-;;        (set-window-buffer other-window (current-buffer))
-;;        (set-window-hscroll other-window (window-hscroll (selected-window)))
-;;        (set-window-point other-window (point))
-;;        (set-window-start other-window (window-start (selected-window)))
-;;        (set-window-buffer (selected-window) other-window-buffer)
-;;        (set-window-hscroll (selected-window) other-window-hscroll)
-;;        (set-window-point (selected-window) other-window-point)
-;;        (set-window-start (selected-window) other-window-start))
-;;      ;;(select-window other-window)
-;;      (if (= 4 arg)
-;; 	 (select-window other-window))
-;;      )
-;;    )
+;;; http://www.emacswiki.org/emacs/TransposeWindows
+(defun swap-window-positions (&optional arg)         ; Stephen Gildea
+  "*Swap the positions of this window and the next one."
+  (interactive "p")
+  (let ((other-window (next-window (selected-window) 'no-minibuf)))
+    (let ((other-window-buffer (window-buffer other-window))
+          (other-window-hscroll (window-hscroll other-window))
+          (other-window-point (window-point other-window))
+          (other-window-start (window-start other-window)))
+      (set-window-buffer other-window (current-buffer))
+      (set-window-hscroll other-window (window-hscroll (selected-window)))
+      (set-window-point other-window (point))
+      (set-window-start other-window (window-start (selected-window)))
+      (set-window-buffer (selected-window) other-window-buffer)
+      (set-window-hscroll (selected-window) other-window-hscroll)
+      (set-window-point (selected-window) other-window-point)
+      (set-window-start (selected-window) other-window-start))
+    ;;(select-window other-window)
+    (if (= 4 arg)
+        (select-window other-window))
+    )
+  )
 
 (global-set-key (kbd "C-x \\") 'swap-window-positions)
 (global-set-key (kbd "C-x |") 'toggle-window-split)
@@ -269,6 +288,7 @@
 	  (select-window first-win)
 	  (if this-win-2nd (other-window 1))))))
 
+
 (defun z/pop-window-into-frame ()
   (interactive)
   (let ((buffer (current-buffer)))
@@ -276,13 +296,14 @@
       (delete-window))
     (display-buffer-pop-up-frame buffer nil)))
 
+
 (defun z/toggle-window-dedicated ()
   (interactive)
   (unless (boundp 'z/window-dedicated-p)
     (make-local-variable 'z/window-dedicated-p)
     (setq z/window-dedicated-p nil)
     )
-  
+
   (if z/window-dedicated-p
       (progn
 	(set-window-dedicated-p (selected-window) nil)

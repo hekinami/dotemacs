@@ -17,6 +17,7 @@
 (desktop-save-mode 0)
 
 (use-package undo-tree
+  :bind ("C-x u" . undo-tree-visualize)
   :init
   (require-package 'undo-tree)
   :config
@@ -183,10 +184,11 @@ BUFFER may be either a buffer or its name (a string)."
 (global-set-key (kbd "C->") 'mc/mark-next-like-this)
 (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
 (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(add-hook 'multiple-cursors-mode-hook (lambda ()
-                                        (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
-                                        (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
-                                        ))
+(add-hook 'multiple-cursors-mode-hook
+          (lambda ()
+            (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
+            (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
+            ))
 
 
 ;;; ------------------------------------------------------------
@@ -194,12 +196,19 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; bm.el
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'bm)
-(require-package 'helm-bm)
-(global-set-key (kbd "<C-f2>") 'bm-toggle)
-(global-set-key (kbd "<f2>")   'bm-next)
-(global-set-key (kbd "<S-f2>") 'bm-previous)
-(global-set-key (kbd "<C-S-f2>") 'helm-bm)
+(use-package bm
+  :bind
+  (("C-<f2>" . bm-toggle)
+   ("<f2>" . bm-next)
+   ("S-<f2>" . bm-previous))
+  :init
+  (require-package 'bm)
+  )
+
+(use-package helm-bm
+  :bind ("C-S-<f2>" . helm-bm)
+  :init
+  (require-package 'helm-bm))
 
 ;;; ------------------------------------------------------------
 ;;;
