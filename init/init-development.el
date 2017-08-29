@@ -10,6 +10,8 @@
 (global-diff-hl-mode 1)
 
 (require-package 'realgud)
-(require 'realgud)
+;;(require 'realgud)
+(use-package realgud
+  :defer t)
 
 (provide 'init-development)

@@ -1,25 +1,33 @@
-(require-package 'org)
-(require-package 'org-plus-contrib)
-(setq org-modules '(org-crypt))
-
-(define-key global-map "\C-cl" 'org-store-link)
-(define-key global-map "\C-ca" 'org-agenda)
-(define-key global-map "\C-cb" 'org-switchb)
-(define-key global-map "\C-cc" 'org-capture)
-
+(use-package org
+  :bind
+  (("C-c l" . org-store-link)
+   ("C-c a" . org-agenda)
+   ("C-c b" . org-switchb)
+   ("C-c c" . org-capture))
+  :init
+  (require-package 'org)
+  (require-package 'org-plus-contrib)
+  :config
+  (setq org-modules '(org-crypt))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; appearance
 ;;;
 ;;; ------------------------------------------------------------
-(setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
+  (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
 
-(setq org-hide-leading-stars t)
-(setq org-startup-indented nil)
-(setq org-cycle-separator-lines 0)
+  (setq org-hide-leading-stars t)
+  (setq org-startup-indented nil)
+  (setq org-cycle-separator-lines 0)
 
-(setq org-catch-invisible-edits 'smart)
-(setq org-agenda-window-setup 'other-window)
+  (setq org-catch-invisible-edits 'smart)
+  (setq org-agenda-window-setup 'other-window)
+  ;; table
+  (setq table-html-th-rows 1)
+  (setq table-html-table-attribute "")
+  (setq table-inhibit-auto-fill-paragraph t)
+  )
+
 (defun org-switch-to-buffer-other-window (&rest args)
   ;; override the original one
   (apply 'pop-to-buffer-same-window args))
@@ -41,11 +49,6 @@
 		(set-face-attribute 'default nil :family temp-family)
 		)
 	      ))
-
-;; table
-(setq table-html-th-rows 1)
-(setq table-html-table-attribute "")
-(setq table-inhibit-auto-fill-paragraph t)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -108,18 +111,19 @@
 ;;; pomodoro technique
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'org-pomodoro)
-(require 'org-pomodoro)
-(setq org-pomodoro-length 25)
-(setq org-pomodoro-long-break-frequency 4)
-(setq org-pomodoro-short-break-length 5)
-(setq org-pomodoro-long-break-length 10)
-(setq org-pomodoro-format "P:%s")
-(when *is-windows*
-  ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
-  (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "/sounder.exe"))))
-
-(global-set-key (kbd "<f11>") 'org-pomodoro)
+(use-package org-pomodoro
+  :bind ("<f11>" . org-pomodoro)
+  :init
+  (require-package 'org-pomodoro)
+  :config
+  (setq org-pomodoro-length 25)
+  (setq org-pomodoro-long-break-frequency 4)
+  (setq org-pomodoro-short-break-length 5)
+  (setq org-pomodoro-long-break-length 10)
+  (setq org-pomodoro-format "P:%s")
+  (when *is-windows*
+    ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
+    (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "/sounder.exe")))))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -231,16 +235,18 @@
 ;;; deft
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'deft)
-(require 'deft)
-(setq deft-default-extension "org")
-(setq deft-extensions '("org"))
-(setq deft-directory (concat (bibo/get-contents-dir) "deft"))
-(setq deft-new-file-format "%Y-%m-%dT%H%M")
-(add-hook 'deft-mode-hook (lambda nil
-                            (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
-(global-set-key [f9] 'deft)
-
+(use-package deft
+  :bind
+  (("<f9>" . deft))
+  :init
+  (require-package 'deft)
+  :config
+  (setq deft-default-extension "org")
+  (setq deft-extensions '("org"))
+  (setq deft-directory (concat (bibo/get-contents-dir) "deft"))
+  (setq deft-new-file-format "%Y-%m-%dT%H%M")
+  (add-hook 'deft-mode-hook (lambda nil
+                              (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family))))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -621,9 +627,13 @@ a communication channel."
 ;;; ledger
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'ledger-mode)
-(add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
-(setq ledger-reconcile-default-commodity "CNY") 
+(use-package ledger-mode
+  :defer t
+  :mode "\\.ledger$" 
+  :init
+  ;; (require-package 'ledger-mode)
+  :config
+  (setq ledger-reconcile-default-commodity "CNY"))
 
 ;;; ------------------------------------------------------------
 ;;;

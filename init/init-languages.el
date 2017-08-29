@@ -65,35 +65,45 @@
 ;;; python
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'jedi)
-
-(setq python-environment-directory (concat (bibo/get-runtimes-dir) ".python-environments"))
-(setq jedi:environment-root "py3jedi")
-(setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "--always-copy" "--quiet"))
-(when *is-linux*
-  (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+(use-package python
+  :defer t
+  :init
+  (use-package jedi
+    :defer t
+    :init
+    (require-package 'jedi)
+    :config
+    (setq jedi:environment-root "py3jedi")
+    (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "--always-copy" "--quiet"))
+    (when *is-linux*
+      (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+      )
+    (setq jedi:setup-keys t)
+    (setq jedi:complete-on-dot t)
+    (setq jedi:tooltip-method nil)
+    )
+  :config
+  (setq python-environment-directory (concat (bibo/get-runtimes-dir) ".python-environments"))
+  (setq python-indent-guess-indent-offset nil)
+  (jedi:setup)
+  (add-hook 'python-mode-hook (lambda ()
+                                ;; (jedi:setup)
+                                (yas-minor-mode)
+                                (setq ac-sources (append ac-sources '(ac-source-yasnippet)))))
+  (use-package traad
+    :init
+    (require-package 'traad)
+    :config
+    ;; https://github.com/abingham/emacs-traad/issues/6
+    (setq venv-location (concat (bibo/get-runtimes-dir) ".python-environments"))
+    (setq traad-environment-name "py3traad")
+    (setq traad-server-program "traad")
+    (setq traad-auto-revert t))
+  (use-package python-django
+    :bind ("C-x j" . python-django-open-project)
+    :init
+    (require-package 'python-django))
   )
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot t)
-(setq jedi:tooltip-method nil)
-(setq python-indent-guess-indent-offset nil)
-
-(add-hook 'python-mode-hook (lambda ()
-                              (jedi:setup)
-                              (yas-minor-mode)
-                              (setq ac-sources (append ac-sources '(ac-source-yasnippet)))))
-
-
-(require-package 'traad)
-;; https://github.com/abingham/emacs-traad/issues/6
-(setq venv-location (concat (bibo/get-runtimes-dir) ".python-environments"))
-(setq traad-environment-name "py3traad")
-(setq traad-server-program "traad")
-(setq traad-auto-revert t)
-
-(require-package 'python-django)
-(require 'python-django)
-(global-set-key (kbd "C-x j") 'python-django-open-project)
 
 ;;; ------------------------------------------------------------
 ;;;

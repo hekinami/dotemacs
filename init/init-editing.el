@@ -16,11 +16,13 @@
 (setq auto-save-mode -1)
 (desktop-save-mode 0)
 
-(require-package 'undo-tree)
-(global-undo-tree-mode)
+(use-package undo-tree
+  :init
+  (require-package 'undo-tree)
+  :config
+  (global-undo-tree-mode))
 
 (fset 'yes-or-no-p 'y-or-n-p)
-(global-set-key (kbd "C-x C-f") 'helm-find-files)
 
 (global-set-key (kbd "C-c r") 'replace-regexp)
 (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
@@ -270,25 +272,31 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; swoop
 ;;;
 ;;; ------------------------------------------------------------
-
-(require-package 'swoop)
-(require 'swoop)
-(global-set-key (kbd "C-o")   'swoop)
-(global-set-key (kbd "M-o")   'swoop-pcre-regexp)
-(global-set-key (kbd "C-S-o") 'swoop-back-to-last-position)
-(define-key swoop-map (kbd "C-o") 'swoop-multi-from-swoop)
-
-(setq swoop-use-target-magnifier: nil)
-(setq swoop-font-size-change: nil)
+(use-package swoop
+  :bind
+  (("C-o" . swoop)
+   ("M-o" . swoop-pcre-regexp)
+   ("C-S-o" . swoop-back-to-last-position)
+   :map swoop-map
+   ("C-o" . swoop-multi-from-swoop))
+  :init
+  (require-package 'swoop)
+  :config
+  (setq swoop-use-target-magnifier: nil)
+  (setq swoop-font-size-change: nil)
+  )
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; ciel
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'ciel)
-(global-set-key "\C-ci" 'ciel-ci)
-(global-set-key "\C-co" 'ciel-co)
+(use-package ciel
+  :bind
+  (("C-c i" . ciel-ci)
+   ("C-c o" . ciel-co))
+  :init
+  (require-package 'ciel))
 
 ;;; ------------------------------------------------------------
 ;;;

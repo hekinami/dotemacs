@@ -1,6 +1,6 @@
 (require 'package)
 (setq package-enable-at-startup nil)
-(package-initialize)
+;; (package-initialize)
 
 (defun require-package (package &optional min-version no-refresh)
   "Install given PACKAGE, optionally requiring MIN-VERSION.
@@ -23,5 +23,6 @@ re-downloaded in order to locate PACKAGE."
       )
 
 (require-package 'try)
+(require-package 'use-package)
 
 (provide 'init-packages)
