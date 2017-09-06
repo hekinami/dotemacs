@@ -650,19 +650,19 @@
   :config
   (setq ledger-reconcile-default-commodity "CNY"))
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; babel
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; ;; active Babel languages
-;; (org-babel-do-load-languages
-;;  'org-babel-load-languages
-;;  '((python . t)
-;;    (emacs-lisp . t)
-;;    (shell . t)
-;;    (restclient . t)
-;;    (ledger . t)
-;;    ))
+;;; ------------------------------------------------------------
+;;;
+;;; babel
+;;;
+;;; ------------------------------------------------------------
+;; active Babel languages
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((python . t)
+   (emacs-lisp . t)
+   (shell . t)
+   (restclient . t)
+   (ledger . t)
+   ))
 
 (provide 'init-orgnization)
