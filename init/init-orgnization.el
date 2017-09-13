@@ -10,6 +10,7 @@
   :init
   (require-package 'org)
   (require-package 'org-plus-contrib)
+  (require-package 'org-bullets)
   :config
   (setq org-modules '(org-crypt))
 ;;; ------------------------------------------------------------
