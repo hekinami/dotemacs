@@ -321,4 +321,11 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; ------------------------------------------------------------
 (require-package 'dockerfile-mode)
 
+;;; ------------------------------------------------------------
+;;;
+;;; terraform
+;;;
+;;; ------------------------------------------------------------
+(require-package 'terraform-mode)
+
 (provide 'init-editing)
