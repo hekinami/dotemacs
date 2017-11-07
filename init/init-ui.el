@@ -28,25 +28,41 @@
 ;;; ------------------------------------------------------------
 (setq frame-title-format "[%F]")
 
-(when (and (display-graphic-p) *is-windows*) 
-  (set-frame-font "Courier New-12")
-  (let ((fontset (frame-parameter nil 'font)))
-    (set-fontset-font fontset 'gb18030 (font-spec :family "YaHei Consolas Hybrid"))
-    (set-fontset-font fontset 'kana (font-spec :family "MS Gothic"))
-    ))
+(setq init-frame-alist
+      (append
+       `((font . "Courier 10 Pitch-12:style=Regular")
+         (height . 25)
+	 (width . 100)) default-frame-alist))
 
-(when (and (display-graphic-p) *is-linux*)
+(setq default-frame-alist
+      (append
+       `((font . "Courier 10 Pitch-12:style=Regular")
+         (height . 25)
+	 (width . 100)) default-frame-alist))
+
+;;; init frame when using daemon mode
+;;; https://emacs.stackexchange.com/questions/16464/emacs-server-init-when-called-without-file
+(defun bibo/set-frame-daemon (&optional frame)
+  "Make frame- and/or terminal-local changes."
+  (with-selected-frame (or frame (selected-frame))
+    (let ((fontset (frame-parameter nil 'font)))
+      (set-fontset-font fontset 'gb18030 (font-spec :family "WenQuanYi Zen Hei Mono"))
+      (set-fontset-font fontset 'kana (font-spec :family "TakaoPGothic"))
+      )
+    (highlight-tail-mode 1)
+    ))
+(defun bibo/set-frame ()
   (set-frame-font "Courier 10 Pitch-12:style=Regular")
   (let ((fontset (frame-parameter nil 'font)))
     (set-fontset-font fontset 'gb18030 (font-spec :family "WenQuanYi Zen Hei Mono"))
     (set-fontset-font fontset 'kana (font-spec :family "TakaoPGothic"))
-    ))
+    )
+  )
 
-(setq default-frame-alist
-      (append
-       `((font . ,(frame-parameter nil 'font))
-         (height . 25)
-	 (width . 100)) default-frame-alist))
+(if (daemonp)
+    (add-hook 'after-make-frame-functions 'bibo/set-frame-daemon)
+  (bibo/set-frame)
+  )
 
 (global-set-key (kbd "C-x C-a f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "C-x C-a m") 'toggle-frame-maximized)
@@ -96,6 +112,7 @@
   :config
   (setq highlight-tail-timer 0.01))
 
+(blink-cursor-mode 1)
 (setq blink-cursor-blinks 0)
 
 (setq hcz-set-cursor-color-color "")
