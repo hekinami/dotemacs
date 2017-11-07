@@ -50,6 +50,7 @@
       (set-fontset-font fontset 'kana (font-spec :family "TakaoPGothic"))
       )
     (highlight-tail-mode 1)
+    (set-frame-parameter nil 'alpha '(100 100))
     ))
 (defun bibo/set-frame ()
   (set-frame-font "Courier 10 Pitch-12:style=Regular")
@@ -57,6 +58,7 @@
     (set-fontset-font fontset 'gb18030 (font-spec :family "WenQuanYi Zen Hei Mono"))
     (set-fontset-font fontset 'kana (font-spec :family "TakaoPGothic"))
     )
+  (set-frame-parameter nil 'alpha '(100 100))
   )
 
 (if (daemonp)
@@ -67,7 +69,6 @@
 (global-set-key (kbd "C-x C-a f") 'toggle-frame-fullscreen)
 (global-set-key (kbd "C-x C-a m") 'toggle-frame-maximized)
 
-(set-frame-parameter nil 'alpha '(100 100))
 (defun bibo/toggle-transparency ()
   (interactive)
   (if (/=
@@ -104,7 +105,7 @@
 ;;; cursor
 ;;;
 ;;; ------------------------------------------------------------
-(add-hook 'after-init-hook 'highlight-tail-mode)
+(if (daemonp) nil (add-hook 'after-init-hook 'highlight-tail-mode))
 (use-package highlight-tail
   :defer t
   :init
