@@ -336,179 +336,179 @@
     )
   )
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; appointment
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require 'appt)
-;; (appt-activate t)
+;;; ------------------------------------------------------------
+;;;
+;;; appointment
+;;;
+;;; ------------------------------------------------------------
+(require 'appt)
+(appt-activate t)
 
-;; (setq appt-message-warning-time 10)
-;; (setq appt-display-interval (1+ appt-message-warning-time)) ; disable multiple reminders
-;; (setq appt-display-mode-line nil)
+(setq appt-message-warning-time 10)
+(setq appt-display-interval (1+ appt-message-warning-time)) ; disable multiple reminders
+(setq appt-display-mode-line nil)
 
-;; ; use appointment data from org-mode
-;; (defun bibo/org-agenda-to-appt ()
-;;   (interactive)
-;;   (setq appt-time-msg-list nil)
-;;   (org-agenda-to-appt))
+; use appointment data from org-mode
+(defun bibo/org-agenda-to-appt ()
+  (interactive)
+  (setq appt-time-msg-list nil)
+  (org-agenda-to-appt))
 
-;; ; run when starting Emacs and everyday at 12:05am
-;; (bibo/org-agenda-to-appt)
-;; (run-at-time "12:05am" (* 24 3600) 'bibo/org-agenda-to-appt)
+                                        ; run when starting Emacs and everyday at 12:05am
+(bibo/org-agenda-to-appt)
+(run-at-time "12:05am" (* 24 3600) 'bibo/org-agenda-to-appt)
 
-;; ; automatically update appointments when TODO.txt is saved
-;; (add-hook 'after-save-hook
-;;           '(lambda ()
-;;              (if (string= (buffer-file-name) (expand-file-name
-;;                                               (concat (bibo/get-contents-dir) "gtd/event.gtd.org")))
-;;                  (bibo/org-agenda-to-appt))))
+                                        ; automatically update appointments when TODO.txt is saved
+(add-hook 'after-save-hook
+          '(lambda ()
+             (if (string= (buffer-file-name) (expand-file-name
+                                              (concat (bibo/get-contents-dir) "gtd/event.gtd.org")))
+                 (bibo/org-agenda-to-appt))))
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; projects and publish
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (setq org-projects-base (concat (bibo/get-contents-dir) (file-name-as-directory "org")))
-;; (setq org-projects-publish (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+;;; ------------------------------------------------------------
+;;;
+;;; projects and publish
+;;;
+;;; ------------------------------------------------------------
+(setq org-projects-base (concat (bibo/get-contents-dir) (file-name-as-directory "org")))
+(setq org-projects-publish (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
 
-;; ;;; use a .org-project file in each project directory to define a project
-;; ;;; org-publish-project-alist would be set just before we try to publish
-;; (advice-add 'org-publish-current-project :around (lambda (orig-fun &rest args)
-;;                                                    (if (file-exists-p ".org-project")
-;;                                                        (progn
-;;                                                          (setq org-publish-project-alist ())
-;;                                                          (load-file ".org-project")
-;;                                                          (apply orig-fun args)
-;;                                                          (setq org-publish-project-alist ()))
-;;                                                      (message "no .org-project definition found.")
-;;                                                      )
-;;                                                    ))
+;;; use a .org-project file in each project directory to define a project
+;;; org-publish-project-alist would be set just before we try to publish
+(advice-add 'org-publish-current-project :around (lambda (orig-fun &rest args)
+                                                   (if (file-exists-p ".org-project")
+                                                       (progn
+                                                         (setq org-publish-project-alist ())
+                                                         (load-file ".org-project")
+                                                         (apply orig-fun args)
+                                                         (setq org-publish-project-alist ()))
+                                                     (message "no .org-project definition found.")
+                                                     )
+                                                   ))
 
-;; (defun bibo/org-init-project-directory (&optional template)
-;;   "for now, use default template only"
-;;   (interactive)
-;;   (if (file-exists-p ".org-project")
-;;       (message ".org-project file already existed.")
-;;     (let* ((template-candidates (cl-remove-if (lambda (x)
-;;                                                 (or (string= "." x)
-;;                                                     (string= ".." x))
-;;                                                 )
-;;                                               (directory-files org-tpl-directory)))
-;;            (template (helm-comp-read "Select template: " template-candidates)))
-;;       (progn
-;;         (copy-file (concat org-tpl-directory (concat template "/.org-project")) ".org-project" )
-;;         (message ".org-project file created.")
-;;         ))
-;;     )
-;;   )
+(defun bibo/org-init-project-directory (&optional template)
+  "for now, use default template only"
+  (interactive)
+  (if (file-exists-p ".org-project")
+      (message ".org-project file already existed.")
+    (let* ((template-candidates (cl-remove-if (lambda (x)
+                                                (or (string= "." x)
+                                                    (string= ".." x))
+                                                )
+                                              (directory-files org-tpl-directory)))
+           (template (helm-comp-read "Select template: " template-candidates)))
+      (progn
+        (copy-file (concat org-tpl-directory (concat template "/.org-project")) ".org-project" )
+        (message ".org-project file created.")
+        ))
+    )
+  )
 
-;; (define-key org-mode-map "\C-c\C-xh" 'bibo/org-init-project-directory)
+(define-key org-mode-map "\C-c\C-xh" 'bibo/org-init-project-directory)
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; export
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (define-key org-mode-map "\C-cp" 'org-publish-current-project)
-;; (setq org-tpl-directory (concat (bibo/get-stuff-dir) (file-name-as-directory "orgtemplate")))
+;;; ------------------------------------------------------------
+;;;
+;;; export
+;;;
+;;; ------------------------------------------------------------
+(define-key org-mode-map "\C-cp" 'org-publish-current-project)
+(setq org-tpl-directory (concat (bibo/get-stuff-dir) (file-name-as-directory "orgtemplate")))
 
-;; (setq org-html-head-include-default-style nil)
-;; (setq org-html-head-include-scripts nil)
-;; (setq org-html-doctype "html5")
-;; (setq org-html-html5-fancy t)
-;; (setq org-publish-timestamp-directory (concat (bibo/get-runtimes-dir) "org-timestamps"))
-;; (setq org-id-locations-file (concat (bibo/get-runtimes-dir) "org-id-locations"))
-;; (setq org-export-with-sub-superscripts nil)
-;; (setq org-html-htmlize-output-type 'inline-css)
-;; (setq org-export-headline-levels 4)
-;; (setq org-src-fontify-natively t)
+(setq org-html-head-include-default-style nil)
+(setq org-html-head-include-scripts nil)
+(setq org-html-doctype "html5")
+(setq org-html-html5-fancy t)
+(setq org-publish-timestamp-directory (concat (bibo/get-runtimes-dir) "org-timestamps"))
+(setq org-id-locations-file (concat (bibo/get-runtimes-dir) "org-id-locations"))
+(setq org-export-with-sub-superscripts nil)
+(setq org-html-htmlize-output-type 'inline-css)
+(setq org-export-headline-levels 4)
+(setq org-src-fontify-natively t)
 
-;; ;;; redefine the original one, move the svg related stuff
-;; (eval-after-load "ox-html"
-;;   '(progn
-;;      (defun org-html--format-image (source attributes info)
-;;        "Return \"img\" tag with given SOURCE and ATTRIBUTES.
-;; SOURCE is a string specifying the location of the image.
-;; ATTRIBUTES is a plist, as returned by
-;; `org-export-read-attribute'.  INFO is a plist used as
-;; a communication channel."
-;;        (org-html-close-tag
-;;         "img"
-;;         (org-html--make-attribute-string
-;;          (org-combine-plists
-;;           (list :src source
-;;                 :alt (if (string-match-p "^ltxpng/" source)
-;;                          (org-html-encode-plain-text
-;;                           (org-find-text-property-in-string 'org-latex-src source))
-;;                        (file-name-nondirectory source)))
-;;           attributes))
-;;         info)
-;;        )
-;;      )
-;;   )
+;;; redefine the original one, move the svg related stuff
+(eval-after-load "ox-html"
+  '(progn
+     (defun org-html--format-image (source attributes info)
+       "Return \"img\" tag with given SOURCE and ATTRIBUTES.
+SOURCE is a string specifying the location of the image.
+ATTRIBUTES is a plist, as returned by
+`org-export-read-attribute'.  INFO is a plist used as
+a communication channel."
+       (org-html-close-tag
+        "img"
+        (org-html--make-attribute-string
+         (org-combine-plists
+          (list :src source
+                :alt (if (string-match-p "^ltxpng/" source)
+                         (org-html-encode-plain-text
+                          (org-find-text-property-in-string 'org-latex-src source))
+                       (file-name-nondirectory source)))
+          attributes))
+        info)
+       )
+     )
+  )
 
-;; ;;; latex
-;; ;;; font: https://www.google.com/get/noto/help/cjk/
-;; (setq org-latex-classes
-;;       '(("article"
-;;          "
-;; \\documentclass[12pt,a4paper]{article}
-;; \\usepackage[margin=2cm]{geometry}
-;; \\usepackage{fontspec}
-;; \\setromanfont{Noto Serif SC:style=Regular}
-;; \\setsansfont{Noto Sans SC Regular}
-;; \\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}
-;; \\XeTeXlinebreaklocale \"zh\"
-;; \\XeTeXlinebreakskip = 0pt plus 1pt
-;; \\linespread{1.1}
-;; \\usepackage{hyperref}
-;; \\hypersetup{
-;;   colorlinks=true,
-;;   linkcolor=[rgb]{0,0.37,0.53},
-;;   citecolor=[rgb]{0,0.47,0.68},
-;;   filecolor=[rgb]{0,0.37,0.53},
-;;   urlcolor=[rgb]{0,0.37,0.53},
-;;   pagebackref=true,
-;;   linktoc=all,}
-;; "
-;;          ("\\section{%s}" . "\\section*{%s}")
-;;          ("\\subsection{%s}" . "\\subsection*{%s}")
-;;          ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-;;          ("\\paragraph{%s}" . "\\paragraph*{%s}")
-;;          ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-;;         ))
+;;; latex
+;;; font: https://www.google.com/get/noto/help/cjk/
+(setq org-latex-classes
+      '(("article"
+         "
+\\documentclass[12pt,a4paper]{article}
+\\usepackage[margin=2cm]{geometry}
+\\usepackage{fontspec}
+\\setromanfont{Noto Serif SC:style=Regular}
+\\setsansfont{Noto Sans SC Regular}
+\\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}
+\\XeTeXlinebreaklocale \"zh\"
+\\XeTeXlinebreakskip = 0pt plus 1pt
+\\linespread{1.1}
+\\usepackage{hyperref}
+\\hypersetup{
+  colorlinks=true,
+  linkcolor=[rgb]{0,0.37,0.53},
+  citecolor=[rgb]{0,0.47,0.68},
+  filecolor=[rgb]{0,0.37,0.53},
+  urlcolor=[rgb]{0,0.37,0.53},
+  pagebackref=true,
+  linktoc=all,}
+"
+         ("\\section{%s}" . "\\section*{%s}")
+         ("\\subsection{%s}" . "\\subsection*{%s}")
+         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+        ))
 
-;; (setq org-latex-with-hyperref t)
-;; (setq org-latex-default-packages-alist
-;;       '(
-;;         ("AUTO" "inputenc" t)
-;;         ("" "fixltx2e" nil)
-;;         ("" "graphicx" t)
-;;         ("" "longtable" nil)
-;;         ("" "float" nil)
-;;         ("" "wrapfig" nil)
-;;         ("" "rotating" nil)
-;;         ("normalem" "ulem" t)
-;;         ("" "amsmath" t)
-;;         ("" "textcomp" t)
-;;         ("" "marvosym" t)
-;;         ("" "wasysym" t)
-;;         ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
-;;         ("" "amssymb" t)
-;;         "\\tolerance=1000"))
+(setq org-latex-with-hyperref t)
+(setq org-latex-default-packages-alist
+      '(
+        ("AUTO" "inputenc" t)
+        ("" "fixltx2e" nil)
+        ("" "graphicx" t)
+        ("" "longtable" nil)
+        ("" "float" nil)
+        ("" "wrapfig" nil)
+        ("" "rotating" nil)
+        ("normalem" "ulem" t)
+        ("" "amsmath" t)
+        ("" "textcomp" t)
+        ("" "marvosym" t)
+        ("" "wasysym" t)
+        ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
+        ("" "amssymb" t)
+        "\\tolerance=1000"))
 
-;; (setq org-latex-pdf-process
-;;       '("xelatex -interaction nonstopmode -output-directory %o %f"
-;;         "xelatex -interaction nonstopmode -output-directory %o %f"
-;;         "xelatex -interaction nonstopmode -output-directory %o %f"))
+(setq org-latex-pdf-process
+      '("xelatex -interaction nonstopmode -output-directory %o %f"
+        "xelatex -interaction nonstopmode -output-directory %o %f"
+        "xelatex -interaction nonstopmode -output-directory %o %f"))
 
-;; (setq org-file-apps '((auto-mode . emacs)
-;;                       ("\\.mm\\'" . default)
-;;                       ("\\.x?html?\\'" . "firefox %s")
-;;                       ("\\.pdf\\'" . "xreader %s")
-;;                       ("\\.jpg\\'" . "xviewer %s")))
+(setq org-file-apps '((auto-mode . emacs)
+                      ("\\.mm\\'" . default)
+                      ("\\.x?html?\\'" . "firefox %s")
+                      ("\\.pdf\\'" . "xreader %s")
+                      ("\\.jpg\\'" . "xviewer %s")))
 
 ;; ;;; beamer
 ;; (require 'ox-beamer)
@@ -535,23 +535,28 @@
 
 ;; ;; http://kb.mozillazine.org/Register_protocol#Windows
 
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; simple-httpd
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'simple-httpd)
-;; (setq url-cache-directory (concat (bibo/get-runtimes-dir) "url/cache"))
-;; (setq httpd-port 3721)
-;; (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
-;; (httpd-start)
-;; (global-set-key (kbd "<f8>") (lambda nil
-;;                                (interactive)
-;;                                (browse-url "http://localhost:3721")))
-;; (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
-;;                                                   (httpd-stop)
-;;                                                   (apply orig-fun args)
-;;                                                   ))
+;;; ------------------------------------------------------------
+;;;
+;;; simple-httpd
+;;;
+;;; ------------------------------------------------------------
+(defun bibo/open-browser nil
+  (interactive)
+  (browse-url "http://localhost:3721"))
+(use-package simple-httpd
+  :bind
+  ("<f8>" . bibo/open-browser)
+  :init
+  (require-package 'simple-httpd)
+  (setq url-cache-directory (concat (bibo/get-runtimes-dir) "url/cache"))
+  (setq httpd-port 3721)
+  (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+  (httpd-start)
+  (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
+                                                    (httpd-stop)
+                                                    (apply orig-fun args)
+                                                    ))
+  )
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
@@ -665,5 +670,21 @@
    (restclient . t)
    (ledger . t)
    ))
+
+;;; ------------------------------------------------------------
+;;;
+;;; org-brain
+;;;
+;;; ------------------------------------------------------------
+(use-package org-brain :ensure t
+  :bind
+  (("C-z b" . org-brain-visualize))
+  :config
+  (setq org-id-track-globally t)
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+          "* %i%?" :empty-lines 1)
+        org-capture-templates)
+  (setq org-brain-visualize-default-choices 'all)
+  (setq org-brain-title-max-length 12))
 
 (provide 'init-orgnization)
