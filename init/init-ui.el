@@ -348,4 +348,15 @@
   (set (make-local-variable 'system-messages-locale) "C")
   )
 
+;;; ------------------------------------------------------------
+;;;
+;;; persp-mode
+;;;
+;;; ------------------------------------------------------------
+(use-package persp-mode
+  :init
+  (require-package 'persp-mode)
+  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
+  )
+
 (provide 'init-ui)
