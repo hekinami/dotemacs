@@ -354,9 +354,17 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package persp-mode
+  :bind (("C-x k" . persp-kill-buffer)
+         ("C-x b" . persp-switch-to-buffer)) ; may overwrite by helm loading, workaround needed in helm config
   :init
   (require-package 'persp-mode)
+  (setq persp-save-dir (concat (bibo/get-runtimes-dir) "persp-confs/"))
   (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
+  :config
+  ;; eshell
+  (persp-def-buffer-save/load
+   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
+   :save-vars '(major-mode default-directory))
   )
 
 (provide 'init-ui)
