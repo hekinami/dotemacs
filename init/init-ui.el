@@ -104,11 +104,13 @@
 ;;; cursor
 ;;;
 ;;; ------------------------------------------------------------
-(add-hook 'after-init-hook 'highlight-tail-mode)
 (use-package highlight-tail
   :defer t
   :init
   (require-package 'highlight-tail)
+  (add-hook 'after-init-hook (lambda nil
+                               (highlight-tail-mode)
+                               (diminish 'highlight-tail-mode)))
   :config
   (setq highlight-tail-timer 0.01))
 
@@ -169,49 +171,53 @@
   (setq sml/no-confirm-load-theme t)
   (setq sml/mode-width 5)
   (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
-  (set-face-attribute 'mode-line nil  :height 100)
 
   (use-package smart-mode-line-powerline-theme
     :defer t
     :init
     (require-package 'smart-mode-line-powerline-theme)
+    (sml/apply-theme 'powerline)
     :config
     (setq powerline-default-separator 'arrow-fade))
-  (sml/apply-theme 'powerline)
-
+  
   (use-package spacemacs-theme
     :defer t
     :init
     (require-package 'spacemacs-theme))
-
+  
   (use-package spaceline
     :defer t
     :init
-    (require-package 'spaceline)
+    (require-package 'spaceline) 
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme)
+    (add-hook 'spaceline-pre-hook (lambda nil
+				    (set-face-attribute 'mode-line nil  :height 100)
+				    (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+				    (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
+				    (set-face-attribute 'sml/vc nil :foreground "lawn green")
+				    (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
+				    (set-face-attribute 'sml/vc-edited nil :foreground "red")
+				    ))
     :config
-    (setq spaceline-minor-modes-separator nil))
-  (require 'spaceline-config)
-  (spaceline-spacemacs-theme)
-    ;;; adjustment for vc-mode modeline face
-  (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
-  (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
-  (set-face-attribute 'sml/vc nil :foreground "lawn green")
-  (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
-  (set-face-attribute 'sml/vc-edited nil :foreground "red3")
+    (setq spaceline-minor-modes-separator nil)
+    )
   )
 
 (use-package diminish
   :init
   (require-package 'diminish)
   :config
-  (eval-after-load "highlight-tail" '(diminish 'highlight-tail-mode))
-  (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode))
+  (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode "ⅈ"))
   (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
   (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
   (eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
-  (eval-after-load "hideshow" '(diminish 'hs-minor-mode "ⓗs"))
-  (eval-after-load "paredit" '(diminish 'paredit-mode "ⓟe"))
-  (eval-after-load "eldoc" '(diminish 'eldoc-mode "ⓔl")))
+  (eval-after-load "hideshow" '(diminish 'hs-minor-mode "🅢"))
+  (eval-after-load "paredit" '(diminish 'paredit-mode))
+  (eval-after-load "which-key" '(diminish 'which-key-mode))
+  (eval-after-load "helm-mode" '(diminish 'helm-mode))
+  (eval-after-load "buffer-face-mode" '(diminish 'buffer-face-mode))
+  (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
 
 ;;; ------------------------------------------------------------
 ;;;
