@@ -32,6 +32,8 @@
   (require 'init-languages)
   (require 'init-web)
 
+  (require 'init-media)
+
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
   (and (file-exists-p custom-file)
        (load-file custom-file)) 
