@@ -10,3 +10,6 @@ runtimes/*
 contents/*
 request/*
 url/*
+session.*
+cnfonts/*
+emms/*

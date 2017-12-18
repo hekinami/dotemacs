@@ -15,7 +15,13 @@ re-downloaded in order to locate PACKAGE."
         (require-package package min-version t)))))
 
 (setq package-archives
-      '(
+      '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+        ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+        ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
+        ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
+        ("org-cn" . "http://elpa.emacs-china.org/org/")
+        ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
+        ("user42-cn" . "http://elpa.emacs-china.org/user42/")
 	("melpa" . "http://melpa.org/packages/")
 	("org" . "http://orgmode.org/elpa/")
 	("melpa-stable" . "http://stable.melpa.org/packages/")

@@ -1,6 +1,7 @@
 (require-package 'ac-html)
 (require-package 'web-mode)
 (require-package 'emmet-mode)
+(require-package 'rainbow-mode)
 
 (setq sgml-basic-offset 4)
 

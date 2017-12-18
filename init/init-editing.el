@@ -160,7 +160,13 @@ BUFFER may be either a buffer or its name (a string)."
                                      (forward-char)))
 
 (define-key global-map (kbd "M-z") 'avy-goto-word-1)
-(define-key global-map (kbd "M-/") 'avy-goto-char)
+;; (define-key global-map (kbd "M-/") 'avy-goto-char)
+
+(use-package ace-pinyin
+  :bind
+  (("M-/" . ace-pinyin-dwim))
+  :init
+  (require-package 'ace-pinyin))
 
 ;;; ------------------------------------------------------------
 ;;;

@@ -12,7 +12,7 @@
   (require-package 'org-plus-contrib)
   (require-package 'org-bullets)
   :config
-  (setq org-modules '(org-crypt))
+  (setq org-modules '(org-crypt org-drill))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; appearance
@@ -34,7 +34,6 @@
   (add-hook 'org-mode-hook (lambda ()
                              (org-bullets-mode 1)
                              (bibo/timestamp-format-setting)
-                             (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
                              ))
 ;;; ------------------------------------------------------------
 ;;;
@@ -51,7 +50,6 @@
 
   (add-hook 'org-agenda-mode-hook (lambda ()
                                     (bibo/timestamp-format-setting)
-                                    (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
                                     (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                     ))
 
@@ -70,8 +68,6 @@
 (advice-add 'org-columns-display-here :around
 	    (lambda (orig-fun &rest args)
 	      (let ((temp-family (face-attribute 'default :family)))
-		(set-face-attribute 'default nil :family bibo/monofont-family)
-		(set-face-attribute 'header-line nil :family bibo/monofont-family)
 		(apply orig-fun args)
 		(set-face-attribute 'default nil :family temp-family)
 		)
@@ -156,7 +152,6 @@
                                         (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
                                         (set-face-attribute 'cfw:face-toolbar nil :background nil))
                                       (bibo/timestamp-format-setting)
-                                      (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)
                                       ) 
             ))
 
@@ -261,8 +256,7 @@
   (setq deft-extensions '("org"))
   (setq deft-directory (concat (bibo/get-contents-dir) "deft"))
   (setq deft-new-file-format "%Y-%m-%dT%H%M")
-  (add-hook 'deft-mode-hook (lambda nil
-                              (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family))))
+  )
 
 ;;; ------------------------------------------------------------
 ;;;
