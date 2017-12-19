@@ -44,11 +44,14 @@
 
 (defun bibo/toggle-transparency ()
   (interactive)
-  (if (/=
-       (cadr (frame-parameter nil 'alpha))
-       100)
+  (let ((current (frame-parameter nil 'alpha)))
+    (if (or (booleanp current)
+            (= (cadr (frame-parameter nil 'alpha))
+               100))
+        (set-frame-parameter nil 'alpha '(85 50))
       (set-frame-parameter nil 'alpha '(100 100))
-    (set-frame-parameter nil 'alpha '(85 50))))
+      )
+    ))
 (global-set-key (kbd "C-x C-a t") 'bibo/toggle-transparency)
 
 ;;; ------------------------------------------------------------
