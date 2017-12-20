@@ -681,4 +681,22 @@ a communication channel."
   (setq org-brain-visualize-default-choices 'all)
   (setq org-brain-title-max-length 12))
 
+;;; ------------------------------------------------------------
+;;;
+;;; some customization
+;;;
+;;; ------------------------------------------------------------
+(defun bibo/org-at-item-checked-checkbox-p ()
+  "Check if current org checkbox is checked"
+  (org-list-at-regexp-after-bullet-p "\\(\\[[X]\\]\\)[ \t]+"))
+
+(defun bibo/org-checkbox-checked-to-todo-advice (orig-fun &rest args)
+  "Set CHECKED-THEN-TODO property to `t' to open new TODO entry after checked"
+  (apply orig-fun args)
+  (when (and (string= "t" (org-entry-get nil "CHECKED-THEN-TODO")) 
+             (bibo/org-at-item-checked-checkbox-p)) 
+    (org-capture nil "t")))
+
+(advice-add 'org-ctrl-c-ctrl-c :around #'bibo/org-checkbox-checked-to-todo-advice)
+
 (provide 'init-orgnization)
