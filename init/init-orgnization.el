@@ -12,7 +12,7 @@
   (require-package 'org-plus-contrib)
   (require-package 'org-bullets)
   :config
-  (setq org-modules '(org-crypt org-drill))
+  (setq org-modules '(org-crypt org-drill org-checklist))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; appearance
