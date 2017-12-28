@@ -10,6 +10,7 @@
 (defconst *is-mac* (string= system-type "darwin"))
 
 (add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
+(add-to-list 'load-path (expand-file-name "extension" user-emacs-directory))
 
 (let ((loading-start-time (current-time)))
   (let ((proxy-file (expand-file-name ".proxy" user-emacs-directory)))

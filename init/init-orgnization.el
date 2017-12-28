@@ -75,6 +75,9 @@
 
 
 (require 'org-habit)
+(use-package org-drill-table
+  :init
+  (require-package 'org-drill-table))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -649,6 +652,8 @@ a communication channel."
   (require-package 'ledger-mode)
   :config
   (setq ledger-reconcile-default-commodity "CNY"))
+
+(use-package ledger-capture)
 
 ;;; ------------------------------------------------------------
 ;;;
