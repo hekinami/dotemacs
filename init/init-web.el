@@ -1,4 +1,4 @@
-(require-package 'ac-html)
+n(require-package 'ac-html)
 (require-package 'web-mode)
 (require-package 'emmet-mode)
 (require-package 'rainbow-mode)
@@ -61,7 +61,13 @@
 (require-package 'scss-mode)
 
 (require-package 'impatient-mode)
-(require-package 'restclient)
+(use-package restclient
+  :init
+  (require-package 'restclient)
+  (defun restclient nil
+    (interactive)
+    (switch-to-buffer (generate-new-buffer "*restclient*"))
+    (restclient-mode)))
 
 (require-package 'php-mode)
 (require-package 'geben)
