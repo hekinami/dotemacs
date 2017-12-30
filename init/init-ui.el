@@ -197,6 +197,10 @@
   (eval-after-load "buffer-face-mode" '(diminish 'buffer-face-mode))
   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
 
+(use-package mode-icons
+  :init
+  (require-package 'mode-icons)
+  (mode-icons-mode))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; window

@@ -1,4 +1,4 @@
-n(require-package 'ac-html)
+(require-package 'ac-html)
 (require-package 'web-mode)
 (require-package 'emmet-mode)
 (require-package 'rainbow-mode)
@@ -64,10 +64,12 @@ n(require-package 'ac-html)
 (use-package restclient
   :init
   (require-package 'restclient)
+  :config
   (defun restclient nil
     (interactive)
     (switch-to-buffer (generate-new-buffer "*restclient*"))
-    (restclient-mode)))
+    (restclient-mode))
+  )
 
 (require-package 'php-mode)
 (require-package 'geben)
