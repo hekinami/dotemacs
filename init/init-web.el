@@ -115,4 +115,10 @@
          "with"                         ; new added
          )))
 
+(use-package apib-mode
+  :defer t
+  :mode ("\\.apib\\'" . apib-mode)
+  :init
+  (require-package 'apib-mode))
+
 (provide 'init-web)
