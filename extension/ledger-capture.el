@@ -1,4 +1,3 @@
-(use-package ledger-mode)
 (use-package subr-x)
 
 (defvar bibo/ledger-file (concat org-directory "/fin.ledger")

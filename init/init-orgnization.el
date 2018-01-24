@@ -653,7 +653,8 @@ a communication channel."
   :config
   (setq ledger-reconcile-default-commodity "CNY"))
 
-(use-package ledger-capture)
+(use-package ledger-capture
+  :requires ledger-mode)
 
 ;;; ------------------------------------------------------------
 ;;;
