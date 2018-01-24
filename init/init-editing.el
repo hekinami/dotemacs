@@ -17,9 +17,8 @@
 (desktop-save-mode 0)
 
 (use-package undo-tree
+  :ensure t
   :bind ("C-x u" . undo-tree-visualize)
-  :init
-  (require-package 'undo-tree)
   :config
   (global-undo-tree-mode))
 
@@ -29,12 +28,17 @@
 (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
 
 (setq-default indent-tabs-mode nil)
-(require-package 'aggressive-indent)
-(global-aggressive-indent-mode 1)
+
+(use-package aggressive-indent
+  :ensure t
+  :config
+  (global-aggressive-indent-mode 1))
 
 (electric-pair-mode)
 
-(require-package 'fancy-narrow)
+(use-package fancy-narrow
+  :ensure t)
+
 (fancy-narrow-mode)
 
 ;;; ------------------------------------------------------------
@@ -83,9 +87,10 @@
 ;;; buffer
 ;;;
 ;;; ------------------------------------------------------------
-(require 'uniquify)
-(setq  uniquify-buffer-name-style 'post-forward
-       uniquify-separator ":")
+(require 'uniquify
+         :config
+         (setq  uniquify-buffer-name-style 'post-forward
+                uniquify-separator ":"))
 
 (defun kill-buffer-when-exit ()
   "Close assotiated buffer when a process exited"
@@ -148,25 +153,23 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; navigation
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'avy)
-(setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
-(setq avy-style 'at)
-(setq avy-background t)
-
-;;; select current position to the position jumped to
-(advice-add 'avy-goto-char :around (lambda (orig-fun &rest args)
-                                     (push-mark)
-                                     (apply orig-fun args)
-                                     (forward-char)))
-
-(define-key global-map (kbd "M-z") 'avy-goto-word-1)
-;; (define-key global-map (kbd "M-/") 'avy-goto-char)
+(use-package avy
+  :ensure t
+  :bind ("M-z" . avy-goto-word-1)
+  :config
+  (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
+  (setq avy-style 'at)
+  (setq avy-background t)
+  ;;; select current position to the position jumped to
+  (advice-add 'avy-goto-char :around (lambda (orig-fun &rest args)
+                                       (push-mark)
+                                       (apply orig-fun args)
+                                       (forward-char))))
 
 (use-package ace-pinyin
+  :ensure t
   :bind
-  (("M-/" . ace-pinyin-dwim))
-  :init
-  (require-package 'ace-pinyin))
+  (("M-/" . ace-pinyin-dwim)))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -184,18 +187,21 @@ BUFFER may be either a buffer or its name (a string)."
 ;;; multiple cursors
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'multiple-cursors)
-(setq mc/list-file (concat (bibo/get-runtimes-dir) ".mc-lists.el"))
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-(add-hook 'multiple-cursors-mode-hook
-          (lambda ()
-            (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
-            (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
-            ))
-
+(use-package multiple-cursors
+  :ensure t
+  :bind (("C-S-c C-S-c" . mc/edit-lines)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C-<" . mc/mark-all-like-this)
+         :map mc/keymap
+         ("C-z n" . mc/insert-numbers)
+         ("C-z l" . mc/insert-letters))
+  :init
+  (add-hook 'multiple-cursors-mode-hook
+            (lambda ()
+              (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
+              (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
+              )))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -203,18 +209,15 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package bm
+  :ensure t
   :bind
   (("C-<f2>" . bm-toggle)
    ("<f2>" . bm-next)
-   ("S-<f2>" . bm-previous))
-  :init
-  (require-package 'bm)
-  )
+   ("S-<f2>" . bm-previous)))
 
 (use-package helm-bm
-  :bind ("C-S-<f2>" . helm-bm)
-  :init
-  (require-package 'helm-bm))
+  :ensure t
+  :bind ("C-S-<f2>" . helm-bm))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -288,14 +291,13 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package swoop
+  :ensure t
   :bind
   (("C-o" . swoop)
    ("M-o" . swoop-pcre-regexp)
    ("C-S-o" . swoop-back-to-last-position)
    :map swoop-map
    ("C-o" . swoop-multi-from-swoop))
-  :init
-  (require-package 'swoop)
   :config
   (setq swoop-use-target-magnifier: nil)
   (setq swoop-font-size-change: nil)
@@ -307,31 +309,33 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package ciel
+  :ensure t
   :bind
   (("C-c i" . ciel-ci)
-   ("C-c o" . ciel-co))
-  :init
-  (require-package 'ciel))
+   ("C-c o" . ciel-co)))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; markdown
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'markdown-mode)
+(use-package markdown-mode
+  :ensure t)
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; dockerfile
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'dockerfile-mode)
+(use-package dockerfile-mode
+  :ensure t)
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; terraform
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'terraform-mode)
+(use-package terraform-mode
+  :ensure t)
 
 (provide 'init-editing)
