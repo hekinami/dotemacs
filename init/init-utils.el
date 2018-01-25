@@ -1,4 +1,4 @@
-(defun bibo/get-runtimes-dir ()  
+(defun z/get-runtimes-dir ()  
   (let ((dir (concat user-emacs-directory
                      (file-name-as-directory "runtimes"))))
     (unless (file-exists-p dir)
@@ -7,7 +7,7 @@
         )
   )
 
-(defun bibo/get-contents-dir ()  
+(defun z/get-contents-dir ()  
   (let ((dir (concat user-emacs-directory
                      (file-name-as-directory "contents"))))
     (unless (file-exists-p dir)
@@ -16,7 +16,7 @@
         )
   )
 
-(defun bibo/get-stuff-dir ()  
+(defun z/get-stuff-dir ()  
   (let ((dir (concat user-emacs-directory
                      (file-name-as-directory "stuff"))))
     (unless (file-exists-p dir)
@@ -25,7 +25,7 @@
         )
   )
 
-(defun bibo/get-tools-dir ()  
+(defun z/get-tools-dir ()  
   (let ((dir (concat user-emacs-directory
                      (file-name-as-directory "tools"))))
     (unless (file-exists-p dir)

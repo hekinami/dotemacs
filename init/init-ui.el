@@ -7,7 +7,7 @@
   :ensure t
   :config
   (load-theme 'molokai t)
-  (setq bibo/current-theme-name "molokai"))
+  (setq z/current-theme-name "molokai"))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -228,7 +228,7 @@
 ;;; utility
 ;;;
 ;;; ------------------------------------------------------------
-(defun bibo/timestamp-format-setting ()
+(defun z/timestamp-format-setting ()
   (set (make-local-variable 'system-time-locale) "C")
   (set (make-local-variable 'system-messages-locale) "C")
   )
@@ -243,7 +243,7 @@
   :bind (("C-x k" . persp-kill-buffer)
          ("C-x b" . persp-switch-to-buffer)) ; may overwrite by helm loading, workaround needed in helm config
   :init
-  (setq persp-save-dir (concat (bibo/get-runtimes-dir) "persp-confs/")) 
+  (setq persp-save-dir (concat (z/get-runtimes-dir) "persp-confs/")) 
   (persp-mode 1)
   ;; :config
   ;; eshell

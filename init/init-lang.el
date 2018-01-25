@@ -94,7 +94,7 @@
 ;;; python
 ;;;
 ;;; ------------------------------------------------------------
-(setq python-environment-directory (concat (bibo/get-runtimes-dir) ".python-environments"))
+(setq python-environment-directory (concat (z/get-runtimes-dir) ".python-environments"))
 (setq python-indent-guess-indent-offset nil)
 (require-package 'jedi)
 (setq jedi:environment-root "py3jedi")

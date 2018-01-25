@@ -39,5 +39,5 @@
   (and (file-exists-p custom-file)
        (load-file custom-file)) 
 
-  (message "loading process took %f ms" (bibo/time-difference-in-millis loading-start-time (current-time)))
+  (message "loading process took %f ms" (z/time-difference-in-millis loading-start-time (current-time)))
   )

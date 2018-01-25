@@ -6,15 +6,15 @@
   :ensure t
   :defer t
   :config
-  (setq irfc-directory (concat (bibo/get-runtimes-dir) (file-name-as-directory "RFC")))
+  (setq irfc-directory (concat (z/get-runtimes-dir) (file-name-as-directory "RFC")))
   (setq irfc-assoc-mode t))
 
 (use-package xkcd
   :ensure t
   :defer t
   :config
-  (setq xkcd-cache-dir (concat (bibo/get-runtimes-dir) "xkcd"))
-  (setq xkcd-cache-latest (concat (bibo/get-runtimes-dir) "xkcd/latest")))
+  (setq xkcd-cache-dir (concat (z/get-runtimes-dir) "xkcd"))
+  (setq xkcd-cache-latest (concat (z/get-runtimes-dir) "xkcd/latest")))
 
 ;;; ------------------------------------------------------------
 ;;;

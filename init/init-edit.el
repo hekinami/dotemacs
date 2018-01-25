@@ -6,9 +6,9 @@
 (setq user-full-name "Zou Bibo")
 (setq user-mail-address "hekinami@amiunique.net")
 
-(setq savehist-file (concat (bibo/get-runtimes-dir) "history"))
-(setq auto-save-list-file-prefix (concat (bibo/get-runtimes-dir) "auto-save-list/.saves-"))
-(setq tramp-persistency-file-name (concat (bibo/get-runtimes-dir) "tramp"))
+(setq savehist-file (concat (z/get-runtimes-dir) "history"))
+(setq auto-save-list-file-prefix (concat (z/get-runtimes-dir) "auto-save-list/.saves-"))
+(setq tramp-persistency-file-name (concat (z/get-runtimes-dir) "tramp"))
 (global-auto-revert-mode)
 (setq make-backup-files nil)
 (auto-compression-mode t)
@@ -130,7 +130,7 @@ BUFFER may be either a buffer or its name (a string)."
 (ido-mode 1)
 (setq ido-create-new-buffer 'always)
 (setq ido-ignore-buffers '("gtd.org$" "\\*"))
-(setq ido-save-directory-list-file (concat (bibo/get-runtimes-dir) "ido.last"))
+(setq ido-save-directory-list-file (concat (z/get-runtimes-dir) "ido.last"))
 
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
 (global-set-key (kbd "C-x C-b") 'bs-show)
@@ -177,7 +177,7 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (setq server-auth-dir (if *is-windows* (concat (file-name-as-directory (getenv "USERPROFILE") ) (file-name-as-directory "emacserver"))
-                        (concat (bibo/get-runtimes-dir) "emacsserver")))
+                        (concat (z/get-runtimes-dir) "emacsserver")))
 (unless (and (functionp 'server-running-p)
 	     (server-running-p))
   (server-start))

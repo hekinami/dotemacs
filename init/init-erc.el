@@ -1,6 +1,6 @@
 (setq erc-log-channels-directory "~/.erc/logs/")
 
-(defun bibo/erc-generate-log-file-name (buffer target nick server port)
+(defun z/erc-generate-log-file-name (buffer target nick server port)
   "Generates a log-file name in the way ERC always did it.
 This results in a file name of the form #channel!nick@server:port.txt.
 This function is a possible value for `erc-generate-log-file-name-function'."
@@ -12,16 +12,16 @@ This function is a possible value for `erc-generate-log-file-name-function'."
     ;; we need a make-safe-file-name function.
     (convert-standard-filename file)))
 
-(setq erc-generate-log-file-name-function 'bibo/erc-generate-log-file-name)
+(setq erc-generate-log-file-name-function 'z/erc-generate-log-file-name)
 (setq erc-log-file-coding-system 'utf-8)
 
-(defun bibo/bitlbee-connect ()
+(defun z/bitlbee-connect ()
   (interactive)
   (erc :server "localhost"
-       :nick bibo/bitlbee-nickname))
-;;; set bibo/bitlbee-nickname in custom.el
+       :nick z/bitlbee-nickname))
+;;; set z/bitlbee-nickname in custom.el
 
-(defalias 'bibo/erc 'bibo/bitlbee-connect)
+(defalias 'z/erc 'z/bitlbee-connect)
 
 ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
 ;; http://emacs-fu.blogspot.de/2012/03/social-networking-with-bitlbee-and-erc.html
@@ -30,8 +30,8 @@ This function is a possible value for `erc-generate-log-file-name-function'."
              (string= "&bitlbee" (buffer-name)))
     (erc-message "PRIVMSG" (format "%s identify %s"
                                    (erc-default-target)
-                                   bibo/bitlbee-password))))
-;;; set bibo/bitlbee-password in custom.el
+                                   z/bitlbee-password))))
+;;; set z/bitlbee-password in custom.el
 
 (add-hook 'erc-join-hook 'fg/bitlbee-identify)
 

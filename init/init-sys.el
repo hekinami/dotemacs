@@ -32,7 +32,7 @@
 ;;; shell
 ;;;
 ;;; ------------------------------------------------------------
-(setq eshell-directory-name (concat (bibo/get-runtimes-dir) (file-name-as-directory "eshell")))
+(setq eshell-directory-name (concat (z/get-runtimes-dir) (file-name-as-directory "eshell")))
 
 (add-hook 'eshell-mode-hook (lambda ()
                               (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)

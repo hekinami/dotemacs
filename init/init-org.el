@@ -6,8 +6,8 @@
    ("C-c b" . org-switchb)
    ("C-c c" . org-capture)
    :map org-mode-map
-   (("C-c s" . bibo/org-screenshot)
-    ("C-c d" . bibo/org-delete-linked-file-in-point)))
+   (("C-c s" . z/org-screenshot)
+    ("C-c d" . z/org-delete-linked-file-in-point)))
   :config
   (setq org-modules '(org-crypt org-drill org-checklist org-habit))
 
@@ -30,7 +30,7 @@
 
   (add-hook 'org-mode-hook (lambda ()
                              (org-bullets-mode 1)
-                             (bibo/timestamp-format-setting)
+                             (z/timestamp-format-setting)
                              ))
 ;;; ------------------------------------------------------------
 ;;;
@@ -46,12 +46,12 @@
   (setq org-agenda-sorting-strategy '(todo-state-down deadline-up scheduled-up))
 
   (add-hook 'org-agenda-mode-hook (lambda ()
-                                    (bibo/timestamp-format-setting)
+                                    (z/timestamp-format-setting)
                                     (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                     ))
 
-  (setq org-directory (concat (bibo/get-contents-dir) (file-name-as-directory "gtd")))
-  (setq org-agenda-files `(,(concat (bibo/get-contents-dir) (file-name-as-directory "gtd"))))
+  (setq org-directory (concat (z/get-contents-dir) (file-name-as-directory "gtd")))
+  (setq org-agenda-files `(,(concat (z/get-contents-dir) (file-name-as-directory "gtd"))))
 
   (setq org-deadline-warning-days 3)
   (setq org-log-into-drawer t)
@@ -125,7 +125,7 @@
   :config
   (org-crypt-use-before-save-magic)
   (setq org-tags-exclude-from-inheritance (quote ("crypt")))
-  (setq org-crypt-key "bibo")
+  (setq org-crypt-key "z")
   (setq auto-save-default nil)
   )
 
@@ -160,14 +160,14 @@
   (setq org-pomodoro-format "P:%s")
   (when *is-windows*
     ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
-    (setq org-pomodoro-audio-player (expand-file-name (concat (bibo/get-tools-dir) "/sounder.exe")))))
+    (setq org-pomodoro-audio-player (expand-file-name (concat (z/get-tools-dir) "/sounder.exe")))))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; canlendar & date/time
 ;;;
 ;;; ------------------------------------------------------------
-(setq diary-file (concat (bibo/get-runtimes-dir) "diary"))
+(setq diary-file (concat (z/get-runtimes-dir) "diary"))
 (unless (file-exists-p diary-file) (write-region nil nil diary-file))
 (setq view-diary-entries-initially t)
 (setq mark-diary-entries-in-calendar t)
@@ -184,10 +184,10 @@
   :config
   (add-hook 'cfw:calendar-mode-hook
             (lambda ()
-              (when (equal bibo/current-theme-name "molokai")
+              (when (equal z/current-theme-name "molokai")
                 (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
                 (set-face-attribute 'cfw:face-toolbar nil :background nil))
-              (bibo/timestamp-format-setting)
+              (z/timestamp-format-setting)
               )))
 
 (use-package cal-china-x
@@ -201,11 +201,11 @@
   :ensure t
   :defer t)
 
-(defun bibo/open-calendar ()
+(defun z/open-calendar ()
   (interactive)
   (let* ((sources (list (cfw:org-create-source "Green"))))
-    (when (boundp 'bibo/ical-source-list) ; bibo/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
-      (setcdr sources bibo/ical-source-list)
+    (when (boundp 'z/ical-source-list) ; z/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
+      (setcdr sources z/ical-source-list)
       )
     (cfw:open-calendar-buffer :contents-sources sources)
     )
@@ -237,7 +237,7 @@
       (?G (call-interactively 'org-agenda-toggle-time-grid))
       (?D (call-interactively 'org-agenda-toggle-diary))
       (?\! (call-interactively 'org-agenda-toggle-deadlines))
-      (?i (call-interactively 'bibo/open-calendar))
+      (?i (call-interactively 'z/open-calendar))
       (?\[ (let ((org-agenda-include-inactive-timestamps t))
              (org-agenda-check-type t 'timeline 'agenda)
              (org-agenda-redo))
@@ -286,7 +286,7 @@
   :config
   (setq deft-default-extension "org")
   (setq deft-extensions '("org"))
-  (setq deft-directory (concat (bibo/get-contents-dir) "deft"))
+  (setq deft-directory (concat (z/get-contents-dir) "deft"))
   (setq deft-new-file-format "%Y-%m-%dT%H%M")
   )
 
@@ -299,7 +299,7 @@
   :ensure t
   :defer t)
 
-(defun bibo/org-screenshot ()
+(defun z/org-screenshot ()
   "Take a screenshot into a time stamped unique-named file in the same directory as the org-buffer and insert a link to this file."
   (interactive)
   (when *is-windows*
@@ -337,7 +337,7 @@
 
 
 
-(defun bibo/org-delete-linked-file-in-point ()
+(defun z/org-delete-linked-file-in-point ()
   "delete a file in point if exists."
   (interactive)
   (let* ((raw-string (or (thing-at-point 'filename) "neverexists"))
@@ -364,29 +364,29 @@
 (setq appt-display-mode-line nil)
 
 ; use appointment data from org-mode
-(defun bibo/org-agenda-to-appt ()
+(defun z/org-agenda-to-appt ()
   (interactive)
   (setq appt-time-msg-list nil)
   (org-agenda-to-appt))
 
                                         ; run when starting Emacs and everyday at 12:05am
-(bibo/org-agenda-to-appt)
-(run-at-time "12:05am" (* 24 3600) 'bibo/org-agenda-to-appt)
+(z/org-agenda-to-appt)
+(run-at-time "12:05am" (* 24 3600) 'z/org-agenda-to-appt)
 
                                         ; automatically update appointments when TODO.txt is saved
 (add-hook 'after-save-hook
           '(lambda ()
              (if (string= (buffer-file-name) (expand-file-name
-                                              (concat (bibo/get-contents-dir) "gtd/event.gtd.org")))
-                 (bibo/org-agenda-to-appt))))
+                                              (concat (z/get-contents-dir) "gtd/event.gtd.org")))
+                 (z/org-agenda-to-appt))))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; projects and publish
 ;;;
 ;;; ------------------------------------------------------------
-(setq org-projects-base (concat (bibo/get-contents-dir) (file-name-as-directory "org")))
-(setq org-projects-publish (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+(setq org-projects-base (concat (z/get-contents-dir) (file-name-as-directory "org")))
+(setq org-projects-publish (concat (z/get-contents-dir) (file-name-as-directory "orgp")))
 
 ;;; use a .org-project file in each project directory to define a project
 ;;; org-publish-project-alist would be set just before we try to publish
@@ -401,7 +401,7 @@
                                                      )
                                                    ))
 
-(defun bibo/org-init-project-directory (&optional template)
+(defun z/org-init-project-directory (&optional template)
   "for now, use default template only"
   (interactive)
   (if (file-exists-p ".org-project")
@@ -419,7 +419,7 @@
     )
   )
 
-(define-key org-mode-map "\C-c\C-xh" 'bibo/org-init-project-directory)
+(define-key org-mode-map "\C-c\C-xh" 'z/org-init-project-directory)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -427,14 +427,14 @@
 ;;;
 ;;; ------------------------------------------------------------
 (define-key org-mode-map "\C-cp" 'org-publish-current-project)
-(setq org-tpl-directory (concat (bibo/get-stuff-dir) (file-name-as-directory "orgtemplate")))
+(setq org-tpl-directory (concat (z/get-stuff-dir) (file-name-as-directory "orgtemplate")))
 
 (setq org-html-head-include-default-style nil)
 (setq org-html-head-include-scripts nil)
 (setq org-html-doctype "html5")
 (setq org-html-html5-fancy t)
-(setq org-publish-timestamp-directory (concat (bibo/get-runtimes-dir) "org-timestamps"))
-(setq org-id-locations-file (concat (bibo/get-runtimes-dir) "org-id-locations"))
+(setq org-publish-timestamp-directory (concat (z/get-runtimes-dir) "org-timestamps"))
+(setq org-id-locations-file (concat (z/get-runtimes-dir) "org-id-locations"))
 (setq org-export-with-sub-superscripts nil)
 (setq org-html-htmlize-output-type 'inline-css)
 (setq org-export-headline-levels 4)
@@ -558,9 +558,9 @@ a communication channel."
 (use-package simple-httpd
   :ensure t
   :config
-  (setq url-cache-directory (concat (bibo/get-runtimes-dir) "url/cache"))
+  (setq url-cache-directory (concat (z/get-runtimes-dir) "url/cache"))
   (setq httpd-port 3721)
-  (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
+  (setq httpd-root (concat (z/get-contents-dir) (file-name-as-directory "orgp")))
   (httpd-start)
   (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
                                                     (httpd-stop)
@@ -580,11 +580,11 @@ a communication channel."
 ;; (require-package 'bbdb-china)
 ;; (require-package 'bbdb-vcard)
 
-;; (setq bbdb-file (concat (bibo/get-contents-dir) "bbdb"))
+;; (setq bbdb-file (concat (z/get-contents-dir) "bbdb"))
 ;; (setq bbdb-phone-style nil)
 
 ;; (add-hook 'bbdb-mode-hook (lambda nil
-;;                             (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
+;;                             (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
 ;; ;;; thunderbird interaction
@@ -640,10 +640,10 @@ a communication channel."
 
 ;; (setq wl-folders-file (concat user-emacs-directory ".wl-folder"))
 ;; (add-hook 'wl-summary-mode-hook (lambda nil
-;;                                   (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
+;;                                   (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
 
 ;; (add-hook 'mime-view-mode-hook (lambda nil
-;;                                  (bibo/use-buffer-face-mode-with-fontfamily bibo/monofont-family)))
+;;                                  (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
 
 ;; (require-package 'ob-restclient)
 ;; (require 'ob-restclient)
@@ -698,32 +698,32 @@ a communication channel."
 ;;; 1. CHECKED-THEN-TODO, if t, then add new TODO entry after checkbox checked
 ;;; 2. TODO-TEMPLATE, the value if the key for template, if nil, then capture template
 ;;;    could be selected from list.
-(defvar bibo/current-item-content ""
+(defvar z/current-item-content ""
   "Used to save content of current item of list")
 
-(defun bibo/get-current-item-content nil
+(defun z/get-current-item-content nil
   "Return current content of current item of list, used in capture template"
-  bibo/current-item-content)
+  z/current-item-content)
 
-(defun bibo/org-at-item-checked-checkbox-p ()
+(defun z/org-at-item-checked-checkbox-p ()
   "Check if current org checkbox is checked"
   (org-list-at-regexp-after-bullet-p "\\(\\[[X]\\]\\)[ \t]+"))
 
-(defun bibo/org-checkbox-checked-to-todo-advice (orig-fun &rest args)
+(defun z/org-checkbox-checked-to-todo-advice (orig-fun &rest args)
   "Set CHECKED-THEN-TODO property to `t' to open new TODO entry after checked"
   (apply orig-fun args)
   (when (and (string= "t" (org-entry-get nil "CHECKED-THEN-TODO")) 
-             (bibo/org-at-item-checked-checkbox-p))
+             (z/org-at-item-checked-checkbox-p))
     (save-excursion
       (back-to-indentation)
       (let* ((pl (car (cdr (org-element-context))))
              (cbegin (plist-get pl :contents-begin))
              (cend (plist-get pl :contents-end)))
-        (setq bibo/current-item-content
+        (setq z/current-item-content
               (s-trim (buffer-substring-no-properties cbegin cend)))
         ))
     (org-capture nil (org-entry-get nil "TODO-TEMPLATE"))))
 
-(advice-add 'org-ctrl-c-ctrl-c :around #'bibo/org-checkbox-checked-to-todo-advice)
+(advice-add 'org-ctrl-c-ctrl-c :around #'z/org-checkbox-checked-to-todo-advice)
 
 (provide 'init-org)
