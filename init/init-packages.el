@@ -28,7 +28,10 @@ re-downloaded in order to locate PACKAGE."
 	)
       )
 
-(require-package 'try)
 (require-package 'use-package)
+
+(use-package try
+  :defer t
+  :ensure t)
 
 (provide 'init-packages)

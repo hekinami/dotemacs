@@ -37,9 +37,9 @@
 (electric-pair-mode)
 
 (use-package fancy-narrow
-  :ensure t)
-
-(fancy-narrow-mode)
+  :ensure t
+  :config
+  (fancy-narrow-mode))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -87,10 +87,10 @@
 ;;; buffer
 ;;;
 ;;; ------------------------------------------------------------
-(require 'uniquify
-         :config
-         (setq  uniquify-buffer-name-style 'post-forward
-                uniquify-separator ":"))
+(use-package uniquify
+  :config
+  (setq  uniquify-buffer-name-style 'post-forward
+         uniquify-separator ":"))
 
 (defun kill-buffer-when-exit ()
   "Close assotiated buffer when a process exited"
@@ -196,7 +196,7 @@ BUFFER may be either a buffer or its name (a string)."
          :map mc/keymap
          ("C-z n" . mc/insert-numbers)
          ("C-z l" . mc/insert-letters))
-  :init
+  :config
   (add-hook 'multiple-cursors-mode-hook
             (lambda ()
               (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
@@ -320,7 +320,8 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package markdown-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -328,7 +329,8 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package dockerfile-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -336,6 +338,7 @@ BUFFER may be either a buffer or its name (a string)."
 ;;;
 ;;; ------------------------------------------------------------
 (use-package terraform-mode
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (provide 'init-editing)

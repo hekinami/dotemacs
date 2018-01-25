@@ -1,6 +1,6 @@
 (use-package which-key
-  :init
-  (require-package 'which-key)
+  :ensure t
+  :config
   (which-key-mode))
 
 ;;; ------------------------------------------------------------
@@ -9,11 +9,10 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package auto-complete
+  :ensure t
   :bind
   (:map ac-completing-map
         ("M-/" . ac-stop))
-  :init
-  (require-package 'auto-complete)
   :config
   (ac-linum-workaround)
   (require 'auto-complete-config)
@@ -31,13 +30,12 @@
 ;;; ------------------------------------------------------------
 (add-hook 'after-init-hook 'yas-global-mode)
 (use-package yasnippet
+  :ensure t
   :bind
   (:map yas-minor-mode-map
         ("<tab>" . nil)
         ("TAB" . nil)
         ("<backtab>" . yas-expand))
-  :init
-  (require-package 'yasnippet)
   :config
   (setq yas-also-auto-indent-first-line t)
   (setq yas-prompt-functions
@@ -55,13 +53,13 @@
 (global-unset-key (kbd "C-x c"))
 
 (use-package helm
+  :ensure t
   :bind
   (("C-c h" . helm-command-prefix)
    ("M-x" . helm-M-x)
    ("C-x r l" . helm-filtered-bookmarks)
    ("C-x C-f" . helm-find-files))
   :init
-  (require-package 'helm)
   (setq bookmark-file (concat (bibo/get-runtimes-dir) "bookmarks")) ; must be set before enable helm-mode
   :config
   (require 'helm-config)

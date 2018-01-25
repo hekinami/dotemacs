@@ -1,4 +1,5 @@
 (use-package org
+  :ensure org-plus-contrib
   :bind
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
@@ -7,19 +8,15 @@
    :map org-mode-map
    (("C-c s" . bibo/org-screenshot)
     ("C-c d" . bibo/org-delete-linked-file-in-point)))
-  :init
-  (require-package 'org)
-  (require-package 'org-plus-contrib)
-  (require-package 'org-bullets)
   :config
-  (setq org-modules '(org-crypt org-drill org-checklist))
+  (setq org-modules '(org-crypt org-drill org-checklist org-habit))
+
+  
 ;;; ------------------------------------------------------------
 ;;;
 ;;; appearance
 ;;;
-;;; ------------------------------------------------------------
-  (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
-
+;;; ------------------------------------------------------------ 
   (setq org-hide-leading-stars t)
   (setq org-startup-indented nil)
   (setq org-cycle-separator-lines 0)
@@ -61,7 +58,37 @@
   (setq org-enforce-todo-dependencies t)
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+
+;;; ------------------------------------------------------------
+;;;
+;;; capture
+;;;
+;;; ------------------------------------------------------------
+  (let ((template-file (expand-file-name ".org-capture-templates" user-emacs-directory)))
+    (when (file-exists-p template-file)
+      (load-file template-file)
+      )
+    )
+
+;;; ------------------------------------------------------------
+;;;
+;;; babel
+;;;
+;;; ------------------------------------------------------------
+  ;; active Babel languages
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((python . t)
+     (emacs-lisp . t)
+     (shell . t)
+     (restclient . t)
+     (ledger . t)
+     ))
   )
+
+(use-package ob-restclient
+  :ensure t
+  :defer t)
 
 ;;; modify columns font to mono
 ;;; the reason is that origin function use default face to decide the font family, which may not be mono
@@ -73,11 +100,18 @@
 		)
 	      ))
 
+(use-package org-bullets
+  :ensure t
+  :defer t
+  :config
+  (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
+  (add-hook 'org-mode-hook (lambda ()
+                             (org-bullets-mode 1)))
+  :after org)
 
-(require 'org-habit)
 (use-package org-drill-table
-  :init
-  (require-package 'org-drill-table))
+  :ensure t
+  :defer t)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -116,9 +150,8 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package org-pomodoro
+  :ensure t
   :bind ("<f11>" . org-pomodoro)
-  :init
-  (require-package 'org-pomodoro)
   :config
   (setq org-pomodoro-length 25)
   (setq org-pomodoro-long-break-frequency 4)
@@ -145,31 +178,28 @@
 (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
 
 (use-package calfw
+  :ensure t
   :defer t
   :commands cfw:org-create-source
-  :init
-  (require-package 'calfw)
   :config
-  (add-hook 'cfw:calendar-mode-hook (lambda ()
-                                      (when (equal bibo/current-theme-name "molokai")
-                                        (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
-                                        (set-face-attribute 'cfw:face-toolbar nil :background nil))
-                                      (bibo/timestamp-format-setting)
-                                      ) 
-            ))
+  (add-hook 'cfw:calendar-mode-hook
+            (lambda ()
+              (when (equal bibo/current-theme-name "molokai")
+                (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
+                (set-face-attribute 'cfw:face-toolbar nil :background nil))
+              (bibo/timestamp-format-setting)
+              )))
 
 (use-package cal-china-x
+  :ensure t
   :defer t
-  :init
-  (require-package 'cal-china-x)
   :config
   (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
   (setq calendar-holidays cal-china-x-important-holidays))
 
 (use-package calfw-ical
-  :defer t
-  :init
-  (require-package 'calfw-ical))
+  :ensure t
+  :defer t)
 
 (defun bibo/open-calendar ()
   (interactive)
@@ -250,10 +280,9 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package deft
+  :ensure t
   :bind
   (("<f9>" . deft))
-  :init
-  (require-package 'deft)
   :config
   (setq deft-default-extension "org")
   (setq deft-extensions '("org"))
@@ -267,8 +296,8 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package uuidgen
-  :init
-  (require-package 'uuidgen))
+  :ensure t
+  :defer t)
 
 (defun bibo/org-screenshot ()
   "Take a screenshot into a time stamped unique-named file in the same directory as the org-buffer and insert a link to this file."
@@ -319,17 +348,6 @@
 	    (delete-file full-name))
       (message "no file can be deleted")
       )
-    )
-  )
-
-;;; ------------------------------------------------------------
-;;;
-;;; capture
-;;;
-;;; ------------------------------------------------------------
-(let ((template-file (expand-file-name ".org-capture-templates" user-emacs-directory)))
-  (when (file-exists-p template-file)
-    (load-file template-file)
     )
   )
 
@@ -537,14 +555,9 @@ a communication channel."
 ;;; simple-httpd
 ;;;
 ;;; ------------------------------------------------------------
-(defun bibo/open-browser nil
-  (interactive)
-  (browse-url "http://localhost:3721"))
 (use-package simple-httpd
-  :bind
-  ("<f8>" . bibo/open-browser)
-  :init
-  (require-package 'simple-httpd)
+  :ensure t
+  :config
   (setq url-cache-directory (concat (bibo/get-runtimes-dir) "url/cache"))
   (setq httpd-port 3721)
   (setq httpd-root (concat (bibo/get-contents-dir) (file-name-as-directory "orgp")))
@@ -552,8 +565,11 @@ a communication channel."
   (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
                                                     (httpd-stop)
                                                     (apply orig-fun args)
-                                                    ))
-  )
+                                                    )))
+
+(use-package z-org-ext
+  :bind ("<f8>" . z/open-browser)
+  :after simple-httpd)
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
@@ -646,10 +662,9 @@ a communication channel."
 ;; ;;;
 ;; ;;; ------------------------------------------------------------
 (use-package ledger-mode
+  :ensure t
   :defer t
   :mode "\\.ledger$" 
-  :init
-  (require-package 'ledger-mode)
   :config
   (setq ledger-reconcile-default-commodity "CNY"))
 
@@ -658,25 +673,11 @@ a communication channel."
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; babel
-;;;
-;;; ------------------------------------------------------------
-;; active Babel languages
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((python . t)
-   (emacs-lisp . t)
-   (shell . t)
-   (restclient . t)
-   (ledger . t)
-   ))
-
-;;; ------------------------------------------------------------
-;;;
 ;;; org-brain
 ;;;
 ;;; ------------------------------------------------------------
-(use-package org-brain :ensure t
+(use-package org-brain
+  :ensure t
   :bind
   (("C-z b" . org-brain-visualize))
   :config

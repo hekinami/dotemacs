@@ -1,20 +1,17 @@
 (use-package info+
-  :defer t
-  :init
-  (require-package 'info+))
+  :ensure t
+  :defer t)
 
 (use-package irfc
+  :ensure t
   :defer t
-  :init
-  (require-package 'irfc)
   :config
   (setq irfc-directory (concat (bibo/get-runtimes-dir) (file-name-as-directory "RFC")))
   (setq irfc-assoc-mode t))
 
 (use-package xkcd
+  :ensure t
   :defer t
-  :init
-  (require-package 'xkcd)
   :config
   (setq xkcd-cache-dir (concat (bibo/get-runtimes-dir) "xkcd"))
   (setq xkcd-cache-latest (concat (bibo/get-runtimes-dir) "xkcd/latest")))

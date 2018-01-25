@@ -3,12 +3,10 @@
 ;;; theme
 ;;;
 ;;; ------------------------------------------------------------
-(use-package molokai
-  :defer t
-  :init
-  (require-package 'molokai-theme)
-  (load-theme 'molokai t)
+(use-package molokai-theme
+  :ensure t
   :config
+  (load-theme 'molokai t)
   (setq bibo/current-theme-name "molokai"))
 
 ;;; ------------------------------------------------------------
@@ -17,9 +15,8 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package cnfonts
-  :defer t
-  :init
-  (require-package 'cnfonts)
+  :ensure t
+  :config
   (cnfonts-enable))
 
 ;;; ------------------------------------------------------------
@@ -39,20 +36,14 @@
        `((height . 25)
          (width . 100)) default-frame-alist))
 
-(global-set-key (kbd "C-x C-a f") 'toggle-frame-fullscreen)
-(global-set-key (kbd "C-x C-a m") 'toggle-frame-maximized)
+(use-package frame
+  :bind (("C-x C-a f" . toggle-frame-fullscreen)
+         ("C-x C-a m" . toggle-frame-maximized)))
 
-(defun bibo/toggle-transparency ()
-  (interactive)
-  (let ((current (frame-parameter nil 'alpha)))
-    (if (or (booleanp current)
-            (= (cadr (frame-parameter nil 'alpha))
-               100))
-        (set-frame-parameter nil 'alpha '(85 50))
-      (set-frame-parameter nil 'alpha '(100 100))
-      )
-    ))
-(global-set-key (kbd "C-x C-a t") 'bibo/toggle-transparency)
+(use-package z-ui-extension
+  :bind (("C-x C-a t" . z/toggle-transparency)
+         ("C-x \\" . z/swap-window-positions)
+         ("C-x |" . z/toggle-window-split)))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -73,24 +64,20 @@
 (global-set-key (kbd "<f10>") 'menu-bar-mode)
 
 (use-package sr-speedbar
-  :bind ("C-z s" . sr-speedbar-toggle)
-  :init (require-package 'sr-speedbar))
+  :ensure t
+  :bind ("C-z s" . sr-speedbar-toggle))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; cursor
 ;;;
 ;;; ------------------------------------------------------------
-(if (daemonp) nil (add-hook 'after-init-hook 'highlight-tail-mode))
-(use-package highlight-tail
-  :defer t
-  :init
-  (require-package 'highlight-tail)
-  (add-hook 'after-init-hook (lambda nil
-                               (highlight-tail-mode)
-                               (diminish 'highlight-tail-mode)))
-  :config
-  (setq highlight-tail-timer 0.01))
+;; (use-package highlight-tail
+;;   :ensure t
+;;   :config
+;;   (highlight-tail-mode)
+;;   (setq highlight-tail-timer 0.01)
+;;   (diminish 'highlight-tail-mode))
 
 (blink-cursor-mode 1)
 (setq blink-cursor-blinks 0)
@@ -116,75 +103,70 @@
 ;;; scrollbar
 ;;;
 ;;; ------------------------------------------------------------
-(add-hook 'after-init-hook 'global-yascroll-bar-mode)
 (use-package yascroll
-  :defer t
-  :init
-  (require-package 'yascroll))
-(scroll-bar-mode -1)
+  :ensure t
+  :config
+  (scroll-bar-mode -1)
+  (global-yascroll-bar-mode))
+
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; assistant
 ;;;
 ;;; ------------------------------------------------------------
-(require-package 'on-screen)
-(on-screen-global-mode +1)
+(use-package on-screen
+  :ensure t
+  :config
+  (on-screen-global-mode +1))
 
-(add-hook 'linum-before-numbering-hook
-	  (lambda ()
-	    (set-face-foreground 'linum "#4B8DF8")))
+(use-package linum
+  :defer t
+  :config
+  (add-hook 'linum-before-numbering-hook
+            (lambda ()
+              (set-face-foreground 'linum "#4B8DF8"))))
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; modeline
 ;;;
 ;;; ------------------------------------------------------------
-(add-hook 'after-init-hook 'sml/setup)
 (use-package smart-mode-line
-  :defer t
-  :init
-  (require-package 'smart-mode-line)
+  :ensure t
   :config
   (setq sml/no-confirm-load-theme t)
+  (sml/setup)
   (setq sml/mode-width 5)
-  (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t)
+  (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t))
 
-  (use-package smart-mode-line-powerline-theme
-    :defer t
-    :init
-    (require-package 'smart-mode-line-powerline-theme)
-    (sml/apply-theme 'powerline)
-    :config
-    (setq powerline-default-separator 'arrow-fade))
-  
-  (use-package spacemacs-theme
-    :defer t
-    :init
-    (require-package 'spacemacs-theme))
-  
-  (use-package spaceline
-    :defer t
-    :init
-    (require-package 'spaceline) 
-    (require 'spaceline-config)
-    (spaceline-spacemacs-theme)
-    (add-hook 'spaceline-pre-hook (lambda nil
-				    (set-face-attribute 'mode-line nil  :height 100)
-				    (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
-				    (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
-				    (set-face-attribute 'sml/vc nil :foreground "lawn green")
-				    (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
-				    (set-face-attribute 'sml/vc-edited nil :foreground "red")
-				    ))
-    :config
-    (setq spaceline-minor-modes-separator nil)
-    )
-  )
+(use-package smart-mode-line-powerline-theme
+  :ensure t
+  :config
+  (sml/apply-theme 'powerline)
+  (setq powerline-default-separator 'arrow-fade))
+
+(require-package 'spacemacs-theme)      ;use-package don't work, why?
+
+(use-package spaceline
+  :ensure t
+  :config
+  (require 'spaceline-config)
+  (spaceline-spacemacs-theme)
+  (add-hook
+   'spaceline-pre-hook
+   (lambda nil
+     (set-face-attribute 'mode-line nil  :height 100)
+     (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+     (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
+     (set-face-attribute 'sml/vc nil :foreground "lawn green")
+     (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
+     (set-face-attribute 'sml/vc-edited nil :foreground "red")
+     ))
+  (setq spaceline-minor-modes-separator nil))
 
 (use-package diminish
-  :init
-  (require-package 'diminish)
+  :ensure t
   :config
   (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode "ⅈ"))
   (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
@@ -198,15 +180,14 @@
   (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
 
 (use-package mode-icons
-  :init
-  (require-package 'mode-icons)
+  :ensure t
+  :config
   (mode-icons-mode))
 ;;; ------------------------------------------------------------
 ;;;
 ;;; window
 ;;;
 ;;; ------------------------------------------------------------
-(add-hook 'after-init-hook 'popwin-mode)
 (use-package popwin
   ;; | Key    | Command                               |
   ;; |--------+---------------------------------------|
@@ -223,9 +204,11 @@
   ;; | e      | popwin:messages                       |
   ;; | C-u    | popwin:universal-display              |
   ;; | 1      | popwin:one-window                     |
-  :init
-  (require-package 'popwin)
+  :ensure t
+  :bind 
   :config
+  (popwin-mode)
+  (bind-key "C-z p" popwin:keymap)
   (push '("*Backtrace*" :height 15) popwin:special-display-config)
   (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
   (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
@@ -237,89 +220,8 @@
   (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
   (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
   (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
-  (push '("*js*" :position bottom :width 20) popwin:special-display-config)
-  (bind-key "C-z p" popwin:keymap)
-  )
+  (push '("*js*" :position bottom :width 20) popwin:special-display-config))
 
-;;; http://www.emacswiki.org/emacs/TransposeWindows
-(defun swap-window-positions (&optional arg)         ; Stephen Gildea
-  "*Swap the positions of this window and the next one."
-  (interactive "p")
-  (let ((other-window (next-window (selected-window) 'no-minibuf)))
-    (let ((other-window-buffer (window-buffer other-window))
-          (other-window-hscroll (window-hscroll other-window))
-          (other-window-point (window-point other-window))
-          (other-window-start (window-start other-window)))
-      (set-window-buffer other-window (current-buffer))
-      (set-window-hscroll other-window (window-hscroll (selected-window)))
-      (set-window-point other-window (point))
-      (set-window-start other-window (window-start (selected-window)))
-      (set-window-buffer (selected-window) other-window-buffer)
-      (set-window-hscroll (selected-window) other-window-hscroll)
-      (set-window-point (selected-window) other-window-point)
-      (set-window-start (selected-window) other-window-start))
-    ;;(select-window other-window)
-    (if (= 4 arg)
-        (select-window other-window))
-    )
-  )
-
-(global-set-key (kbd "C-x \\") 'swap-window-positions)
-(global-set-key (kbd "C-x |") 'toggle-window-split)
-
-;;; http://www.emacswiki.org/emacs/ToggleWindowSplit
-(defun toggle-window-split ()
-  (interactive)
-  (if (= (count-windows) 2)
-      (let* ((this-win-buffer (window-buffer))
-	     (next-win-buffer (window-buffer (next-window)))
-	     (this-win-edges (window-edges (selected-window)))
-	     (next-win-edges (window-edges (next-window)))
-	     (this-win-2nd (not (and (<= (car this-win-edges)
-					 (car next-win-edges))
-				     (<= (cadr this-win-edges)
-					 (cadr next-win-edges)))))
-	     (splitter
-	      (if (= (car this-win-edges)
-		     (car (window-edges (next-window))))
-		  'split-window-horizontally
-		'split-window-vertically)))
-	(delete-other-windows)
-	(let ((first-win (selected-window)))
-	  (funcall splitter)
-	  (if this-win-2nd (other-window 1))
-	  (set-window-buffer (selected-window) this-win-buffer)
-	  (set-window-buffer (next-window) next-win-buffer)
-	  (select-window first-win)
-	  (if this-win-2nd (other-window 1))))))
-
-
-(defun z/pop-window-into-frame ()
-  (interactive)
-  (let ((buffer (current-buffer)))
-    (unless (one-window-p)
-      (delete-window))
-    (display-buffer-pop-up-frame buffer nil)))
-
-
-(defun z/toggle-window-dedicated ()
-  (interactive)
-  (unless (boundp 'z/window-dedicated-p)
-    (make-local-variable 'z/window-dedicated-p)
-    (setq z/window-dedicated-p nil)
-    )
-
-  (if z/window-dedicated-p
-      (progn
-	(set-window-dedicated-p (selected-window) nil)
-	(setq z/window-dedicated-p nil)
-	(message "window is not dedicated")
-	)
-    (set-window-dedicated-p (selected-window) t)
-    (setq z/window-dedicated-p t)
-    (message "window is dedicated")
-    )
-  )
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -337,17 +239,17 @@
 ;;;
 ;;; ------------------------------------------------------------
 (use-package persp-mode
+  :ensure t
   :bind (("C-x k" . persp-kill-buffer)
          ("C-x b" . persp-switch-to-buffer)) ; may overwrite by helm loading, workaround needed in helm config
   :init
-  (require-package 'persp-mode)
-  (setq persp-save-dir (concat (bibo/get-runtimes-dir) "persp-confs/"))
-  (add-hook 'after-init-hook #'(lambda () (persp-mode 1)))
-  :config
+  (setq persp-save-dir (concat (bibo/get-runtimes-dir) "persp-confs/")) 
+  (persp-mode 1)
+  ;; :config
   ;; eshell
-  (persp-def-buffer-save/load
-   :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
-   :save-vars '(major-mode default-directory))
+  ;; (persp-def-buffer-save/load
+  ;;  :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
+  ;;  :save-vars '(major-mode default-directory))
   )
 
 (provide 'init-ui)

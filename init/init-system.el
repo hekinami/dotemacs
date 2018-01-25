@@ -3,10 +3,11 @@
 ;;; dired
 ;;;
 ;;; ------------------------------------------------------------
-(require 'dired-x)
-
-(require-package 'dired-single)
-(require-package 'dired-k)
+(use-package dired-x)
+(use-package dired-single
+  :ensure t)
+(use-package dired-k
+  :ensure t)
 
 (defun my-dired-init ()
   "Bunch of stuff to run for dired, either immediately or when it's

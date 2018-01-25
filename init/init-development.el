@@ -1,22 +1,21 @@
-(global-set-key (kbd "<f12>") 'compile)
+(use-package compile
+  :bind ("<f12>" . compile))
 
 (use-package magit
+  :ensure t
   :bind
   (("C-x g" . magit-status)
-   ("C-x M-g" . magit-dispatch-popup))
+   ("C-x M-g" . magit-dispatch-popup)))
+
+(use-package diff-hl
+  :ensure t
   :init
-  (require-package 'magit)
-  :config
-  (use-package diff-hl
-    :init
-    (require-package 'diff-hl)
-    :config
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-    (global-diff-hl-mode 1)))
+  (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+  :config    
+  (global-diff-hl-mode 1))
 
 (use-package realgud
   :defer t
-  :init
-  (require-package 'realgud))
+  :ensure t)
 
 (provide 'init-development)
