@@ -341,4 +341,4 @@ BUFFER may be either a buffer or its name (a string)."
   :ensure t
   :defer t)
 
-(provide 'init-editing)
+(provide 'init-edit)

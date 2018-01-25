@@ -27,4 +27,4 @@
         ("<mouse-5>" . xwidget-webkit-scroll-up)
         ("<mouse-4>" . xwidget-webkit-scroll-down)))
 
-(provide 'init-information)
+(provide 'init-info)

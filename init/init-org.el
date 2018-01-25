@@ -726,4 +726,4 @@ a communication channel."
 
 (advice-add 'org-ctrl-c-ctrl-c :around #'bibo/org-checkbox-checked-to-todo-advice)
 
-(provide 'init-orgnization)
+(provide 'init-org)

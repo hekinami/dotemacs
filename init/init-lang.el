@@ -206,4 +206,4 @@
   :ensure t
   :defer t)
 
-(provide 'init-languages)
+(provide 'init-lang)

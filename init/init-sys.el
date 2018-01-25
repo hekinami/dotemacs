@@ -39,4 +39,4 @@
                               (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
                               ))
 
-(provide 'init-system)
+(provide 'init-sys)

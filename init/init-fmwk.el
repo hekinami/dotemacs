@@ -73,4 +73,4 @@
      ))
   (helm-mode 1))
 
-(provide 'init-framework)
+(provide 'init-fmwk)

@@ -18,4 +18,4 @@
   :defer t
   :ensure t)
 
-(provide 'init-development)
+(provide 'init-dev)
