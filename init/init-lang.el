@@ -33,13 +33,15 @@
   :config
   (setq inferior-js-program-command "node")
 
-  (add-hook 'js2-mode-hook '(lambda () 
-                              (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-                              (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-                              (local-set-key "\C-cb" 'js-send-buffer)
-                              (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-                              (local-set-key "\C-cl" 'js-load-file-and-go)
-                              ))  
+  (add-hook
+   'js2-mode-hook
+   '(lambda () 
+      (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+      (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+      (local-set-key "\C-cb" 'js-send-buffer)
+      (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+      (local-set-key "\C-cl" 'js-load-file-and-go)
+      ))  
   )
 
 (use-package skewer-mode
@@ -59,28 +61,35 @@
   :ensure t
   :defer t)
 
-(add-hook 'emacs-lisp-mode-hook (lambda ()
-                                  (show-paren-mode 1)
-                                  (turn-on-eldoc-mode)
-                                  (paredit-mode)
-                                  (auto-complete-mode)
-                                  (local-set-key (kbd "C-c s") 'elisp-index-search)))
+(add-hook
+ 'emacs-lisp-mode-hook
+ (lambda ()
+   (show-paren-mode 1)
+   (turn-on-eldoc-mode)
+   (paredit-mode)
+   (auto-complete-mode)
+   (local-set-key (kbd "C-c s") 'elisp-index-search)))
 
-(add-hook 'lisp-interaction-mode-hook (lambda ()
-                                        (add-to-list 'ac-sources 'ac-source-variables)
-                                        (add-to-list 'ac-sources 'ac-source-symbols)
-                                        (add-to-list 'ac-sources 'ac-source-functions)
-                                        (add-to-list 'ac-sources 'ac-source-features)
-                                        (auto-complete-mode)
-                                        ))
-(add-hook 'ielm-mode-hook (lambda ()
-                            (add-to-list 'ac-sources 'ac-source-variables)
-                            (add-to-list 'ac-sources 'ac-source-symbols)
-                            (add-to-list 'ac-sources 'ac-source-functions)
-                            (add-to-list 'ac-sources 'ac-source-features)
-                            (auto-complete-mode)
-                            (eldoc-mode)
-                            ))
+(add-hook
+ 'lisp-interaction-mode-hook
+ (lambda ()
+   (add-to-list 'ac-sources 'ac-source-variables)
+   (add-to-list 'ac-sources 'ac-source-symbols)
+   (add-to-list 'ac-sources 'ac-source-functions)
+   (add-to-list 'ac-sources 'ac-source-features)
+   (auto-complete-mode)
+   ))
+
+(add-hook
+ 'ielm-mode-hook
+ (lambda ()
+   (add-to-list 'ac-sources 'ac-source-variables)
+   (add-to-list 'ac-sources 'ac-source-symbols)
+   (add-to-list 'ac-sources 'ac-source-functions)
+   (add-to-list 'ac-sources 'ac-source-features)
+   (auto-complete-mode)
+   (eldoc-mode)
+   ))
 
 (use-package slime
   :ensure t

@@ -6,7 +6,6 @@
   :config
   (require 'emms-setup)
   (emms-standard)
-  (emms-default-players)
-  )
+  (emms-default-players))
 
 (provide 'init-media)

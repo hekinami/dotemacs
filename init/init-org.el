@@ -84,6 +84,23 @@
      (restclient . t)
      (ledger . t)
      ))
+  
+;;; ------------------------------------------------------------
+;;;
+;;; refile
+;;;
+;;; ------------------------------------------------------------
+  (add-hook
+   'org-mode-hook
+   (lambda ()
+     (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
+       (make-variable-buffer-local 'org-refile-targets)
+       (setq org-refile-targets (quote ((nil :maxlevel . 2)
+                                        (org-agenda-files :maxlevel . 2))))
+       )
+     ))
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
   )
 
 (use-package ob-restclient
@@ -128,21 +145,6 @@
   (setq org-crypt-key "z")
   (setq auto-save-default nil)
   )
-
-;;; ------------------------------------------------------------
-;;;
-;;; refile
-;;;
-;;; ------------------------------------------------------------
-(add-hook 'org-mode-hook (lambda ()
-			   (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
-			     (make-variable-buffer-local 'org-refile-targets)
-			     (setq org-refile-targets (quote ((nil :maxlevel . 2)
-							      (org-agenda-files :maxlevel . 2))))
-			     )
-			   ))
-(setq org-refile-use-outline-path 'file)
-(setq org-refile-allow-creating-parent-nodes 'confirm)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -298,58 +300,6 @@
 (use-package uuidgen
   :ensure t
   :defer t)
-
-(defun z/org-screenshot ()
-  "Take a screenshot into a time stamped unique-named file in the same directory as the org-buffer and insert a link to this file."
-  (interactive)
-  (when *is-windows*
-    (let* ((capturer "\"C:\\Program Files (x86)\\IrfanView\\i_view32.exe\" /clippaste /convert ")
-           (buffer-file-name-no-ext (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
-           (buffer-file-dir (file-name-directory (buffer-file-name)))
-           (buffer-file-dir-img (concat buffer-file-dir "images/"))
-           (exist-dir-img (file-accessible-directory-p buffer-file-dir-img))
-           (target-dir (if (not exist-dir-img)
-                           buffer-file-dir
-                         buffer-file-dir-img))
-           (target-file
-            (replace-regexp-in-string "/" "\\"
-                                      (concat (concat target-dir (uuidgen-4)) ".png") t t)))
-      (call-process-shell-command (concat capturer target-file) nil nil nil)
-      (insert (concat "[[file:./" (if exist-dir-img "images/" "") (file-name-nondirectory target-file)  "]]")))
-    )
-  (when *is-linux*
-    (let* ((capturer (concat "python " user-emacs-directory "tools/capclip.py "))
-           p	     (buffer-file-name-no-ext (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
-           (buffer-file-dir (file-name-directory (buffer-file-name)))
-           (buffer-file-dir-img (concat buffer-file-dir "images/"))
-           (exist-dir-img (file-accessible-directory-p buffer-file-dir-img))
-           (target-dir (if (not exist-dir-img)
-                           buffer-file-dir
-                         buffer-file-dir-img))
-           (target-file
-            (replace-regexp-in-string "/" "/"
-                                      (concat (concat target-dir (uuidgen-4)) ".png") t t)))
-      (if (= 0 (call-process-shell-command (concat capturer target-file) nil))
-          (insert (concat "[[file:./" (if exist-dir-img "images/" "") (file-name-nondirectory target-file)  "]]"))
-        (message "no images in clipboard")))
-    )
-  )
-
-
-
-(defun z/org-delete-linked-file-in-point ()
-  "delete a file in point if exists."
-  (interactive)
-  (let* ((raw-string (or (thing-at-point 'filename) "neverexists"))
-	 (rel-filename (replace-regexp-in-string "^file:" "" raw-string))
-	 (full-name (expand-file-name rel-filename)))
-    (if (file-exists-p full-name)
-	(if (y-or-n-p (format "delete %s " full-name))
-	    (delete-file full-name))
-      (message "no file can be deleted")
-      )
-    )
-  )
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -663,13 +613,12 @@ a communication channel."
 ;; ;;; ------------------------------------------------------------
 (use-package ledger-mode
   :ensure t
-  :defer t
   :mode "\\.ledger$" 
   :config
   (setq ledger-reconcile-default-commodity "CNY"))
 
 (use-package ledger-capture
-  :requires ledger-mode)
+  :after ledger-mode)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -688,42 +637,9 @@ a communication channel."
   (setq org-brain-visualize-default-choices 'all)
   (setq org-brain-title-max-length 12))
 
-;;; ------------------------------------------------------------
-;;;
-;;; some customization
-;;;
-;;; ------------------------------------------------------------
-;;; Capture a new TODO entry when a checkbox item checked.
-;;; Two properties defined for this purpose:
-;;; 1. CHECKED-THEN-TODO, if t, then add new TODO entry after checkbox checked
-;;; 2. TODO-TEMPLATE, the value if the key for template, if nil, then capture template
-;;;    could be selected from list.
-(defvar z/current-item-content ""
-  "Used to save content of current item of list")
-
-(defun z/get-current-item-content nil
-  "Return current content of current item of list, used in capture template"
-  z/current-item-content)
-
-(defun z/org-at-item-checked-checkbox-p ()
-  "Check if current org checkbox is checked"
-  (org-list-at-regexp-after-bullet-p "\\(\\[[X]\\]\\)[ \t]+"))
-
-(defun z/org-checkbox-checked-to-todo-advice (orig-fun &rest args)
-  "Set CHECKED-THEN-TODO property to `t' to open new TODO entry after checked"
-  (apply orig-fun args)
-  (when (and (string= "t" (org-entry-get nil "CHECKED-THEN-TODO")) 
-             (z/org-at-item-checked-checkbox-p))
-    (save-excursion
-      (back-to-indentation)
-      (let* ((pl (car (cdr (org-element-context))))
-             (cbegin (plist-get pl :contents-begin))
-             (cend (plist-get pl :contents-end)))
-        (setq z/current-item-content
-              (s-trim (buffer-substring-no-properties cbegin cend)))
-        ))
-    (org-capture nil (org-entry-get nil "TODO-TEMPLATE"))))
-
-(advice-add 'org-ctrl-c-ctrl-c :around #'z/org-checkbox-checked-to-todo-advice)
+(use-package z-org-checkbox
+  :config
+  (z/checked-to-todo-enable)
+  :after org)
 
 (provide 'init-org)

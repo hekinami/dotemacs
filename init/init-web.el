@@ -1,8 +1,10 @@
 (use-package ac-html
-  :ensure t)
+  :ensure t
+  :defer t)
 
 (use-package web-mode
   :ensure t
+  :defer t
   :mode (("\\.phtml\\'" . web-mode)
          ("\\.tpl\\'" . web-mode)
          ("\\.tpl\\.php\\'" . web-mode)
@@ -16,6 +18,7 @@
          ("\\.htm\\'" . web-mode)
          ("\\.swig\\'" . web-mode))
   :config
+  (setq sgml-basic-offset 4)
   (setq web-mode-engines-alist
         '(("django" . "\\.swig\\'")
           ("django" . "\\.djhtml\\'")))
@@ -39,7 +42,29 @@
         web-mode-comment-style 2
         web-mode-enable-auto-pairing nil)
   (setq web-mode-enable-current-column-highlight t)
-  (setq web-mode-enable-current-element-highlight t))
+  (setq web-mode-enable-current-element-highlight t)
+  (add-hook
+   'web-mode-hook
+   (lambda ()
+     (setq-local
+      electric-pair-pairs
+      (append electric-pair-pairs '((?% . ?%))))
+     (emmet-mode)
+     (setq emmet-preview-default t)
+     (auto-complete-mode)
+     (require 'ac-html)
+     (add-to-list
+      'web-mode-ac-sources-alist
+      '("html" . (
+                  ;; attribute-value better to be first
+                  ac-source-html-attribute-value
+                  ac-source-html-tag
+                  ac-source-html-attribute)))
+
+     (add-to-list
+      'web-mode-ac-sources-alist
+      '("css" . (ac-source-css-property)))
+     )))
 
 (use-package emmet-mode
   :ensure t
@@ -50,28 +75,6 @@
 (use-package rainbow-mode
   :ensure t
   :defer t)
-
-(setq sgml-basic-offset 4)
-
-(add-hook 'web-mode-hook
-          (lambda ()
-            (setq-local
-             electric-pair-pairs
-             (append electric-pair-pairs '((?% . ?%))))
-            (emmet-mode)
-            (setq emmet-preview-default t)
-            (auto-complete-mode)
-            (require 'ac-html)
-            (add-to-list 'web-mode-ac-sources-alist
-                         '("html" . (
-                                     ;; attribute-value better to be first
-                                     ac-source-html-attribute-value
-                                     ac-source-html-tag
-                                     ac-source-html-attribute)))
-
-            (add-to-list 'web-mode-ac-sources-alist
-                         '("css" . (ac-source-css-property)))
-            ))
 
 (use-package less-css-mode
   :ensure t

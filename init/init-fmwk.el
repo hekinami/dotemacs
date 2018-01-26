@@ -50,10 +50,10 @@
 ;;; helm
 ;;;
 ;;; ------------------------------------------------------------
-(global-unset-key (kbd "C-x c"))
-
 (use-package helm
   :ensure t
+  :init
+  (global-unset-key (kbd "C-x c"))
   :bind
   (("C-c h" . helm-command-prefix)
    ("M-x" . helm-M-x)

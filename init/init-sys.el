@@ -32,11 +32,13 @@
 ;;; shell
 ;;;
 ;;; ------------------------------------------------------------
-(setq eshell-directory-name (concat (z/get-runtimes-dir) (file-name-as-directory "eshell")))
-
-(add-hook 'eshell-mode-hook (lambda ()
-                              (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
-                              (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
-                              ))
+(use-package eshell
+  :config
+  (setq eshell-directory-name (concat (z/get-runtimes-dir) (file-name-as-directory "eshell")))
+  (add-hook 'eshell-mode-hook
+            (lambda ()
+              (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
+              (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
+              )))
 
 (provide 'init-sys)
