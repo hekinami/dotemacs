@@ -5,7 +5,7 @@
 
 (defun bibo/ledger-accounts nil
   (let ((ledger-master-file bibo/ledger-file))
-    (string-join (ledger-accounts-in-buffer) "|")
+    (string-join (ledger-accounts-list-in-buffer) "|")
     ))
 
 (defun bibo/ledger-payees nil
