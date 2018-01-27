@@ -4,8 +4,11 @@
   "Ledger file")
 
 (defun bibo/ledger-accounts nil
-  (let ((ledger-master-file bibo/ledger-file))
-    (string-join (ledger-accounts-list-in-buffer) "|")
+  (with-temp-buffer
+    (let ((ledger-file bibo/ledger-file))
+      (insert-file-contents ledger-file)
+      (string-join (ledger-accounts-list-in-buffer) "|")
+      )
     ))
 
 (defun bibo/ledger-payees nil
