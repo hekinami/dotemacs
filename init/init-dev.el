@@ -34,4 +34,11 @@
   :defer t
   :ensure t)
 
+(use-package edbi
+  :defer t
+  :ensure t
+  :config
+  (setq edbi:query-result-fix-header nil)
+  (setq edbi:ds-history-file (concat (z/get-runtimes-dir) ".edbi-ds-history")))
+
 (provide 'init-dev)
