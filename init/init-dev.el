@@ -17,6 +17,15 @@
   :config    
   (global-diff-hl-mode 1))
 
+(use-package eshell-git-prompt
+  :ensure t
+  :config
+  (eshell-git-prompt-use-theme 'git-radar))
+
+(use-package git-messenger
+  :ensure t
+  :bind ("C-x v p" . git-messenger:popup-message))
+
 (use-package git-timemachine
   :ensure t
   :commands (git-timemachine git-timemachine-toggle))
