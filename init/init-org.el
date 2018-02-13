@@ -483,7 +483,6 @@ a communication channel."
 ;; ;;; org-protocol
 ;; ;;;
 ;; ;;; ------------------------------------------------------------
-;; (require 'org-protocol)
 
 ;; ;; Save following snippet to .reg file to register protocal in windows
 ;; ;; ------------
@@ -498,7 +497,8 @@ a communication channel."
 ;; ;; @="\"C:\\Programme\\Emacs\\emacs\\bin\\emacsclientw.exe\" \"%1\""
 ;; ;; ------------
 
-;; ;; http://kb.mozillazine.org/Register_protocol#Windows
+;; ;; http://kb.mozillazine.org/Register_protocol
+(use-package org-protocol)
 
 ;;; ------------------------------------------------------------
 ;;;

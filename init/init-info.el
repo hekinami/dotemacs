@@ -16,6 +16,10 @@
   (setq xkcd-cache-dir (concat (z/get-runtimes-dir) "xkcd"))
   (setq xkcd-cache-latest (concat (z/get-runtimes-dir) "xkcd/latest")))
 
+(use-package hackernews
+  :ensure t
+  :commands (hackernews))
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; xwidget webkit
