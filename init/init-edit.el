@@ -249,7 +249,9 @@
 
 (use-package embrace
   :ensure t
-  :bind ("C-," . embrace-commander))
+  :bind ("C-," . embrace-commander)
+  :init
+  (add-hook 'org-mode-hook #'embrace-org-mode-hook))
 
 (use-package z-edit-ext
   :init
