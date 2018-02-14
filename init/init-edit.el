@@ -247,6 +247,10 @@
   :ensure t
   :defer t)
 
+(use-package embrace
+  :ensure t
+  :bind ("C-," . embrace-commander))
+
 (use-package z-edit-ext
   :init
   (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
