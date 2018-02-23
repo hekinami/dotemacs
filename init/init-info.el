@@ -20,6 +20,20 @@
   :ensure t
   :commands (hackernews))
 
+(use-package elfeed
+  :ensure t
+  :commands (elfeed)
+  :config
+  (use-package elfeed-org
+    :ensure t
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org")))
+  (use-package elfeed-goodies
+    :ensure t
+    :config
+    (elfeed-goodies/setup)))
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; xwidget webkit
