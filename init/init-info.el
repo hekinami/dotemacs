@@ -45,4 +45,10 @@
         ("<mouse-5>" . xwidget-webkit-scroll-up)
         ("<mouse-4>" . xwidget-webkit-scroll-down)))
 
+(use-package nov
+  :ensure t
+  :mode ("\\.epub\\'" . nov-mode)
+  :config
+  (setq nov-save-place-file (concat (z/get-runtimes-dir) "nov-places")))
+
 (provide 'init-info)
