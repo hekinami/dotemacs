@@ -422,8 +422,8 @@ a communication channel."
 \\documentclass[12pt,a4paper]{article}
 \\usepackage[margin=2cm]{geometry}
 \\usepackage{fontspec}
-\\setromanfont{Noto Serif SC:style=Regular}
-\\setsansfont{Noto Sans SC Regular}
+\\setromanfont{Noto Serif CJK SC:style=Regular}
+\\setsansfont{Noto Sans CJK SC Regular}
 \\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}
 \\XeTeXlinebreaklocale \"zh\"
 \\XeTeXlinebreakskip = 0pt plus 1pt
