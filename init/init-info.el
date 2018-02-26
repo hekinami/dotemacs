@@ -1,7 +1,3 @@
-(use-package info+
-  :ensure t
-  :defer t)
-
 (use-package irfc
   :ensure t
   :defer t
