@@ -215,4 +215,10 @@
   :ensure t
   :defer t)
 
+(use-package solidity-mode
+  :ensure t
+  :mode ("\\.sol\\'" . solidity-mode)
+  :config
+  (setq c-basic-offset 4))
+
 (provide 'init-lang)
