@@ -159,6 +159,11 @@
                                ))
   :after (rust-mode racer))
 
+(use-package rust-playground
+  :ensure t
+  :config
+  (setq rust-playground-basedir (concat (z/get-contents-dir) "rust-playground") ))
+
 (use-package toml-mode
   :ensure t
   :defer t

@@ -83,6 +83,7 @@
      (shell . t)
      (restclient . t)
      (ledger . t)
+     (rust . t)
      ))
   
 ;;; ------------------------------------------------------------
@@ -104,6 +105,10 @@
   )
 
 (use-package ob-restclient
+  :ensure t
+  :defer t)
+
+(use-package ob-rust
   :ensure t
   :defer t)
 
