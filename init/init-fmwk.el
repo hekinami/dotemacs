@@ -69,8 +69,25 @@
      (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
      (set-face-attribute 'helm-source-header nil :background nil)
      (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
-     (global-set-key (kbd "C-x b") #'persp-switch-to-buffer) ; workaround for overwriting persp-mode key binding
      ))
   (helm-mode 1))
+
+;;; ------------------------------------------------------------
+;;;
+;;; projectile
+;;;
+;;; ------------------------------------------------------------
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode)
+  (setq projectile-completion-system 'helm))
+
+(use-package helm-projectile
+  :ensure t
+  :config
+  (helm-projectile-on)
+  :after
+  projectile)
 
 (provide 'init-fmwk)

@@ -233,23 +233,5 @@
   (set (make-local-variable 'system-messages-locale) "C")
   )
 
-;;; ------------------------------------------------------------
-;;;
-;;; persp-mode
-;;;
-;;; ------------------------------------------------------------
-(use-package persp-mode
-  :ensure t
-  :bind (("C-x k" . persp-kill-buffer)
-         ("C-x b" . persp-switch-to-buffer)) ; may overwrite by helm loading, workaround needed in helm config
-  :init
-  (setq persp-save-dir (concat (z/get-runtimes-dir) "persp-confs/")) 
-  (persp-mode 1)
-  ;; :config
-  ;; eshell
-  ;; (persp-def-buffer-save/load
-  ;;  :mode 'eshell-mode :tag-symbol 'def-eshell-buffer
-  ;;  :save-vars '(major-mode default-directory))
-  )
 
 (provide 'init-ui)
