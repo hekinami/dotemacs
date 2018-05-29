@@ -80,6 +80,9 @@
 (use-package projectile
   :ensure t
   :config
+  (setq projectile-known-projects-file
+        (expand-file-name "projectile-bookmarks.eld"
+                          (z/get-runtimes-dir)))
   (projectile-global-mode)
   (setq projectile-completion-system 'helm))
 
