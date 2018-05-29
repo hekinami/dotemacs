@@ -109,6 +109,7 @@
   (scroll-bar-mode -1)
   (global-yascroll-bar-mode))
 
+(setq auto-hscroll-mode 'current-line)
 
 ;;; ------------------------------------------------------------
 ;;;
