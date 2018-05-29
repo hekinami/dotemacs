@@ -28,6 +28,8 @@ re-downloaded in order to locate PACKAGE."
 	)
       )
 
+(setq ad-redefinition-action 'accept)   ;https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
+
 (require-package 'use-package)
 
 (use-package try
