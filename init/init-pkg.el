@@ -32,6 +32,9 @@ re-downloaded in order to locate PACKAGE."
 
 (require-package 'use-package)
 
+(use-package quelpa-use-package
+  :ensure t) 
+
 (use-package try
   :defer t
   :ensure t)
