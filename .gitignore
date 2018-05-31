@@ -1,5 +1,6 @@
 *.elc
 elpa/*
+quelpa/*
 .proxy
 .proxy.disable
 .org-capture-templates
