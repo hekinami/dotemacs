@@ -33,7 +33,9 @@ re-downloaded in order to locate PACKAGE."
 (require-package 'use-package)
 
 (use-package quelpa-use-package
-  :ensure t) 
+  :ensure t
+  :init
+  (setq quelpa-update-melpa-p nil)) 
 
 (use-package try
   :defer t
