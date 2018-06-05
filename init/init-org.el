@@ -647,4 +647,8 @@ a communication channel."
   (z/checked-to-todo-enable)
   :after org)
 
+(use-package z-org-repeat
+  :config
+  (z/org-repeat-enable))
+
 (provide 'init-org)
