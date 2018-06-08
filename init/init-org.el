@@ -187,7 +187,6 @@
 (use-package calfw
   :ensure t
   :defer t
-  :commands cfw:org-create-source
   :config
   (add-hook 'cfw:calendar-mode-hook
             (lambda ()
@@ -195,7 +194,16 @@
                 (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
                 (set-face-attribute 'cfw:face-toolbar nil :background nil))
               (z/timestamp-format-setting)
-              )))
+              ))
+  (setq cfw:fchar-junction ?╬
+        cfw:fchar-vertical-line ?║
+        cfw:fchar-horizontal-line ?═
+        cfw:fchar-left-junction ?╠
+        cfw:fchar-right-junction ?╣
+        cfw:fchar-top-junction ?╦
+        cfw:fchar-top-left-corner ?╔
+        cfw:fchar-top-right-corner ?╗)
+  )
 
 (use-package cal-china-x
   :ensure t
@@ -204,19 +212,33 @@
   (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
   (setq calendar-holidays cal-china-x-important-holidays))
 
+(use-package calfw-cal
+  :ensure t
+  :defer t
+  :commands cfw:cal-create-source)
+
 (use-package calfw-ical
   :ensure t
-  :defer t)
+  :defer t
+  :commands cfw:ical-create-source)
+
+(use-package calfw-org
+  :ensure t
+  :defer t
+  :commands cfw:org-create-source
+  )
 
 (defun z/open-calendar ()
   (interactive)
-  (let* ((sources (list (cfw:org-create-source "Green"))))
+  (let* ((sources (list (cfw:cal-create-source "Green"))))
     (when (boundp 'z/ical-source-list) ; z/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
       (setcdr sources z/ical-source-list)
       )
     (cfw:open-calendar-buffer :contents-sources sources)
     )
   )
+
+(global-set-key (kbd "<f5>") 'z/open-calendar)
 
 ;;; redefine the original dispatcher
 (defun org-agenda-view-mode-dispatch ()
@@ -308,6 +330,19 @@
   (("C-c C-j" . org-journal-new-entry))
   :config
   (setq org-journal-dir (concat (z/get-contents-dir) "org/journal")))
+
+;;; ------------------------------------------------------------
+;;;
+;;; diary-manager
+;;;
+;;; ------------------------------------------------------------
+(use-package diary-manager
+  :ensure t
+  :config
+  (setq diary-manager-location (concat (z/get-contents-dir) "org/diary"))
+  (setq diary-manager-enable-git-integration nil)
+  (setq diary-manager-entry-extension ".org")
+  )
 
 ;;; ------------------------------------------------------------
 ;;;
