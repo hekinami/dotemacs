@@ -37,6 +37,9 @@
         ("TAB" . nil)
         ("<backtab>" . yas-expand))
   :config
+  (use-package yasnippet-snippets
+    :defer t
+    :ensure t)
   (setq yas-also-auto-indent-first-line t)
   (setq yas-prompt-functions
         '(yas-ido-prompt
