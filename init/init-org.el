@@ -207,7 +207,6 @@
 
 (use-package cal-china-x
   :ensure t
-  :defer t
   :config
   (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
   (setq calendar-holidays cal-china-x-important-holidays))
