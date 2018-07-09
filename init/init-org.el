@@ -4,13 +4,15 @@
   (("C-c l" . org-store-link)
    ("C-c a" . org-agenda)
    ("C-c b" . org-switchb)
-   ("C-c c" . org-capture)
-   :map org-mode-map
-   (("C-c s" . z/org-screenshot)
-    ("C-c d" . z/org-delete-linked-file-in-point)))
+   ("C-c c" . org-capture))
   :config
+  (use-package z-org-ext
+    :bind (("<f8>" . z/open-browser)
+           :map org-mode-map
+           (("C-c s" . z/org-screenshot)
+            ("C-c d" . z/org-delete-linked-file-in-point)))
+    )
   (setq org-modules '(org-crypt org-drill org-checklist org-habit))
-
   
 ;;; ------------------------------------------------------------
 ;;;
@@ -102,6 +104,14 @@
      ))
   (setq org-refile-use-outline-path 'file)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
+
+;;; ------------------------------------------------------------
+;;;
+;;; screenshot
+;;;
+;;; ------------------------------------------------------------
+  (use-package uuidgen
+    :ensure t)
   )
 
 (use-package ob-restclient
@@ -353,15 +363,6 @@
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; screenshot
-;;;
-;;; ------------------------------------------------------------
-(use-package uuidgen
-  :ensure t
-  :defer t)
-
-;;; ------------------------------------------------------------
-;;;
 ;;; appointment
 ;;;
 ;;; ------------------------------------------------------------
@@ -372,17 +373,17 @@
 (setq appt-display-interval (1+ appt-message-warning-time)) ; disable multiple reminders
 (setq appt-display-mode-line nil)
 
-; use appointment data from org-mode
+;; use appointment data from org-mode
 (defun z/org-agenda-to-appt ()
   (interactive)
   (setq appt-time-msg-list nil)
   (org-agenda-to-appt))
 
-                                        ; run when starting Emacs and everyday at 12:05am
+;; run when starting Emacs and everyday at 12:05am
 (z/org-agenda-to-appt)
 (run-at-time "12:05am" (* 24 3600) 'z/org-agenda-to-appt)
 
-                                        ; automatically update appointments when TODO.txt is saved
+;; automatically update appointments when TODO.txt is saved
 (add-hook 'after-save-hook
           '(lambda ()
              (if (string= (buffer-file-name) (expand-file-name
@@ -472,6 +473,11 @@ a communication channel."
        )
      )
   )
+
+(use-package ox-reveal
+  :ensure t
+  :config
+  (setq org-reveal-root "file:///home/hekinami/git/reveal.js"))
 
 ;;; latex
 ;;; font: https://www.google.com/get/noto/help/cjk/
@@ -576,9 +582,9 @@ a communication channel."
                                                     (apply orig-fun args)
                                                     )))
 
-(use-package z-org-ext
-  :bind ("<f8>" . z/open-browser)
-  :after simple-httpd)
+;; (use-package z-org-ext
+;;   :bind ("<f8>" . z/open-browser)
+;;   :after simple-httpd)
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
