@@ -10,6 +10,11 @@
   :config
   (setq savehist-file (concat (z/get-runtimes-dir) "history")))
 
+(defun emacs-session-filename (session-id)
+  "override the original one"
+  (let ((basename (concat "runtimes/session." session-id)))
+    (locate-user-emacs-file basename
+                            (concat ".emacs-" basename))))
 (setq auto-save-list-file-prefix (concat (z/get-runtimes-dir) "auto-save-list/.saves-"))
 (setq tramp-persistency-file-name (concat (z/get-runtimes-dir) "tramp"))
 (global-auto-revert-mode)
