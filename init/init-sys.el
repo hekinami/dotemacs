@@ -39,4 +39,9 @@
               (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
               )))
 
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 (provide 'init-sys)
