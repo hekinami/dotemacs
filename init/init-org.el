@@ -711,4 +711,7 @@ a communication channel."
   :config
   (z/org-repeat-enable))
 
+(use-package simplenote2
+  :ensure t)
+
 (provide 'init-org)
