@@ -13,6 +13,22 @@
             ("C-c d" . z/org-delete-linked-file-in-point)))
     )
   (setq org-modules '(org-crypt org-drill org-checklist org-habit))
+
+;;; ------------------------------------------------------------
+;;;
+;;; methodology
+;;;
+;;; ------------------------------------------------------------
+  ;; Priority Definition
+  ;; 
+  ;; A: do: good, don't: harm, cannot atone
+  ;; B: do: good, don't: harm, can atone
+  ;; C: do: good, don't: may be harmful
+  ;; D: do: good, don't: no harm
+  ;; E: do: may be good, don't: no harm
+  (setq org-highest-priority ?A)
+  (setq org-lowest-priority ?E)
+  (setq org-default-priority ?C)
   
 ;;; ------------------------------------------------------------
 ;;;
@@ -60,6 +76,13 @@
   (setq org-enforce-todo-dependencies t)
   (setq org-enforce-todo-checkbox-dependencies t)
   (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+
+  (setq org-agenda-custom-commands
+        '(("A" "Accounts" ((tags "account" ((org-agenda-hide-tags-regexp "account\\|crypt")
+                                            (org-agenda-prefix-format "")))))
+          ("L" "Links" ((tags "link" ((org-agenda-hide-tags-regexp "link")
+                                      (org-agenda-prefix-format "")))))
+          ))
 
 ;;; ------------------------------------------------------------
 ;;;
