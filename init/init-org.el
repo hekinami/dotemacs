@@ -45,7 +45,7 @@
   (setq org-agenda-skip-scheduled-if-done nil)
   (setq org-agenda-skip-deadline-if-done nil)
   (setq org-agenda-span 'day)
-  (setq org-agenda-sorting-strategy '(todo-state-down deadline-up scheduled-up))
+  (setq org-agenda-sorting-strategy '(todo-state-down priority-down deadline-up scheduled-up))
 
   (add-hook 'org-agenda-mode-hook (lambda ()
                                     (z/timestamp-format-setting)
