@@ -110,6 +110,8 @@
      (ledger . t)
      (rust . t)
      ))
+  (setq org-src-fontify-natively t)
+  (setq org-src-tab-acts-natively t)
   
 ;;; ------------------------------------------------------------
 ;;;
@@ -440,7 +442,6 @@
 (setq org-export-with-sub-superscripts nil)
 (setq org-html-htmlize-output-type 'inline-css)
 (setq org-export-headline-levels 4)
-(setq org-src-fontify-natively t)
 
 ;;; redefine the original one, move the svg related stuff
 (eval-after-load "ox-html"
