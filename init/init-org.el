@@ -442,6 +442,9 @@
 (setq org-export-with-sub-superscripts nil)
 (setq org-html-htmlize-output-type 'inline-css)
 (setq org-export-headline-levels 4)
+(setq org-html-table-default-attributes
+      '(:border "0" :cellspacing "0" :cellpadding "6" :rules "none" :frame "none"))
+(setq org-html-validation-link nil)
 
 ;;; redefine the original one, move the svg related stuff
 (eval-after-load "ox-html"
