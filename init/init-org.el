@@ -29,6 +29,23 @@
   (setq org-highest-priority ?A)
   (setq org-lowest-priority ?E)
   (setq org-default-priority ?C)
+
+;;; ------------------------------------------------------------
+;;;
+;;; link
+;;;
+;;; ------------------------------------------------------------
+
+  ;; Thunderlink support
+  ;; https://addons.thunderbird.net/en-us/thunderbird/addon/thunderlink/
+  (org-add-link-type "thunderlink" 'org-thunderlink-open)
+
+  (setq thunderlink-thunderbird
+        "/usr/lib/thunderbird/thunderbird")
+
+  (defun org-thunderlink-open (link)
+    (message link)
+    (start-process-shell-command "thunderbird" nil (format "%s -thunderlink thunderlink:%s" thunderlink-thunderbird link)))
   
 ;;; ------------------------------------------------------------
 ;;;
@@ -592,40 +609,6 @@ a communication channel."
 
 ;; (add-hook 'bbdb-mode-hook (lambda nil
 ;;                             (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; thunderbird interaction
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; ;;; install https://github.com/poohsen/thunderlink to thunderbird
-
-;; ;; Save following snippet to .reg file to register protocal in windows
-;; ;; ------------
-;; ;; REGEDIT4
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink]
-;; ;; @="URL:thunderlink Protocol"
-;; ;; "URL Protocol"=""
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell]
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell\open]
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell\open\command]
-;; ;; @="\"C:\\Program Files (x86)\\Mozilla Thunderbird\\thunderbird.exe\" -thunderlink \"%1\""
-;; ;; ------------
-
-;; ;; http://kb.mozillazine.org/Register_protocol#Windows
-
-;; (org-add-link-type "thunderlink" 'org-thunderlink-open)
-;; ;; (add-hook 'org-store-link-functions 'org-thunderlink-store-link)
-
-;; (defun org-thunderlink-open (path)
-;;   "visit the thunderlink on path"
-;;   (browse-url (concat "thunderlink:" path)))
-
-;; (defun org-thunderlink-store-link ()
-;;   "to be implement")
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
