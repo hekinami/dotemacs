@@ -549,9 +549,6 @@ a communication channel."
                       ("\\.pdf\\'" . "xreader %s")
                       ("\\.jpg\\'" . "xviewer %s")))
 
-;; ;;; beamer
-;; (require 'ox-beamer)
-
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
 ;; ;;; org-protocol
@@ -590,61 +587,6 @@ a communication channel."
                                                     (httpd-stop)
                                                     (apply orig-fun args)
                                                     )))
-
-;; (use-package z-org-ext
-;;   :bind ("<f8>" . z/open-browser)
-;;   :after simple-httpd)
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; bbdb
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'bbdb)
-;; (require-package 'bbdb-china)
-;; (require-package 'bbdb-vcard)
-
-;; (setq bbdb-file (concat (z/get-contents-dir) "bbdb"))
-;; (setq bbdb-phone-style nil)
-
-;; (add-hook 'bbdb-mode-hook (lambda nil
-;;                             (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; email
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'wanderlust)
-
-;; ;;; set following variables in custom.el
-;; ;; wl-smtp-connection-type
-;; ;; wl-smtp-posting-port
-;; ;; wl-smtp-authenticate-type
-;; ;; wl-smtp-posting-user
-;; ;; wl-smtp-posting-server
-;; ;; wl-local-domain
-;; ;; wl-message-id-domain
-;; ;;
-;; ;; elmo-passwd-alist-save will save all of your Wanderlust passwords to ~/.elmo/passwd.
-
-;; (setq wl-folders-file (concat user-emacs-directory ".wl-folder"))
-;; (add-hook 'wl-summary-mode-hook (lambda nil
-;;                                   (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-
-;; (add-hook 'mime-view-mode-hook (lambda nil
-;;                                  (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-
-;; (require-package 'ob-restclient)
-;; (require 'ob-restclient)
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; gnuplot
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'gnuplot)
-;; (require 'ob-gnuplot)
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
