@@ -29,6 +29,23 @@
   (setq org-highest-priority ?A)
   (setq org-lowest-priority ?E)
   (setq org-default-priority ?C)
+
+;;; ------------------------------------------------------------
+;;;
+;;; link
+;;;
+;;; ------------------------------------------------------------
+
+  ;; Thunderlink support
+  ;; https://addons.thunderbird.net/en-us/thunderbird/addon/thunderlink/
+  (org-add-link-type "thunderlink" 'org-thunderlink-open)
+
+  (setq thunderlink-thunderbird
+        "/usr/lib/thunderbird/thunderbird")
+
+  (defun org-thunderlink-open (link)
+    (message link)
+    (start-process-shell-command "thunderbird" nil (format "%s -thunderlink thunderlink:%s" thunderlink-thunderbird link)))
   
 ;;; ------------------------------------------------------------
 ;;;
@@ -68,8 +85,10 @@
                                     (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                     ))
 
-  (setq org-directory (concat (z/get-contents-dir) (file-name-as-directory "gtd")))
-  (setq org-agenda-files `(,(concat (z/get-contents-dir) (file-name-as-directory "gtd"))))
+  (setq org-directory (concat (z/get-contents-dir) (file-name-as-directory "organizer")))
+  (setq org-agenda-files `(,(concat (z/get-contents-dir)
+                                    (file-name-as-directory "organizer")
+                                    (file-name-as-directory "gtd"))))
 
   (setq org-deadline-warning-days 3)
   (setq org-log-into-drawer t)
@@ -536,9 +555,6 @@ a communication channel."
                       ("\\.pdf\\'" . "xreader %s")
                       ("\\.jpg\\'" . "xviewer %s")))
 
-;; ;;; beamer
-;; (require 'ox-beamer)
-
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
 ;; ;;; org-protocol
@@ -577,95 +593,6 @@ a communication channel."
                                                     (httpd-stop)
                                                     (apply orig-fun args)
                                                     )))
-
-;; (use-package z-org-ext
-;;   :bind ("<f8>" . z/open-browser)
-;;   :after simple-httpd)
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; bbdb
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'bbdb)
-;; (require-package 'bbdb-china)
-;; (require-package 'bbdb-vcard)
-
-;; (setq bbdb-file (concat (z/get-contents-dir) "bbdb"))
-;; (setq bbdb-phone-style nil)
-
-;; (add-hook 'bbdb-mode-hook (lambda nil
-;;                             (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; thunderbird interaction
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; ;;; install https://github.com/poohsen/thunderlink to thunderbird
-
-;; ;; Save following snippet to .reg file to register protocal in windows
-;; ;; ------------
-;; ;; REGEDIT4
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink]
-;; ;; @="URL:thunderlink Protocol"
-;; ;; "URL Protocol"=""
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell]
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell\open]
-
-;; ;; [HKEY_CLASSES_ROOT\thunderlink\shell\open\command]
-;; ;; @="\"C:\\Program Files (x86)\\Mozilla Thunderbird\\thunderbird.exe\" -thunderlink \"%1\""
-;; ;; ------------
-
-;; ;; http://kb.mozillazine.org/Register_protocol#Windows
-
-;; (org-add-link-type "thunderlink" 'org-thunderlink-open)
-;; ;; (add-hook 'org-store-link-functions 'org-thunderlink-store-link)
-
-;; (defun org-thunderlink-open (path)
-;;   "visit the thunderlink on path"
-;;   (browse-url (concat "thunderlink:" path)))
-
-;; (defun org-thunderlink-store-link ()
-;;   "to be implement")
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; email
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'wanderlust)
-
-;; ;;; set following variables in custom.el
-;; ;; wl-smtp-connection-type
-;; ;; wl-smtp-posting-port
-;; ;; wl-smtp-authenticate-type
-;; ;; wl-smtp-posting-user
-;; ;; wl-smtp-posting-server
-;; ;; wl-local-domain
-;; ;; wl-message-id-domain
-;; ;;
-;; ;; elmo-passwd-alist-save will save all of your Wanderlust passwords to ~/.elmo/passwd.
-
-;; (setq wl-folders-file (concat user-emacs-directory ".wl-folder"))
-;; (add-hook 'wl-summary-mode-hook (lambda nil
-;;                                   (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-
-;; (add-hook 'mime-view-mode-hook (lambda nil
-;;                                  (z/use-buffer-face-mode-with-fontfamily z/monofont-family)))
-
-;; (require-package 'ob-restclient)
-;; (require 'ob-restclient)
-
-;; ;;; ------------------------------------------------------------
-;; ;;;
-;; ;;; gnuplot
-;; ;;;
-;; ;;; ------------------------------------------------------------
-;; (require-package 'gnuplot)
-;; (require 'ob-gnuplot)
 
 ;; ;;; ------------------------------------------------------------
 ;; ;;;
