@@ -51,9 +51,8 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
 ;;; package management infrastructure
 ;;;
 ;;; ------------------------------------------------------------
-(require 'package)
 (setq package-enable-at-startup nil)
-;; (package-initialize)
+(package-initialize)
 
 (defun require-package (package &optional min-version no-refresh)
   "Install given PACKAGE, optionally requiring MIN-VERSION.
