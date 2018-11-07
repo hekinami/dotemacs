@@ -26,7 +26,7 @@
     :ensure t
     :config
     (elfeed-org)
-    (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed.org")))
+    (setq rmh-elfeed-org-files (list (concat (z/get-contents-dir) "others/elfeed.org"))))
   (use-package elfeed-goodies
     :ensure t
     :config
