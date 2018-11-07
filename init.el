@@ -26,12 +26,12 @@
   (require 'init-edit)
   (require 'init-org)
   (require 'init-sys)
-  (require 'init-info)
   (require 'init-erc)
 
   (require 'init-dev)
   (require 'init-lang)
   (require 'init-web)
+  (require 'init-reading)
 
   (require 'init-media)
 
