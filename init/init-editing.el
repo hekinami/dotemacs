@@ -270,4 +270,4 @@
   (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
   (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
 
-(provide 'init-edit)
+(provide 'init-editing)
