@@ -94,4 +94,4 @@ re-downloaded in order to locate PACKAGE."
   :defer t
   :ensure t)
 
-(provide 'init-infra)
+(provide 'init-prepare)

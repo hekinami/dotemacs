@@ -18,7 +18,7 @@
          (load-file proxy-file))
     )
   
-  (require 'init-infra)
+  (require 'init-prepare)
   (require 'init-ui)
   (require 'init-fmwk)
   (require 'init-editing)
