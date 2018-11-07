@@ -170,7 +170,8 @@
          :map mc/keymap
          ("C-z n" . mc/insert-numbers)
          ("C-z l" . mc/insert-letters))
-  :config
+  :init
+  (setq mc/list-file (concat (z/get-runtimes-dir) ".mc-lists.el"))
   (add-hook 'multiple-cursors-mode-hook
             (lambda ()
               (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
