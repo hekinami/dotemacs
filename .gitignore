@@ -1,11 +1,11 @@
 *.elc
 elpa/*
 quelpa/*
-.proxy
-.proxy.disable
 .org-capture-templates
 .wl-folder
 custom.el
+.after_everything.el
+.before_everything.el
 auto-save-list/*
 runtimes/*
 contents/*
