@@ -16,8 +16,8 @@
   :config
   (ac-linum-workaround)
   (require 'auto-complete-config)
-  (add-to-list 'ac-dictionary-directories (concat (z/get-contents-dir) (file-name-as-directory "ac-dict")))
-  (setq ac-comphist-file (concat (z/get-runtimes-dir) "ac-comphist.dat")) 
+  (add-to-list 'ac-dictionary-directories (locate-contents-file "ac-dict"))
+  (setq ac-comphist-file (locate-runtimes-file "ac-comphist.dat")) 
   (ac-config-default)
   (global-auto-complete-mode t)
   (ac-set-trigger-key "TAB")
@@ -63,7 +63,7 @@
    ("C-x r l" . helm-filtered-bookmarks)
    ("C-x C-f" . helm-find-files))
   :init
-  (setq bookmark-file (concat (z/get-runtimes-dir) "bookmarks")) ; must be set before enable helm-mode
+  (setq bookmark-file (locate-runtimes-file "bookmarks")) ; must be set before enable helm-mode
   :config
   (require 'helm-config)
   (add-hook
@@ -83,9 +83,7 @@
 (use-package projectile
   :ensure t
   :config
-  (setq projectile-known-projects-file
-        (expand-file-name "projectile-bookmarks.eld"
-                          (z/get-runtimes-dir)))
+  (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
   (projectile-global-mode)
   (setq projectile-completion-system 'helm))
 

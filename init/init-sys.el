@@ -32,7 +32,7 @@
 ;;; ------------------------------------------------------------
 (use-package eshell
   :config
-  (setq eshell-directory-name (concat (z/get-runtimes-dir) (file-name-as-directory "eshell")))
+  (setq eshell-directory-name (locate-runtimes-file "eshell"))
   (add-hook 'eshell-mode-hook
             (lambda ()
               (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)

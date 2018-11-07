@@ -8,15 +8,15 @@
 
 (use-package savehist
   :config
-  (setq savehist-file (concat (z/get-runtimes-dir) "history")))
+  (setq savehist-file (locate-runtimes-file "history")))
 
 (defun emacs-session-filename (session-id)
   "override the original one"
   (let ((basename (concat "runtimes/session." session-id)))
     (locate-user-emacs-file basename
                             (concat ".emacs-" basename))))
-(setq auto-save-list-file-prefix (concat (z/get-runtimes-dir) "auto-save-list/.saves-"))
-(setq tramp-persistency-file-name (concat (z/get-runtimes-dir) "tramp"))
+(setq auto-save-list-file-prefix (locate-runtimes-file "auto-save-list/.saves-"))
+(setq tramp-persistency-file-name (locate-runtimes-file "tramp"))
 (global-auto-revert-mode)
 (setq make-backup-files nil)
 (auto-compression-mode t)
@@ -90,7 +90,7 @@
   (ido-mode 1)
   (setq ido-create-new-buffer 'always)
   (setq ido-ignore-buffers '("gtd.org$" "\\*"))
-  (setq ido-save-directory-list-file (concat (z/get-runtimes-dir) "ido.last")))
+  (setq ido-save-directory-list-file (locate-runtimes-file "ido.last")))
 
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
 
@@ -133,7 +133,7 @@
 ;;; server
 ;;;
 ;;; ------------------------------------------------------------
-(setq server-auth-dir (concat (z/get-runtimes-dir) "emacsserver"))
+(setq server-auth-dir (locate-runtimes-file "emacsserver"))
 (unless (and (functionp 'server-running-p)
 	     (server-running-p))
   (server-start))
@@ -153,7 +153,7 @@
          ("C-z n" . mc/insert-numbers)
          ("C-z l" . mc/insert-letters))
   :init
-  (setq mc/list-file (concat (z/get-runtimes-dir) ".mc-lists.el"))
+  (setq mc/list-file (locate-runtimes-file ".mc-lists.el"))
   (add-hook 'multiple-cursors-mode-hook
             (lambda ()
               (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)

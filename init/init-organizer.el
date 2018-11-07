@@ -85,7 +85,7 @@
                                     (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                     ))
 
-  (setq org-directory (concat (z/get-contents-dir) "organizer"))
+  (setq org-directory (locate-contents-file "organizer"))
   (setq org-agenda-files `(,(concat org-directory "/gtd")
                            ,(concat org-directory "/info")))
 
@@ -219,16 +219,14 @@
   (setq org-pomodoro-short-break-length 5)
   (setq org-pomodoro-long-break-length 10)
   (setq org-pomodoro-format "P:%s")
-  (when *is-windows*
-    ;; http://www.elifulkerson.com/projects/commandline-wav-player.php
-    (setq org-pomodoro-audio-player (expand-file-name (concat (z/get-tools-dir) "/sounder.exe")))))
+  )
 
 ;;; ------------------------------------------------------------
 ;;;
 ;;; canlendar & date/time
 ;;;
 ;;; ------------------------------------------------------------
-(setq diary-file (concat (z/get-runtimes-dir) "diary"))
+(setq diary-file (locate-runtimes-file "diary"))
 (unless (file-exists-p diary-file) (write-region nil nil diary-file))
 (setq view-diary-entries-initially t)
 (setq mark-diary-entries-in-calendar t)
@@ -334,7 +332,7 @@
   :config
   (setq deft-default-extension "org")
   (setq deft-extensions '("org"))
-  (setq deft-directory (concat (z/get-contents-dir) "deft"))
+  (setq deft-directory (locate-contents-file "deft"))
   (setq deft-new-file-format "%Y-%m-%dT%H%M")
   )
 
@@ -348,7 +346,7 @@
   :bind
   (("C-c C-j" . org-journal-new-entry))
   :config
-  (setq org-journal-dir (concat (z/get-contents-dir) "org/journal")))
+  (setq org-journal-dir (locate-contents-file "org/journal")))
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -358,7 +356,7 @@
 (use-package diary-manager
   :ensure t
   :config
-  (setq diary-manager-location (concat (z/get-contents-dir) "org/diary"))
+  (setq diary-manager-location (locate-contents-file "org/diary"))
   (setq diary-manager-enable-git-integration nil)
   (setq diary-manager-entry-extension ".org")
   )
@@ -397,7 +395,7 @@
 (add-hook 'after-save-hook
           '(lambda ()
              (if (string= (buffer-file-name) (expand-file-name
-                                              (concat (z/get-contents-dir) "gtd/event.gtd.org")))
+                                              (locate-contents-file "gtd/event.gtd.org")))
                  (z/org-agenda-to-appt))))
 
 ;;; ------------------------------------------------------------
@@ -405,8 +403,8 @@
 ;;; projects and publish
 ;;;
 ;;; ------------------------------------------------------------
-(setq org-projects-base (concat (z/get-contents-dir) (file-name-as-directory "org")))
-(setq org-projects-publish (concat (z/get-contents-dir) (file-name-as-directory "orgp")))
+(setq org-projects-base (locate-contents-file "org"))
+(setq org-projects-publish (locate-contents-file "orgp"))
 
 ;;; use a .org-project file in each project directory to define a project
 ;;; org-publish-project-alist would be set just before we try to publish
@@ -447,14 +445,14 @@
 ;;;
 ;;; ------------------------------------------------------------
 (define-key org-mode-map "\C-cp" 'org-publish-current-project)
-(setq org-tpl-directory (concat (z/get-stuff-dir) (file-name-as-directory "orgtemplate")))
+(setq org-tpl-directory (locate-stuff-file "orgtemplate"))
 
 (setq org-html-head-include-default-style nil)
 (setq org-html-head-include-scripts nil)
 (setq org-html-doctype "html5")
 (setq org-html-html5-fancy t)
-(setq org-publish-timestamp-directory (concat (z/get-runtimes-dir) "org-timestamps"))
-(setq org-id-locations-file (concat (z/get-runtimes-dir) "org-id-locations"))
+(setq org-publish-timestamp-directory (locate-runtimes-file "org-timestamps"))
+(setq org-id-locations-file (locate-runtimes-file "org-id-locations"))
 (setq org-export-with-sub-superscripts nil)
 (setq org-html-htmlize-output-type 'inline-css)
 (setq org-export-headline-levels 4)
@@ -580,9 +578,9 @@ a communication channel."
 (use-package simple-httpd
   :ensure t
   :config
-  (setq url-cache-directory (concat (z/get-runtimes-dir) "url/cache"))
+  (setq url-cache-directory (locate-runtimes-file "url/cache"))
   (setq httpd-port 3721)
-  (setq httpd-root (concat (z/get-contents-dir) (file-name-as-directory "orgp")))
+  (setq httpd-root (locate-contents-file "orgp"))
   (httpd-start)
   (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
                                                     (httpd-stop)

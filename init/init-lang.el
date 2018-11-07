@@ -108,7 +108,7 @@
 ;;; python
 ;;;
 ;;; ------------------------------------------------------------
-(setq python-environment-directory (concat (z/get-runtimes-dir) ".python-environments"))
+(setq python-environment-directory (locate-runtimes-file ".python-environments"))
 (setq python-indent-guess-indent-offset nil)
 (require-package 'jedi)
 (setq jedi:environment-root "py3jedi")
@@ -164,7 +164,7 @@
 (use-package rust-playground
   :ensure t
   :config
-  (setq rust-playground-basedir (concat (z/get-contents-dir) "rust-playground") ))
+  (setq rust-playground-basedir (locate-contents-file "rust-playground") ))
 
 (use-package toml-mode
   :ensure t
