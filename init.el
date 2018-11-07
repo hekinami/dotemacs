@@ -32,7 +32,7 @@
   (require 'init-lang)
   (require 'init-web)
   (require 'init-reading)
-
+  (require 'init-writing)
   (require 'init-media)
 
   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
