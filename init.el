@@ -20,11 +20,11 @@
   
   (require 'init-prepare)
   (require 'init-looks)
-  (require 'init-fmwk)
+  (require 'init-framework)
   (require 'init-editing)
   (require 'init-reading)
   (require 'init-writing)
-  (require 'init-org)
+  (require 'init-organizer)
   (require 'init-sys)
   (require 'init-erc)
 

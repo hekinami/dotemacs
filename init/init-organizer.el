@@ -632,4 +632,4 @@ a communication channel."
 (use-package simplenote2
   :ensure t)
 
-(provide 'init-org)
+(provide 'init-organizer)

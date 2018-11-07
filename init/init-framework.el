@@ -96,4 +96,4 @@
   :after
   projectile)
 
-(provide 'init-fmwk)
+(provide 'init-framework)
