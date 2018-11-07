@@ -85,10 +85,9 @@
                                     (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                     ))
 
-  (setq org-directory (concat (z/get-contents-dir) (file-name-as-directory "organizer")))
-  (setq org-agenda-files `(,(concat (z/get-contents-dir)
-                                    (file-name-as-directory "organizer")
-                                    (file-name-as-directory "gtd"))))
+  (setq org-directory (concat (z/get-contents-dir) "organizer"))
+  (setq org-agenda-files `(,(concat org-directory "/gtd")
+                           ,(concat org-directory "/info")))
 
   (setq org-deadline-warning-days 3)
   (setq org-log-into-drawer t)
