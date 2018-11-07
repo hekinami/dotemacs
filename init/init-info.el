@@ -14,7 +14,9 @@
 
 (use-package hackernews
   :ensure t
-  :commands (hackernews))
+  :commands (hackernews)
+  :config
+  (setq hackernews-visited-links-file (concat (z/get-runtimes-dir) "hackernews/visited-links.el")))
 
 (use-package elfeed
   :ensure t
