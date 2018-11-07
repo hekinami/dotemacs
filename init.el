@@ -1,17 +1,10 @@
 ;; (package-initialize)
 
-(defconst *is-windows* (string= system-type "windows-nt"))
-(defconst *is-linux* (string= system-type "gnu/linux"))
-(defconst *is-mac* (string= system-type "darwin"))
-
-(add-to-list 'load-path (expand-file-name "init" user-emacs-directory))
-(add-to-list 'load-path (expand-file-name "extension" user-emacs-directory))
-
 (let ((loading-start-time (current-time)))
-  (let ((proxy-file (expand-file-name ".proxy" user-emacs-directory)))
-    (and (file-exists-p proxy-file)
-         (load-file proxy-file))
-    )
+  (load (locate-user-emacs-file ".before_everything.el") t)
+  
+  (add-to-list 'load-path (locate-user-emacs-file "init/"))
+  (add-to-list 'load-path (locate-user-emacs-file "extension/"))
   
   (require 'init-prepare)
   (require 'init-looks)
@@ -22,15 +15,15 @@
   (require 'init-organizer)
   (require 'init-sys)
   (require 'init-erc)
-
   (require 'init-dev)
   (require 'init-lang)
   (require 'init-web)
   (require 'init-media)
 
-  (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-  (and (file-exists-p custom-file)
-       (load-file custom-file)) 
-
-  (message "loading process took %f ms" (z/time-difference-in-millis loading-start-time (current-time)))
+  (load (locate-user-emacs-file "custom.el") t)
+  
+  (message "loading process took %f ms"
+           (z/time-difference-in-millis loading-start-time (current-time)))
+  
+  (load (locate-user-emacs-file ".after_everything.el") t)
   )

@@ -63,25 +63,8 @@
 (set-buffer-file-coding-system 'utf-8)
 (setq default-buffer-file-coding-system 'utf-8)
 (setq coding-system-for-read 'utf-8)
-
-(when *is-windows*
-  (set-clipboard-coding-system 'gb18030)
-  (setq file-name-coding-system 'gb18030)
-  
-  (add-hook
-   'shell-mode-hook
-   '(lambda ()
-      (set-buffer-process-coding-system 'gb18030 'gb18030)))
-  (add-hook
-   'eshell-mode-hook
-   '(lambda ()
-      (set-buffer-process-coding-system 'gb18030 'gb18030)))
-  )
-
-(when *is-linux*
-  (set-clipboard-coding-system 'utf-8)
-  (setq file-name-coding-system 'utf-8)
-  )
+(set-clipboard-coding-system 'utf-8)
+(setq file-name-coding-system 'utf-8)
 
 ;;; ------------------------------------------------------------
 ;;;
@@ -150,8 +133,7 @@
 ;;; server
 ;;;
 ;;; ------------------------------------------------------------
-(setq server-auth-dir (if *is-windows* (concat (file-name-as-directory (getenv "USERPROFILE") ) (file-name-as-directory "emacserver"))
-                        (concat (z/get-runtimes-dir) "emacsserver")))
+(setq server-auth-dir (concat (z/get-runtimes-dir) "emacsserver"))
 (unless (and (functionp 'server-running-p)
 	     (server-running-p))
   (server-start))
