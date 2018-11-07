@@ -23,6 +23,26 @@ LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
                        (cons feature time)
                        t))))))
 
+(defun z/get-runtimes-dir ()
+  (let ((dir (locate-user-emacs-file "runtimes/")))
+    (unless (file-exists-p dir)
+      (make-directory dir)) dir))
+
+(defun z/get-contents-dir ()
+  (let ((dir (locate-user-emacs-file "contents/")))
+    (unless (file-exists-p dir)
+      (make-directory dir)) dir))
+
+(defun z/get-stuff-dir ()
+  (let ((dir (locate-user-emacs-file "stuff/")))
+    (unless (file-exists-p dir)
+      (make-directory dir)) dir))
+
+(defun z/get-tools-dir ()
+  (let ((dir (locate-user-emacs-file "tools/")))
+    (unless (file-exists-p dir)
+      (make-directory dir)) dir))
+
 (require 'cl)
 (require 'cl-lib)
 
