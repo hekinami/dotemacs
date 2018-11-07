@@ -19,7 +19,6 @@
     )
   
   (require 'init-infra)
-  (require 'init-pkg)
   (require 'init-ui)
   (require 'init-fmwk)
   (require 'init-editing)
