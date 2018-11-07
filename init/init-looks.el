@@ -238,4 +238,4 @@
   ;; M-x all-the-icons-install-fonts
   :ensure t)
 
-(provide 'init-ui)
+(provide 'init-looks)

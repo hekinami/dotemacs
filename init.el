@@ -19,7 +19,7 @@
     )
   
   (require 'init-prepare)
-  (require 'init-ui)
+  (require 'init-looks)
   (require 'init-fmwk)
   (require 'init-editing)
   (require 'init-reading)
