@@ -85,4 +85,4 @@
 
   (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
 
-(provide 'init-info)
+(provide 'init-reading)
