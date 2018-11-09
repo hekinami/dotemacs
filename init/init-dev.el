@@ -39,7 +39,7 @@
   :ensure t
   :config
   (setq edbi:query-result-fix-header nil)
-  (setq edbi:ds-history-file (concat (z/get-runtimes-dir) ".edbi-ds-history")))
+  (setq edbi:ds-history-file (locate-runtimes-file ".edbi-ds-history")))
 
 (use-package edbi-database-url
   :ensure t

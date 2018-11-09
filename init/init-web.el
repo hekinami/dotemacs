@@ -111,7 +111,7 @@
   :config
   (setq geben-pause-at-entry-line nil)
   (setq geben-display-window-function 'pop-to-buffer-same-window)
-  (setq geben-temporary-file-directory (concat (z/get-runtimes-dir) "geben")))
+  (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
 
 (use-package web-beautify
   :ensure t
