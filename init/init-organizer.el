@@ -107,11 +107,7 @@
 ;;; capture
 ;;;
 ;;; ------------------------------------------------------------
-  (let ((template-file (expand-file-name ".org-capture-templates" user-emacs-directory)))
-    (when (file-exists-p template-file)
-      (load-file template-file)
-      )
-    )
+  (load (locate-stuff-file "org-capture-templates") t)
 
 ;;; ------------------------------------------------------------
 ;;;

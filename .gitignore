@@ -1,7 +1,6 @@
 *.elc
 elpa/*
 quelpa/*
-.org-capture-templates
 .wl-folder
 custom.el
 .after_everything.el
