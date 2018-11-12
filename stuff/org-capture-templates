@@ -1,32 +1,22 @@
 ;; -*- mode: emacs-lisp -*-
 (setq org-lang-directory "/home/hekinami/.emacs.d/contents/org/languages")
 (setq org-capture-templates
-      `(("t" "任务")
-        ("tt" "一般事务" entry
-         (file+headline ,(concat org-directory "/taskpool.gtd.org") "UNCLASSIFIED TASKS") "* TODO %? :general:\n\n %i\n")
-        ("tw" "公司事务" entry
-         (file+headline ,(concat org-directory "/taskpool.gtd.org") "COMPANY TASKS") "* TODO %? :company:\n\n %i\n")
-        ("tp" "私人事务" entry
-         (file+headline ,(concat org-directory "/taskpool.gtd.org") "PRIVATE TASKS") "* TODO %? :private:\n\n %i\n")
-        ("tm" "还款任务" entry
-         (file+headline ,(concat org-directory "/taskpool.gtd.org") "REPAYMENT TASKS") "* TODO %(z/get-current-item-content) 还款(%^{金额} CNY) :money:\nDEADLINE: %^{最后还款日}t\n %i\n")
+      `(("t" "Task")
+        ("tt" "Unclassified" entry
+         (file+headline ,(concat org-directory "/gtd/unclassified.gtd.org") "One Time Tasks") "* TODO %?\n\n %i\n")
+        ("tw" "Company" entry
+         (file+headline ,(concat org-directory "/gtd/company.gtd.org") "One Time Tasks") "* TODO %?\n\n %i\n")
+        ("tp" "Private" entry
+         (file+headline ,(concat org-directory "/gtd/private.gtd.org") "One Time Tasks") "* TODO %?\n\n %i\n")
+        ("tm" "Financial" entry
+         (file+headline ,(concat org-directory "/gtd/financial.gtd.org") "One Time Tasks") "* TODO %(z/get-current-item-content) 还款(%^{Amount} CNY) :money:\nDEADLINE: %^{Deadline}t\n %i\n")
 
-        ("e" "事件" entry
-         (file+headline ,(concat org-directory "/event.gtd.org") "UNCLASSIFIED EVENTS") "* %?\n%^{事件开始时间}t\n\n %i\n")
-        ("r" "提醒" entry
-         (file+headline ,(concat org-directory "/reminder.gtd.org") "提醒") "* TOCONFIRM %?\n %i\n")
-        ("y" "阅读" entry
-         (file+headline ,(concat org-directory "/reading.gtd.org") "Reading list") "* TOREAD %? %^g\n\n %i\n")
-        ("i" "想法" entry
-         (file+headline ,(concat org-directory "/idea.gtd.org") "Idea list") "* %? %^g\n\n %i\n")
-        ;; 
-        ("v" "外语生词")
-        ("ve" "英语" entry
-         (file ,(concat org-lang-directory "/english/vacabulary.org")) "%[/home/hekinami/.emacs.d/stuff/orgcapture/vacabulary_en.tpl.org]" :empty-lines 1)
-        ("vj" "日语" entry
-         (file ,(concat org-lang-directory "/japanese/vacabulary.org")) "* Word\n%?%i")
-        ("vs" "西班牙语" entry
-         (file ,(concat org-lang-directory "/spain/vacabulary.org")) "* Word\n%?%i")
-        ("vr" "俄语" entry
-         (file ,(concat org-lang-directory "/russian/vacabulary.org")) "* Word\n%?%i")
+        ("e" "Event" entry
+         (file+headline ,(concat org-directory "/gtd/event.gtd.org") "Events") "* %?\n%^{Start From}t\n\n %i\n")
+        ("r" "Reminder" entry
+         (file+headline ,(concat org-directory "/gtd/reminder.gtd.org") "Reminders") "* TOCONFIRM %?\n %i\n")
+        ("y" "Read" entry
+         (file+headline ,(concat org-directory "/gtd/reading.gtd.org") "Reading list") "* TOREAD %? %^g\n\n %i\n")
+        ("i" "Idea" entry
+         (file+headline ,(concat org-directory "/gtd/idea.gtd.org") "Idea list") "* %? %^g\n\n %i\n")
         ))
