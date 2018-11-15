@@ -32,6 +32,10 @@
     :config
     (elfeed-goodies/setup)))
 
+(use-package doc-view
+  :init
+  (setq doc-view-resolution 600))
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; xwidget webkit
