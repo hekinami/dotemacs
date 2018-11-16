@@ -252,4 +252,9 @@
   (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
   (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
 
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+
 (provide 'init-editing)
