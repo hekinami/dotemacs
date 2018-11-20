@@ -3,6 +3,8 @@
 
 (use-package magit
   :ensure t
+  :init
+  (setq auto-revert-check-vc-info t)
   :bind
   (("C-x g" . magit-status)
    ("C-x M-g" . magit-dispatch-popup)))
