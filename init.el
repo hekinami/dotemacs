@@ -20,10 +20,12 @@
   (require 'init-web)
   (require 'init-media)
 
-  (load (locate-user-emacs-file "custom.el") t)
+  (setq custom-file (locate-user-emacs-file "custom.el"))
+  (load  custom-file t)
   
   (message "loading process took %f ms"
            (z/time-difference-in-millis loading-start-time (current-time)))
   
   (load (locate-user-emacs-file ".after_everything.el") t)
   )
+
