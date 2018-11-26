@@ -488,6 +488,36 @@ a communication channel."
   (setq org-reveal-root "file:///home/hekinami/git/reveal.js"))
 
 ;;; latex
+;;; font: https://www.google.com/get/noto/help/cjk/
+(setq org-latex-classes
+      '(("article"
+         "
+\\documentclass[12pt,a4paper]{article}
+\\usepackage[margin=2cm]{geometry}
+\\usepackage{fontspec}
+\\setromanfont{Noto Serif CJK SC:style=Regular}
+\\setsansfont{Noto Sans CJK SC Regular}
+\\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}
+\\XeTeXlinebreaklocale \"zh\"
+\\XeTeXlinebreakskip = 0pt plus 1pt
+\\linespread{1.1}
+\\usepackage{hyperref}
+\\hypersetup{
+  colorlinks=true,
+  linkcolor=[rgb]{0,0.37,0.53},
+  citecolor=[rgb]{0,0.47,0.68},
+  filecolor=[rgb]{0,0.37,0.53},
+  urlcolor=[rgb]{0,0.37,0.53},
+  pagebackref=true,
+  linktoc=all,}
+"
+         ("\\section{%s}" . "\\section*{%s}")
+         ("\\subsection{%s}" . "\\subsection*{%s}")
+         ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+         ("\\paragraph{%s}" . "\\paragraph*{%s}")
+         ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+        ))
+
 (setq org-latex-with-hyperref t)
 (setq org-latex-default-packages-alist
       '(("margin=2cm" "geometry" t)
