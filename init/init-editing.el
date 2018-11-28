@@ -83,14 +83,14 @@
   (setq  uniquify-buffer-name-style 'post-forward
          uniquify-separator ":"))
 
-(use-package ido
-  :config
-  (setq ido-enable-flex-matching t)
-  (setq ido-everywhere t)
-  (ido-mode 1)
-  (setq ido-create-new-buffer 'always)
-  (setq ido-ignore-buffers '("gtd.org$" "\\*"))
-  (setq ido-save-directory-list-file (locate-runtimes-file "ido.last")))
+;; (use-package ido
+;;   :config
+;;   (setq ido-enable-flex-matching t)
+;;   (setq ido-everywhere t)
+;;   (ido-mode 1)
+;;   (setq ido-create-new-buffer 'always)
+;;   (setq ido-ignore-buffers '("gtd.org$" "\\*"))
+;;   (setq ido-save-directory-list-file (locate-runtimes-file "ido.last")))
 
 (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
 
