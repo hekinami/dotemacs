@@ -86,6 +86,8 @@
 ;;; ------------------------------------------------------------
 (use-package projectile
   :ensure t
+  :bind ("C-x C-b" . helm-projectile-switch-to-buffer)
+  :bind-keymap ("C-c p" . projectile-command-map)
   :config
   (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
   (setq projectile-mode-line-prefix "")

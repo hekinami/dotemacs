@@ -99,17 +99,6 @@
 
 ;;; ------------------------------------------------------------
 ;;;
-;;; bs-configurations
-;;;
-;;; ------------------------------------------------------------
-(use-package bs
-  :bind ("C-x C-b" . bs-show)
-  :config
-  (setcar bs-configurations '("onlyfiles" nil nil "\\(gtd\\.org\\)\\|\\(diary\\)$" bs-visits-non-file bs-sort-buffer-interns-are-last))
-  (setq bs-default-configuration "onlyfiles"))
-
-;;; ------------------------------------------------------------
-;;;
 ;;; navigation
 ;;;
 ;;; ------------------------------------------------------------
