@@ -206,7 +206,6 @@
   ;; | C-u    | popwin:universal-display              |
   ;; | 1      | popwin:one-window                     |
   :ensure t
-  :bind 
   :config
   (popwin-mode)
   (bind-key "C-z p" popwin:keymap)
@@ -214,8 +213,8 @@
   (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
   (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
   (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-  (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-  (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+  ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+  ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
   (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
   (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
   (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
@@ -223,6 +222,22 @@
   (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
   (push '("*js*" :position bottom :width 20) popwin:special-display-config))
 
+;;; ------------------------------------------------------------
+;;;
+;;; shackle
+;;;
+;;; ------------------------------------------------------------
+(use-package shackle
+  :ensure t
+  :config
+  (setq shackle-rules '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
+                        (magit-status-mode :select t :inhibit-window-quit t :same t)
+                        (magit-log-mode :select t :inhibit-window-quit t :same t)
+                        (magit-revision-mode :select t :inhibit-window-quit t :align right :size 0.7)
+                        (magit-diff-mode :noselect t :align right :size 0.7)
+                        ("*hackernews top stories*" :same t)
+                        ))
+  (shackle-mode))
 
 ;;; ------------------------------------------------------------
 ;;;
