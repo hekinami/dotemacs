@@ -64,6 +64,8 @@
 ;;; ------------------------------------------------------------
 (use-package paredit
   :ensure t
+  :diminish paredit-mode
+  :commands paredit-mode
   :defer t)
 
 (add-hook

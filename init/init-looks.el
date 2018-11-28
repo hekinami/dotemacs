@@ -167,18 +167,7 @@
   (setq spaceline-minor-modes-separator nil))
 
 (use-package diminish
-  :ensure t
-  :config
-  (eval-after-load "aggressive-indent" '(diminish 'aggressive-indent-mode "ⅈ"))
-  (eval-after-load "undo-tree" '(diminish 'undo-tree-mode))
-  (eval-after-load "yasnippet" '(diminish 'yas-minor-mode))
-  (eval-after-load "auto-complete" '(diminish 'auto-complete-mode))
-  (eval-after-load "hideshow" '(diminish 'hs-minor-mode "🅢"))
-  (eval-after-load "paredit" '(diminish 'paredit-mode))
-  (eval-after-load "which-key" '(diminish 'which-key-mode))
-  (eval-after-load "helm-mode" '(diminish 'helm-mode))
-  (eval-after-load "buffer-face-mode" '(diminish 'buffer-face-mode))
-  (eval-after-load "eldoc" '(diminish 'eldoc-mode)))
+  :ensure t)
 
 (use-package mode-icons
   :ensure t

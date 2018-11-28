@@ -26,6 +26,7 @@
 
 (use-package undo-tree
   :ensure t
+  :diminish undo-tree-mode
   :bind ("C-x u" . undo-tree-visualize)
   :config
   (global-undo-tree-mode))
@@ -39,6 +40,7 @@
 
 (use-package aggressive-indent
   :ensure t
+  :diminish aggressive-indent-mode
   :config
   (global-aggressive-indent-mode 1))
 
@@ -46,6 +48,7 @@
 
 (use-package fancy-narrow
   :ensure t
+  :diminish fancy-narrow-mode
   :config
   (fancy-narrow-mode))
 

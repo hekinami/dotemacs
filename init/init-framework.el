@@ -1,5 +1,6 @@
 (use-package which-key
   :ensure t
+  :diminish which-key-mode
   :config
   (which-key-mode))
 
@@ -10,6 +11,7 @@
 ;;; ------------------------------------------------------------
 (use-package auto-complete
   :ensure t
+  :diminish auto-complete-mode
   :bind
   (:map ac-completing-map
         ("M-/" . ac-stop))
@@ -31,6 +33,7 @@
 (add-hook 'after-init-hook 'yas-global-mode)
 (use-package yasnippet
   :ensure t
+  :diminish yas-minor-mode
   :bind
   (:map yas-minor-mode-map
         ("<tab>" . nil)
@@ -55,6 +58,7 @@
 ;;; ------------------------------------------------------------
 (use-package helm
   :ensure t
+  :diminish helm-mode
   :init
   (global-unset-key (kbd "C-x c"))
   :bind
@@ -84,6 +88,7 @@
   :ensure t
   :config
   (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
+  (setq projectile-mode-line-prefix "")
   (projectile-global-mode)
   (setq projectile-completion-system 'helm))
 
