@@ -102,6 +102,15 @@
                                       (org-agenda-prefix-format "")))))
           ))
 
+  ;; always in bottom
+  (defadvice org-agenda (around split-vertically activate)
+    (let ((split-width-threshold nil))
+      ad-do-it))
+
+  (defadvice org-capture (around split-vertically activate)
+    (let ((split-width-threshold nil))
+      ad-do-it))
+
 ;;; ------------------------------------------------------------
 ;;;
 ;;; capture
