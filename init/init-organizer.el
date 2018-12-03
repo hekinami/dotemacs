@@ -451,7 +451,7 @@
 ;;; export
 ;;;
 ;;; ------------------------------------------------------------
-(define-key org-mode-map "\C-cp" 'org-publish-current-project)
+;; (define-key org-mode-map "\C-cp" 'org-publish-current-project)
 (setq org-tpl-directory (locate-stuff-file "orgtemplate"))
 
 (setq org-html-head-include-default-style nil)
