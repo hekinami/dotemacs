@@ -110,18 +110,44 @@
 ;;; python
 ;;;
 ;;; ------------------------------------------------------------
-(setq python-environment-directory (locate-runtimes-file ".python-environments"))
-(setq python-indent-guess-indent-offset nil)
-(require-package 'jedi)
-(setq jedi:environment-root "py3jedi")
-(setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
-(setq jedi:setup-keys t)
-(setq jedi:complete-on-dot t)
-(setq jedi:tooltip-method nil)
-(add-hook 'python-mode-hook (lambda ()
-                              (jedi:setup)
-                              (yas-minor-mode)
-                              (setq ac-sources (append ac-sources '(ac-source-yasnippet)))))
+(use-package python
+  :config
+  (setq python-indent-guess-indent-offset nil))
+
+(use-package python-environment
+  :config
+  (setq python-environment-directory (locate-runtimes-file ".python-environments")))
+
+(use-package jedi
+  :ensure t
+  :init
+  (setq jedi:environment-root "py3jedi")
+  (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+  (setq jedi:setup-keys t)
+  (setq jedi:complete-on-dot t)
+  (setq jedi:tooltip-method nil)
+  :config
+  (add-hook 'python-mode-hook
+            (lambda ()
+              (jedi:setup)
+              (yas-minor-mode)
+              (setq ac-sources (append ac-sources '(ac-source-yasnippet))))))
+
+(use-package pyvenv
+  :ensure t
+  :after jedi
+  :init
+  ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
+  (with-eval-after-load 'jedi
+    (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
+      (add-hook hook
+                (lambda ()
+                  (if (and pyvenv-virtual-env
+                           (not (member pyvenv-virtual-env jedi:server-args))
+                           (not (file-remote-p pyvenv-virtual-env)))
+                      (setq jedi:server-args (list "--virtual-env" pyvenv-virtual-env))
+                    (setq jedi:server-args nil))
+                  (jedi:stop-server))))))
 
 (use-package python-django
   :ensure t
