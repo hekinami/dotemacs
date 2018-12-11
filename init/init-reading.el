@@ -1,3 +1,26 @@
+(use-package engine-mode
+  :ensure t
+  :init
+  (engine/set-keymap-prefix (kbd "C-c C-s"))
+  (defengine github
+    "https://github.com/search?ref=simplesearch&q=%s"
+    :keybinding "g")
+
+  (defengine dict.cn
+    "https://dict.cn/%s"
+    :keybinding "d"
+    :browser 'eww-browse-url)
+
+  (defengine bing
+    "https://cn.bing.com/search?q=%s"
+    :keybinding "b")
+
+  (defengine wikipedia
+    "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+    :keybinding "w"
+    :docstring "Searchin' the wikis.")
+  (engine-mode t))
+
 (use-package irfc
   :ensure t
   :defer t
