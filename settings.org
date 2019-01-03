@@ -1,0 +1,2122 @@
+* path
+  #+BEGIN_SRC emacs-lisp
+  (add-to-list 'load-path (locate-user-emacs-file "init/"))
+  (add-to-list 'load-path (locate-user-emacs-file "extension/"))
+  #+END_SRC
+* prepare
+  #+BEGIN_SRC emacs-lisp
+  ;;; customization group for z's
+  (defgroup z nil
+    "z's customization."
+    :group 'emacs)
+
+  ;;; performance
+  (defun z/time-difference-in-millis (start end)
+    (* 1000.0 (float-time (time-subtract end start))))
+
+  (defvar z/feature-loading-times nil
+    "A list of (FEATURE . LOAD-DURATION).
+  LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
+
+  (defadvice require (around z/record-feature-loading-times (feature &optional filename noerror) activate)
+    "Note in `z/feature-loading-times' the time taken to require each feature."
+    (let* ((already-loaded (memq feature features))
+           (require-start-time (and (not already-loaded) (current-time))))
+      (prog1
+          ad-do-it
+        (when (and (not already-loaded) (memq feature features))
+          (let ((time (z/time-difference-in-millis require-start-time (current-time) )))
+            (add-to-list 'z/feature-loading-times
+                         (cons feature time)
+                         t))))))
+
+  (defun locate-runtimes-file (file)
+    (let ((base (locate-user-emacs-file "runtimes/")))
+      (make-directory base t)
+      (concat base file)))
+
+  (defun locate-contents-file (file)
+    (let ((base (locate-user-emacs-file "contents/")))
+      (make-directory base t)
+      (concat base file)))
+
+  (defun locate-stuff-file (file)
+    (let ((base (locate-user-emacs-file "stuff/")))
+      (make-directory base t)
+      (concat base file)))
+
+  (defun locate-tools-file (file)
+    (let ((base (locate-user-emacs-file "tools/")))
+      (make-directory base t)
+      (concat base file)))
+
+  (require 'cl)
+  (require 'cl-lib)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; package management infrastructure
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq package-enable-at-startup nil)
+  (package-initialize)
+
+  (defun require-package (package &optional min-version no-refresh)
+    "Install given PACKAGE, optionally requiring MIN-VERSION.
+  If NO-REFRESH is non-nil, the available package lists will not be
+  re-downloaded in order to locate PACKAGE."
+    (if (package-installed-p package min-version)
+        t
+      (if (or (assoc package package-archive-contents) no-refresh)
+          (package-install package)
+        (progn
+          (package-refresh-contents)
+          (require-package package min-version t)))))
+
+  (setq package-archives
+        '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+          ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+          ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
+          ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
+          ("org-cn" . "http://elpa.emacs-china.org/org/")
+          ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
+          ("user42-cn" . "http://elpa.emacs-china.org/user42/")
+          ("melpa" . "http://melpa.org/packages/")
+          ("org" . "http://orgmode.org/elpa/")
+          ("melpa-stable" . "http://stable.melpa.org/packages/")
+          )
+        )
+
+  (setq ad-redefinition-action 'accept)   ;https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
+
+  (require-package 'use-package)
+
+  (use-package quelpa-use-package
+    :ensure t
+    :init
+    (setq quelpa-update-melpa-p nil)) 
+
+  (use-package try
+    :defer t
+    :ensure t)
+  #+END_SRC
+* looks
+  #+BEGIN_SRC emacs-lisp
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; theme
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package molokai-theme
+    :ensure t
+    :config
+    (load-theme 'molokai t)
+    (setq z/current-theme-name "molokai"))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; fonts
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package cnfonts
+    :ensure t
+    :config
+    (cnfonts-enable))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; frame
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq frame-title-format "[%F]")
+
+  (setq init-frame-alist
+        (append
+         `((height . 25)
+           (width . 100)) default-frame-alist))
+
+  (setq default-frame-alist
+        (append
+         `((height . 25)
+           (width . 100)) default-frame-alist))
+
+  (use-package frame
+    :bind (("C-x C-a f" . toggle-frame-fullscreen)
+           ("C-x C-a m" . toggle-frame-maximized)))
+
+  (use-package z-ui-extension
+    :bind (("C-x C-a t" . z/toggle-transparency)
+           ("C-x \\" . z/swap-window-positions)
+           ("C-x |" . z/toggle-window-split)))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; miscellaneous
+  ;;;
+  ;;; ------------------------------------------------------------
+  (global-unset-key (kbd "C-z"))
+
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (menu-bar-mode -1)
+  (global-hl-line-mode 1)
+  (column-number-mode 1)
+  (setq visible-bell t)
+  (setq inhibit-startup-message t)
+  (setq initial-scratch-message nil)
+
+  (global-set-key (kbd "<f10>") 'menu-bar-mode)
+
+  (use-package sr-speedbar
+    :ensure t
+    :bind ("C-z s" . sr-speedbar-toggle))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; cursor
+  ;;;
+  ;;; ------------------------------------------------------------
+  ;; (use-package highlight-tail
+  ;;   :ensure t
+  ;;   :config
+  ;;   (highlight-tail-mode)
+  ;;   (setq highlight-tail-timer 0.01)
+  ;;   (diminish 'highlight-tail-mode))
+
+  (blink-cursor-mode 1)
+  (setq blink-cursor-blinks 0)
+
+  (setq hcz-set-cursor-color-color "")
+  (setq hcz-set-cursor-color-buffer "")
+  (defun hcz-set-cursor-color-according-to-mode ()
+    "change cursor color according to some minor modes."
+    ;; set-cursor-color is somewhat costly, so we only call it when needed:
+    (let ((color
+           (if buffer-read-only "blue"
+             (if overwrite-mode "red"
+               "white"))))
+      (unless (and
+               (string= color hcz-set-cursor-color-color)
+               (string= (buffer-name) hcz-set-cursor-color-buffer))
+        (set-cursor-color (setq hcz-set-cursor-color-color color))
+        (setq hcz-set-cursor-color-buffer (buffer-name)))))
+  (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; scrollbar
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package yascroll
+    :ensure t
+    :config
+    (scroll-bar-mode -1)
+    (global-yascroll-bar-mode))
+
+  (setq auto-hscroll-mode 'current-line)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; assistant
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package on-screen
+    :ensure t
+    :config
+    (on-screen-global-mode +1))
+
+  (use-package linum
+    :defer t
+    :config
+    (add-hook 'linum-before-numbering-hook
+              (lambda ()
+                (set-face-foreground 'linum "#4B8DF8"))))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; modeline
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package smart-mode-line
+    :ensure t
+    :config
+    (setq sml/no-confirm-load-theme t)
+    (sml/setup)
+    (setq sml/mode-width 5)
+    (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t))
+
+  (use-package smart-mode-line-powerline-theme
+    :ensure t
+    :config
+    (sml/apply-theme 'powerline)
+    (setq powerline-default-separator 'arrow-fade))
+
+  (require-package 'spacemacs-theme)      ;use-package don't work, why?
+
+  (use-package spaceline
+    :ensure t
+    :config
+    (require 'spaceline-config)
+    (spaceline-spacemacs-theme)
+    (add-hook
+     'spaceline-pre-hook
+     (lambda nil
+       (set-face-attribute 'mode-line nil  :height 100)
+       (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+       (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
+       (set-face-attribute 'sml/vc nil :foreground "lawn green")
+       (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
+       (set-face-attribute 'sml/vc-edited nil :foreground "red")
+       ))
+    (setq spaceline-minor-modes-separator nil))
+
+  (use-package diminish
+    :ensure t)
+
+  (use-package mode-icons
+    :ensure t
+    :config
+    (mode-icons-mode))
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; window
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package popwin
+    ;; | Key    | Command                               |
+    ;; |--------+---------------------------------------|
+    ;; | b      | popwin:popup-buffer                   |
+    ;; | l      | popwin:popup-last-buffer              |
+    ;; | o      | popwin:display-buffer                 |
+    ;; | C-b    | popwin:switch-to-last-buffer          |
+    ;; | C-p    | popwin:original-pop-to-last-buffer    |
+    ;; | C-o    | popwin:original-display-last-buffer   |
+    ;; | SPC    | popwin:select-popup-window            |
+    ;; | s      | popwin:stick-popup-window             |
+    ;; | 0      | popwin:close-popup-window             |
+    ;; | f, C-f | popwin:find-file                      |
+    ;; | e      | popwin:messages                       |
+    ;; | C-u    | popwin:universal-display              |
+    ;; | 1      | popwin:one-window                     |
+    :ensure t
+    :config
+    (popwin-mode)
+    (bind-key "C-z p" popwin:keymap)
+    (push '("*Backtrace*" :height 15) popwin:special-display-config)
+    (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
+    (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
+    (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
+    ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+    ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+    (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
+    (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
+    (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
+    (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
+    (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
+    (push '("*js*" :position bottom :width 20) popwin:special-display-config))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; shackle
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package shackle
+    :ensure t
+    :config
+    (setq shackle-rules '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
+                          (magit-status-mode :select t :inhibit-window-quit t :same t)
+                          (magit-log-mode :select t :inhibit-window-quit t :same t)
+                          (magit-revision-mode :select t :inhibit-window-quit t :align right :size 0.7)
+                          (magit-diff-mode :noselect t :align right :size 0.7)
+                          ("*hackernews top stories*" :same t)
+                          ))
+    (shackle-mode))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; utility
+  ;;;
+  ;;; ------------------------------------------------------------
+  (defun z/timestamp-format-setting ()
+    (set (make-local-variable 'system-time-locale) "C")
+    (set (make-local-variable 'system-messages-locale) "C")
+    )
+
+  (use-package all-the-icons
+    ;; M-x all-the-icons-install-fonts
+    :ensure t)
+
+  #+END_SRC
+* framework
+  #+BEGIN_SRC emacs-lisp
+  (use-package which-key
+    :ensure t
+    :diminish which-key-mode
+    :config
+    (which-key-mode))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; auto-complete
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package auto-complete
+    :ensure t
+    :diminish auto-complete-mode
+    :bind
+    (:map ac-completing-map
+          ("M-/" . ac-stop))
+    :config
+    (ac-linum-workaround)
+    (require 'auto-complete-config)
+    (add-to-list 'ac-dictionary-directories (locate-contents-file "ac-dict"))
+    (setq ac-comphist-file (locate-runtimes-file "ac-comphist.dat")) 
+    (ac-config-default)
+    (global-auto-complete-mode t)
+    (ac-set-trigger-key "TAB")
+    (ac-set-trigger-key "<tab>"))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; yasnippet
+  ;;;
+  ;;; ------------------------------------------------------------
+  (add-hook 'after-init-hook 'yas-global-mode)
+  (use-package yasnippet
+    :ensure t
+    :diminish yas-minor-mode
+    :bind
+    (:map yas-minor-mode-map
+          ("<tab>" . nil)
+          ("TAB" . nil)
+          ("<backtab>" . yas-expand))
+    :config
+    (use-package yasnippet-snippets
+      :defer t
+      :ensure t)
+    (setq yas-also-auto-indent-first-line t)
+    (setq yas-prompt-functions
+          '(yas-ido-prompt
+            yas-completing-prompt
+            yas-x-prompt yas-dropdown-prompt yas-no-prompt))
+    (setq yas-triggers-in-field t)
+    (yas-reload-all))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; helm
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package helm
+    :ensure t
+    :diminish helm-mode
+    :init
+    (global-unset-key (kbd "C-x c"))
+    :bind
+    (("C-c h" . helm-command-prefix)
+     ("M-x" . helm-M-x)
+     ("C-x r l" . helm-filtered-bookmarks)
+     ("C-x C-f" . helm-find-files))
+    :init
+    (setq bookmark-file (locate-runtimes-file "bookmarks")) ; must be set before enable helm-mode
+    :config
+    (require 'helm-config)
+    (add-hook
+     'helm-minibuffer-set-up-hook
+     (lambda ()
+       (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
+       (set-face-attribute 'helm-source-header nil :background nil)
+       (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
+       ))
+    (helm-mode 1))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; projectile
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package projectile
+    :ensure t
+    :bind ("C-x C-b" . helm-projectile-switch-to-buffer)
+    :bind-keymap ("C-c p" . projectile-command-map)
+    :config
+    (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
+    (setq projectile-mode-line-prefix "")
+    (projectile-global-mode)
+    (setq projectile-completion-system 'helm))
+
+  (use-package helm-projectile
+    :ensure t
+    :config
+    (helm-projectile-on)
+    :after
+    projectile)
+  #+END_SRC
+* editing
+  #+BEGIN_SRC emacs-lisp
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; miscellaneous
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq user-full-name "Zou Bibo")
+  (setq user-mail-address "hekinami@amiunique.net")
+
+  (use-package savehist
+    :config
+    (setq savehist-file (locate-runtimes-file "history")))
+
+  (defun emacs-session-filename (session-id)
+    "override the original one"
+    (let ((basename (concat "runtimes/session." session-id)))
+      (locate-user-emacs-file basename
+                              (concat ".emacs-" basename))))
+  (setq auto-save-list-file-prefix (locate-runtimes-file "auto-save-list/.saves-"))
+  (setq tramp-persistency-file-name (locate-runtimes-file "tramp"))
+  (global-auto-revert-mode)
+  (setq make-backup-files nil)
+  (auto-compression-mode t)
+  (auto-image-file-mode t)
+  (setq auto-save-mode -1)
+  (desktop-save-mode 0)
+
+  (use-package undo-tree
+    :ensure t
+    :diminish undo-tree-mode
+    :bind ("C-x u" . undo-tree-visualize)
+    :config
+    (global-undo-tree-mode))
+
+  (fset 'yes-or-no-p 'y-or-n-p)
+
+  (global-set-key (kbd "C-c r") 'replace-regexp)
+  (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
+
+  (setq-default indent-tabs-mode nil)
+
+  (use-package aggressive-indent
+    :ensure t
+    :diminish aggressive-indent-mode
+    :config
+    (global-aggressive-indent-mode 1))
+
+  (electric-pair-mode)
+
+  (use-package fancy-narrow
+    :ensure t
+    :diminish fancy-narrow-mode
+    :config
+    (fancy-narrow-mode))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; encoding
+  ;;;
+  ;;; ------------------------------------------------------------
+  (set-language-environment 'utf-8)
+  (setq encoding 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-default-coding-systems 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
+  (set-buffer-file-coding-system 'utf-8)
+  (setq default-buffer-file-coding-system 'utf-8)
+  (setq coding-system-for-read 'utf-8)
+  (set-clipboard-coding-system 'utf-8)
+  (setq file-name-coding-system 'utf-8)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; locale
+  ;;;
+  ;;; ------------------------------------------------------------
+  (set-locale-environment "C")
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; buffer
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package uniquify
+    :config
+    (setq  uniquify-buffer-name-style 'post-forward
+           uniquify-separator ":"))
+
+  ;; (use-package ido
+  ;;   :config
+  ;;   (setq ido-enable-flex-matching t)
+  ;;   (setq ido-everywhere t)
+  ;;   (ido-mode 1)
+  ;;   (setq ido-create-new-buffer 'always)
+  ;;   (setq ido-ignore-buffers '("gtd.org$" "\\*"))
+  ;;   (setq ido-save-directory-list-file (locate-runtimes-file "ido.last")))
+
+  (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; navigation
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package avy
+    :ensure t
+    :bind ("M-z" . avy-goto-word-1)
+    :config
+    (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
+    (setq avy-style 'at)
+    (setq avy-background t)
+    ;;; select current position to the position jumped to
+    (advice-add 'avy-goto-char :around (lambda (orig-fun &rest args)
+                                         (push-mark)
+                                         (apply orig-fun args)
+                                         (forward-char))))
+
+  (use-package ace-pinyin
+    :ensure t
+    :bind
+    (("M-/" . ace-pinyin-dwim)))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; server
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq server-auth-dir (locate-runtimes-file "emacsserver"))
+  (unless (and (functionp 'server-running-p)
+               (server-running-p))
+    (server-start))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; multiple cursors
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package multiple-cursors
+    :ensure t
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this)
+           :map mc/keymap
+           ("C-z n" . mc/insert-numbers)
+           ("C-z l" . mc/insert-letters))
+    :init
+    (setq mc/list-file (locate-runtimes-file ".mc-lists.el"))
+    (add-hook 'multiple-cursors-mode-hook
+              (lambda ()
+                (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
+                (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
+                )))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; bm.el
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package bm
+    :ensure t
+    :bind
+    (("C-<f2>" . bm-toggle)
+     ("<f2>" . bm-next)
+     ("S-<f2>" . bm-previous)))
+
+  (use-package helm-bm
+    :ensure t
+    :bind ("C-S-<f2>" . helm-bm))
+
+  (use-package z-sudo
+    :bind ("C-x C-r" . find-file-root))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; swoop
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package swoop
+    :ensure t
+    :bind
+    (("C-o" . swoop)
+     ("M-o" . swoop-pcre-regexp)
+     ("C-S-o" . swoop-back-to-last-position)
+     :map swoop-map
+     ("C-o" . swoop-multi-from-swoop))
+    :config
+    (setq swoop-use-target-magnifier: nil)
+    (setq swoop-font-size-change: nil)
+    )
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; ciel
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package ciel
+    :ensure t
+    :bind
+    (("C-c i" . ciel-ci)
+     ("C-c o" . ciel-co)))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; markdown
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package markdown-mode
+    :ensure t
+    :defer t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; dockerfile
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package dockerfile-mode
+    :ensure t
+    :defer t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; terraform
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package terraform-mode
+    :ensure t
+    :defer t)
+
+  (use-package embrace
+    :ensure t
+    :bind ("C-," . embrace-commander)
+    :init
+    (add-hook 'org-mode-hook #'embrace-org-mode-hook))
+
+  (use-package z-edit-ext
+    :init
+    (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'jdb-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'pdb-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'comint-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'shell-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'inferior-python-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
+    (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
+
+  (use-package editorconfig
+    :ensure t
+    :diminish editorconfig-mode
+    :config
+    (editorconfig-mode 1))
+
+  #+END_SRC
+* reading
+  #+BEGIN_SRC emacs-lisp
+  (use-package engine-mode
+    :ensure t
+    :init
+    (engine/set-keymap-prefix (kbd "C-c C-s"))
+    (defengine github
+      "https://github.com/search?ref=simplesearch&q=%s"
+      :keybinding "g")
+
+    (defengine dict.cn
+      "https://dict.cn/%s"
+      :keybinding "d"
+      :browser 'eww-browse-url)
+
+    (defengine bing
+      "https://cn.bing.com/search?q=%s"
+      :keybinding "b")
+
+    (defengine wikipedia
+      "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+      :keybinding "w"
+      :docstring "Searchin' the wikis.")
+    (engine-mode t))
+
+  (use-package irfc
+    :ensure t
+    :defer t
+    :config
+    (setq irfc-directory (locate-runtimes-file "RFC"))
+    (setq irfc-assoc-mode t))
+
+  (use-package xkcd
+    :ensure t
+    :defer t
+    :config
+    (setq xkcd-cache-dir (locate-runtimes-file "xkcd"))
+    (setq xkcd-cache-latest (locate-runtimes-file "xkcd/latest")))
+
+  (use-package hackernews
+    :ensure t
+    :commands (hackernews)
+    :config
+    (setq hackernews-visited-links-file (locate-runtimes-file "hackernews/visited-links.el")))
+
+  (use-package elfeed
+    :ensure t
+    :commands (elfeed)
+    :config
+    (use-package elfeed-org
+      :ensure t
+      :config
+      (elfeed-org)
+      (setq rmh-elfeed-org-files (list (locate-contents-file "others/elfeed.org"))))
+    (use-package elfeed-goodies
+      :ensure t
+      :config
+      (elfeed-goodies/setup)))
+
+  (use-package doc-view
+    :init
+    (setq doc-view-resolution 600))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; xwidget webkit
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package xwidget
+    :bind
+    (:map xwidget-webkit-mode-map
+          ("<mouse-5>" . xwidget-webkit-scroll-up)
+          ("<mouse-4>" . xwidget-webkit-scroll-down)))
+
+  (use-package justify-kp
+    :quelpa (justify-kp :fetcher github :repo "Fuco1/justify-kp"))
+
+  (use-package nov
+    :ensure t
+    :mode ("\\.epub\\'" . nov-mode)
+    :config
+    (setq nov-save-place-file (locate-runtimes-file "nov-places"))
+    (require 'justify-kp)
+    (setq nov-text-width most-positive-fixnum)
+
+    (defun my-nov-font-setup ()
+      (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
+                               :height 1.3)
+      )
+    (add-hook 'nov-mode-hook 'my-nov-font-setup)
+
+    (defun my-nov-window-configuration-change-hook ()
+      (my-nov-post-html-render-hook)
+      (remove-hook 'window-configuration-change-hook
+                   'my-nov-window-configuration-change-hook
+                   t))
+
+    (setq window-size-change-functions #'my-nov-window-configuration-change-hook)
+
+    (defun my-nov-post-html-render-hook ()
+      (if (get-buffer-window)
+          (let ((max-width (pj-line-width))
+                buffer-read-only)
+            (save-excursion
+              (goto-char (point-min))
+              (while (not (eobp))
+                (when (not (looking-at "^[[:space:]]*$"))
+                  (goto-char (line-end-position))
+                  (when (> (shr-pixel-column) max-width)
+                    (goto-char (line-beginning-position))
+                    (pj-justify)))
+                (forward-line 1))))
+        ))
+
+    (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
+  #+END_SRC
+* writing
+  #+BEGIN_SRC emacs-lisp
+  (use-package cobalt
+    :ensure t
+    :config
+    (setq cobalt-posts-org-source (locate-contents-file "earl/posts.amiunique.net"))
+    (setq cobalt-source (locate-contents-file "earl/cobalt.amiunique.net"))
+    (setq cobalt-dest-base (locate-contents-file "earl/hekinami.gitlab.io"))
+    (setq cobalt-site-paths '(cobalt-source))
+    (setq cobalt--current-site cobalt-source)
+
+    (defun cobalt-generate-posts-source-from-org ()
+      ""
+      (interactive)
+      (let* ((org-publish-project-alist
+              `(("cobalt-posts"
+                 :base-directory ,cobalt-posts-org-source
+                 :publishing-directory ,(concat cobalt-source "/posts")
+                 :publishing-function org-html-publish-to-html
+                 :section-numbers nil
+                 :with-toc nil
+                 :body-only t
+                 )
+                ("cobalt-post-images"
+                 :base-directory ,(concat cobalt-posts-org-source "/images")
+                 :base-extension "jpg\\|gif\\|png"
+                 :publishing-directory ,(concat cobalt-source "/posts/images")
+                 :publishing-function org-publish-attachment)
+                ("cobalt" :components ("cobalt-posts" "cobalt-post-images"))
+                ))
+             )
+
+        (org-publish-project "cobalt")
+        )
+      )
+
+    (defun cobalt-build-with-posts-from-org ()
+      ""
+      (interactive)
+      (cobalt-generate-posts-source-from-org)
+      (cobalt-build nil)
+      )
+
+    (defun cobalt-deploy ()
+      ""
+      (interactive)
+      (cobalt-build-with-posts-from-org)
+      (magit-status cobalt-dest-base)
+      )
+    )
+
+  #+END_SRC
+* organizer
+  #+BEGIN_SRC emacs-lisp
+  (use-package org
+    :ensure org-plus-contrib
+    :bind
+    (("C-c l" . org-store-link)
+     ("C-c a" . org-agenda)
+     ("C-c b" . org-switchb)
+     ("C-c c" . org-capture))
+    :config
+    (use-package z-org-ext
+      :bind (("<f8>" . z/open-browser)
+             :map org-mode-map
+             (("C-c s" . z/org-screenshot)
+              ("C-c d" . z/org-delete-linked-file-in-point)))
+      )
+    (setq org-modules '(org-crypt org-drill org-checklist org-habit))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; methodology
+  ;;;
+  ;;; ------------------------------------------------------------
+    ;; Priority Definition
+    ;; 
+    ;; A: do: good, don't: harm, cannot atone
+    ;; B: do: good, don't: harm, can atone
+    ;; C: do: good, don't: may be harmful
+    ;; D: do: good, don't: no harm
+    ;; E: do: may be good, don't: no harm
+    (setq org-highest-priority ?A)
+    (setq org-lowest-priority ?E)
+    (setq org-default-priority ?C)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; link
+  ;;;
+  ;;; ------------------------------------------------------------
+
+    ;; Thunderlink support
+    ;; https://addons.thunderbird.net/en-us/thunderbird/addon/thunderlink/
+    (org-add-link-type "thunderlink" 'org-thunderlink-open)
+
+    (setq thunderlink-thunderbird
+          "/usr/lib/thunderbird/thunderbird")
+
+    (defun org-thunderlink-open (link)
+      (message link)
+      (start-process-shell-command "thunderbird" nil (format "%s -thunderlink thunderlink:%s" thunderlink-thunderbird link)))
+  
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; appearance
+  ;;;
+  ;;; ------------------------------------------------------------ 
+    (setq org-hide-leading-stars t)
+    (setq org-startup-indented nil)
+    (setq org-cycle-separator-lines 0)
+
+    (setq org-catch-invisible-edits 'smart)
+    (setq org-agenda-window-setup 'other-window)
+    ;; table
+    (setq table-html-th-rows 1)
+    (setq table-html-table-attribute "")
+    (setq table-inhibit-auto-fill-paragraph t)
+
+    (add-hook 'org-mode-hook (lambda ()
+                               (org-bullets-mode 1)
+                               (z/timestamp-format-setting)
+                               ))
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; agenda & gtd
+  ;;;
+  ;;; ------------------------------------------------------------
+    (setq org-agenda-overriding-columns-format "%25ITEM %TODO %CATEGORY %3PRIORITY %20TAGS")
+    (setq org-agenda-todo-ignore-scheduled t)
+    (setq org-agenda-todo-ignore-deadlines t)
+    (setq org-agenda-skip-scheduled-if-done nil)
+    (setq org-agenda-skip-deadline-if-done nil)
+    (setq org-agenda-span 'day)
+    (setq org-agenda-sorting-strategy '(todo-state-down priority-down deadline-up scheduled-up))
+
+    (add-hook 'org-agenda-mode-hook (lambda ()
+                                      (z/timestamp-format-setting)
+                                      (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
+                                      ))
+
+    (setq org-directory (locate-contents-file "organizer"))
+    (setq org-agenda-files `(,(concat org-directory "/gtd")
+                             ,(concat org-directory "/info")))
+
+    (setq org-deadline-warning-days 3)
+    (setq org-log-into-drawer t)
+    (setq org-enforce-todo-dependencies t)
+    (setq org-enforce-todo-checkbox-dependencies t)
+    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+
+    (setq org-agenda-custom-commands
+          '(("A" "Accounts" ((tags "account" ((org-agenda-hide-tags-regexp "account\\|crypt")
+                                              (org-agenda-prefix-format "")))))
+            ("L" "Links" ((tags "link" ((org-agenda-hide-tags-regexp "link")
+                                        (org-agenda-prefix-format "")))))
+            ))
+
+    ;; always in bottom
+    (defadvice org-agenda (around split-vertically activate)
+      (let ((split-width-threshold nil))
+        ad-do-it))
+
+    (defadvice org-capture (around split-vertically activate)
+      (let ((split-width-threshold nil))
+        ad-do-it))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; capture
+  ;;;
+  ;;; ------------------------------------------------------------
+    (load (locate-stuff-file "org-capture-templates") t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; babel
+  ;;;
+  ;;; ------------------------------------------------------------
+    ;; active Babel languages
+    (org-babel-do-load-languages
+     'org-babel-load-languages
+     '((python . t)
+       (emacs-lisp . t)
+       (shell . t)
+       (restclient . t)
+       (ledger . t)
+       (rust . t)
+       ))
+    (setq org-src-fontify-natively t)
+    (setq org-src-tab-acts-natively t)
+    (setq org-edit-src-content-indentation 0)
+  
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; refile
+  ;;;
+  ;;; ------------------------------------------------------------
+    (add-hook
+     'org-mode-hook
+     (lambda ()
+       (when (string-match "gtd.org" (or buffer-file-name (buffer-name)))
+         (make-variable-buffer-local 'org-refile-targets)
+         (setq org-refile-targets (quote ((nil :maxlevel . 2)
+                                          (org-agenda-files :maxlevel . 2))))
+         )
+       ))
+    (setq org-refile-use-outline-path 'file)
+    (setq org-refile-allow-creating-parent-nodes 'confirm)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; screenshot
+  ;;;
+  ;;; ------------------------------------------------------------
+    (use-package uuidgen
+      :ensure t)
+
+    (add-hook 'org-clock-in-hook 'save-buffer)
+    (add-hook 'org-clock-out-hook 'save-buffer)
+    )
+
+  (use-package ob-restclient
+    :ensure t
+    :defer t)
+
+  (use-package ob-rust
+    :ensure t
+    :defer t)
+
+  ;;; modify columns font to mono
+  ;;; the reason is that origin function use default face to decide the font family, which may not be mono
+  (advice-add 'org-columns-display-here :around
+              (lambda (orig-fun &rest args)
+                (let ((temp-family (face-attribute 'default :family)))
+                  (apply orig-fun args)
+                  (set-face-attribute 'default nil :family temp-family)
+                  )
+                ))
+
+  (use-package org-bullets
+    :ensure t
+    :defer t
+    :config
+    (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
+    (add-hook 'org-mode-hook (lambda ()
+                               (org-bullets-mode 1)))
+    :after org)
+
+  (use-package org-drill-table
+    :ensure t
+    :defer t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; org-crypt
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package org-crypt
+    :bind
+    (:map org-mode-map
+          ("C-c C-/" . org-decrypt-entry))
+    :config
+    (org-crypt-use-before-save-magic)
+    (setq org-tags-exclude-from-inheritance (quote ("crypt")))
+    (setq org-crypt-key "z")
+    (setq auto-save-default nil)
+    )
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; pomodoro technique
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package org-pomodoro
+    :ensure t
+    :bind ("<f11>" . org-pomodoro)
+    :config
+    (setq org-pomodoro-length 25)
+    (setq org-pomodoro-long-break-frequency 4)
+    (setq org-pomodoro-short-break-length 5)
+    (setq org-pomodoro-long-break-length 10)
+    (setq org-pomodoro-format "P:%s")
+    )
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; canlendar & date/time
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq diary-file (locate-runtimes-file "diary"))
+  (unless (file-exists-p diary-file) (write-region nil nil diary-file))
+  (setq view-diary-entries-initially t)
+  (setq mark-diary-entries-in-calendar t)
+  (setq mark-holidays-in-calendar t)
+  (setq number-of-diary-entries 7)
+
+  (add-hook 'diary-display-hook 'diary-fancy-display)
+  (add-hook 'today-visible-calendar-hook 'calendar-mark-today)
+
+  (use-package calfw
+    :ensure t
+    :defer t
+    :config
+    (add-hook 'cfw:calendar-mode-hook
+              (lambda ()
+                (when (equal z/current-theme-name "molokai")
+                  (set-face-attribute 'cfw:face-toolbar-button-off nil :foreground "white")
+                  (set-face-attribute 'cfw:face-toolbar nil :background nil))
+                (z/timestamp-format-setting)
+                ))
+    (setq cfw:fchar-junction ?╬
+          cfw:fchar-vertical-line ?║
+          cfw:fchar-horizontal-line ?═
+          cfw:fchar-left-junction ?╠
+          cfw:fchar-right-junction ?╣
+          cfw:fchar-top-junction ?╦
+          cfw:fchar-top-left-corner ?╔
+          cfw:fchar-top-right-corner ?╗)
+    )
+
+  (use-package cal-china-x
+    :ensure t
+    :config
+    (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
+    (setq calendar-holidays cal-china-x-important-holidays))
+
+  (use-package calfw-cal
+    :ensure t
+    :defer t
+    :commands cfw:cal-create-source)
+
+  (use-package calfw-ical
+    :ensure t
+    :defer t
+    :commands cfw:ical-create-source)
+
+  (use-package calfw-org
+    :ensure t
+    :defer t
+    :commands cfw:org-create-source
+    )
+
+  (defun z/open-calendar ()
+    (interactive)
+    (let* ((sources (list (cfw:cal-create-source "Green"))))
+      (when (boundp 'z/ical-source-list) ; z/ical-source-list can be set in custom.el, and cfw:ical-create-source will create one item
+        (setcdr sources z/ical-source-list)
+        )
+      (cfw:open-calendar-buffer :contents-sources sources)
+      )
+    )
+
+  (global-set-key (kbd "<f5>") 'z/open-calendar)
+
+  (set-time-zone-rule "GMT-8")
+  (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
+
+
+  ;; ;;; ------------------------------------------------------------
+  ;; ;;;
+  ;; ;;; todochiku
+  ;; ;;;
+  ;; ;;; ------------------------------------------------------------
+  ;; ;; (require-package 'todochiku)
+  ;; ;; (if *is-windows*
+  ;; ;;     (setq todochiku-command "C:/Program Files (x86)/full phat/Snarl/tools/heysnarl.exe")
+  ;; ;;   )
+  ;; ;; (require 'todochiku)
+  ;; ;; ;;; overwrite the origin one
+  ;; ;; (defun todochiku-get-arguments (title message icon sticky)
+  ;; ;;   "Gets todochiku arguments.
+  ;; ;; This would be better done through a customization probably."
+  ;; ;;   (cl-case system-type
+  ;; ;;     ('windows-nt (list (concat "notify" 
+  ;; ;;                                "?title=" (encode-coding-string title 'gb18030)
+  ;; ;;                                "&text=" (encode-coding-string message 'gb18030)
+  ;; ;;                                "&icon=" icon 
+  ;; ;;                                (when sticky "&timeout=0")))) ; modified this line for Snarl R3.1
+  ;; ;;     ('darwin (list title (if sticky "-s" "") "-m" message "--image" icon ))
+  ;; ;;     (t (list "-i" icon "-t"
+  ;; ;;              (if sticky "0" (int-to-string (* 1000 todochiku-timeout)))
+  ;; ;;              title message))))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; deft
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package deft
+    :ensure t
+    :bind
+    (("<f9>" . deft))
+    :config
+    (setq deft-default-extension "org")
+    (setq deft-extensions '("org"))
+    (setq deft-directory (locate-contents-file "deft"))
+    (setq deft-new-file-format "%Y-%m-%dT%H%M")
+    )
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; org-journal
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package org-journal
+    :ensure t
+    :bind
+    (("C-c C-j" . org-journal-new-entry))
+    :config
+    (setq org-journal-dir (locate-contents-file "org/journal")))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; diary-manager
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package diary-manager
+    :ensure t
+    :config
+    (setq diary-manager-location (locate-contents-file "org/diary"))
+    (setq diary-manager-enable-git-integration nil)
+    (setq diary-manager-entry-extension ".org")
+    )
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; org-kanban
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package org-kanban
+    :ensure t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; appointment
+  ;;;
+  ;;; ------------------------------------------------------------
+  (require 'appt)
+  (appt-activate t)
+
+  (setq appt-message-warning-time 10)
+  (setq appt-display-interval (1+ appt-message-warning-time)) ; disable multiple reminders
+  (setq appt-display-mode-line nil)
+
+  ;; use appointment data from org-mode
+  (defun z/org-agenda-to-appt ()
+    (interactive)
+    (setq appt-time-msg-list nil)
+    (org-agenda-to-appt))
+
+  ;; run when starting Emacs and everyday at 12:05am
+  (z/org-agenda-to-appt)
+  (run-at-time "12:05am" (* 24 3600) 'z/org-agenda-to-appt)
+
+  ;; automatically update appointments when TODO.txt is saved
+  (add-hook 'after-save-hook
+            '(lambda ()
+               (if (string= (buffer-file-name) (expand-file-name
+                                                (locate-contents-file "gtd/event.gtd.org")))
+                   (z/org-agenda-to-appt))))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; projects and publish
+  ;;;
+  ;;; ------------------------------------------------------------
+  (setq org-projects-base (locate-contents-file "org"))
+  (setq org-projects-publish (locate-contents-file "orgp"))
+
+  ;;; use a .org-project file in each project directory to define a project
+  ;;; org-publish-project-alist would be set just before we try to publish
+  (advice-add 'org-publish-current-project :around (lambda (orig-fun &rest args)
+                                                     (if (file-exists-p ".org-project")
+                                                         (progn
+                                                           (setq org-publish-project-alist ())
+                                                           (load-file ".org-project")
+                                                           (apply orig-fun args)
+                                                           (setq org-publish-project-alist ()))
+                                                       (message "no .org-project definition found.")
+                                                       )
+                                                     ))
+
+  (defun z/org-init-project-directory (&optional template)
+    "for now, use default template only"
+    (interactive)
+    (if (file-exists-p ".org-project")
+        (message ".org-project file already existed.")
+      (let* ((template-candidates (cl-remove-if (lambda (x)
+                                                  (or (string= "." x)
+                                                      (string= ".." x))
+                                                  )
+                                                (directory-files org-tpl-directory)))
+             (template (helm-comp-read "Select template: " template-candidates)))
+        (progn
+          (copy-file (concat org-tpl-directory (concat template "/.org-project")) ".org-project" )
+          (message ".org-project file created.")
+          ))
+      )
+    )
+
+  (define-key org-mode-map "\C-c\C-xh" 'z/org-init-project-directory)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; export
+  ;;;
+  ;;; ------------------------------------------------------------
+  ;; (define-key org-mode-map "\C-cp" 'org-publish-current-project)
+  (setq org-tpl-directory (locate-stuff-file "orgtemplate"))
+
+  (setq org-html-head-include-default-style nil)
+  (setq org-html-head-include-scripts nil)
+  (setq org-html-doctype "html5")
+  (setq org-html-html5-fancy t)
+  (setq org-publish-timestamp-directory (locate-runtimes-file "org-timestamps"))
+  (setq org-id-locations-file (locate-runtimes-file "org-id-locations"))
+  (setq org-export-with-sub-superscripts nil)
+  (setq org-html-htmlize-output-type 'inline-css)
+  (setq org-export-headline-levels 4)
+  (setq org-html-table-default-attributes
+        '(:border "0" :cellspacing "0" :cellpadding "6" :rules "none" :frame "none"))
+  (setq org-html-validation-link nil)
+
+  ;;; redefine the original one, move the svg related stuff
+  (eval-after-load "ox-html"
+    '(progn
+       (defun org-html--format-image (source attributes info)
+         "Return \"img\" tag with given SOURCE and ATTRIBUTES.
+  SOURCE is a string specifying the location of the image.
+  ATTRIBUTES is a plist, as returned by
+  `org-export-read-attribute'.  INFO is a plist used as
+  a communication channel."
+         (org-html-close-tag
+          "img"
+          (org-html--make-attribute-string
+           (org-combine-plists
+            (list :src source
+                  :alt (if (string-match-p "^ltxpng/" source)
+                           (org-html-encode-plain-text
+                            (org-find-text-property-in-string 'org-latex-src source))
+                         (file-name-nondirectory source)))
+            attributes))
+          info)
+         )
+       )
+    )
+
+  (use-package ox-reveal
+    :ensure t
+    :config
+    (setq org-reveal-root "file:///home/hekinami/git/reveal.js"))
+
+  ;;; latex
+  ;;; font: https://www.google.com/get/noto/help/cjk/
+  (setq org-latex-classes
+        '(("article"
+           "
+  \\documentclass[12pt,a4paper]{article}
+  \\usepackage[margin=2cm]{geometry}
+  \\usepackage{fontspec}
+  \\setromanfont{Noto Serif CJK SC:style=Regular}
+  \\setsansfont{Noto Sans CJK SC Regular}
+  \\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}
+  \\XeTeXlinebreaklocale \"zh\"
+  \\XeTeXlinebreakskip = 0pt plus 1pt
+  \\linespread{1.1}
+  \\usepackage{hyperref}
+  \\hypersetup{
+    colorlinks=true,
+    linkcolor=[rgb]{0,0.37,0.53},
+    citecolor=[rgb]{0,0.47,0.68},
+    filecolor=[rgb]{0,0.37,0.53},
+    urlcolor=[rgb]{0,0.37,0.53},
+    pagebackref=true,
+    linktoc=all,}
+  "
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+          ))
+
+  (setq org-latex-with-hyperref t)
+  (setq org-latex-default-packages-alist
+        '(("margin=2cm" "geometry" t)
+          ("" "fontspec" t)
+          ("AUTO" "inputenc" t)
+          ("" "hyperref" t)
+          ("" "fixltx2e" nil)
+          ("" "graphicx" t)
+          ("" "longtable" nil)
+          ("" "float" nil)
+          ("" "wrapfig" nil)
+          ("" "rotating" nil)
+          ("normalem" "ulem" t)
+          ("" "amsmath" t)
+          ("" "textcomp" t)
+          ("" "marvosym" t)
+          ("" "wasysym" t)
+          ("" "multicol" t)  ; 這是我另外加的，因為常需要多欄位文件版面。
+          ("" "amssymb" t)
+          ("" "indentfirst" t)
+          "\\tolerance=1000"))
+
+  ;;; font: https://www.google.com/get/noto/help/cjk/
+  (setq org-latex-classes
+        `(("article"
+           ,(string-join
+             '("\\documentclass[12pt,a4paper]{article}"
+               "[DEFAULT-PACKAGES]"
+               "[PACKAGES]"
+               "\\setromanfont{Noto Serif CJK SC:style=Regular}"
+               "\\setsansfont{Noto Sans CJK SC Regular}"
+               "\\setmonofont[Color={999999}]{Noto Sans Mono CJK SC Regular}"
+               "\\XeTeXlinebreaklocale \"zh\""
+               "\\XeTeXlinebreakskip = 0pt plus 1pt"
+               "\\linespread{1.1}"
+               "\\hypersetup{"
+               "  colorlinks=true,"
+               "  linkcolor=[rgb]{0,0.37,0.53},"
+               "  citecolor=[rgb]{0,0.47,0.68},"
+               "  filecolor=[rgb]{0,0.37,0.53},"
+               "  urlcolor=[rgb]{0,0.37,0.53},"
+               "  pagebackref=true,"
+               "  linktoc=all,}"
+               "[EXTRA]"
+               ) "\n")
+           ("\\section{%s}" . "\\section*{%s}")
+           ("\\subsection{%s}" . "\\subsection*{%s}")
+           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+          ))
+
+  (setq org-latex-pdf-process
+        '("xelatex -interaction nonstopmode -output-directory %o %f"
+          "xelatex -interaction nonstopmode -output-directory %o %f"
+          "xelatex -interaction nonstopmode -output-directory %o %f"))
+
+  (setq org-file-apps '((auto-mode . emacs)
+                        ("\\.mm\\'" . default)
+                        ("\\.x?html?\\'" . "firefox %s")
+                        ("\\.pdf\\'" . "xreader %s")
+                        ("\\.jpg\\'" . "xviewer %s")))
+
+  ;; ;;; ------------------------------------------------------------
+  ;; ;;;
+  ;; ;;; org-protocol
+  ;; ;;;
+  ;; ;;; ------------------------------------------------------------
+
+  ;; ;; Save following snippet to .reg file to register protocal in windows
+  ;; ;; ------------
+  ;; ;; REGEDIT4
+
+  ;; ;; [HKEY_CLASSES_ROOT\org-protocol]
+  ;; ;; @="URL:Org Protocol"
+  ;; ;; "URL Protocol"=""
+  ;; ;; [HKEY_CLASSES_ROOT\org-protocol\shell]
+  ;; ;; [HKEY_CLASSES_ROOT\org-protocol\shell\open]
+  ;; ;; [HKEY_CLASSES_ROOT\org-protocol\shell\open\command]
+  ;; ;; @="\"C:\\Programme\\Emacs\\emacs\\bin\\emacsclientw.exe\" \"%1\""
+  ;; ;; ------------
+
+  ;; ;; http://kb.mozillazine.org/Register_protocol
+  (use-package org-protocol)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; simple-httpd
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package simple-httpd
+    :ensure t
+    :config
+    (setq url-cache-directory (locate-runtimes-file "url/cache"))
+    (setq httpd-port 3721)
+    (setq httpd-root (locate-contents-file "orgp"))
+    (httpd-start)
+    (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
+                                                      (httpd-stop)
+                                                      (apply orig-fun args)
+                                                      )))
+
+  ;; ;;; ------------------------------------------------------------
+  ;; ;;;
+  ;; ;;; ledger
+  ;; ;;;
+  ;; ;;; ------------------------------------------------------------
+  (use-package ledger-mode
+    :ensure t
+    :mode "\\.ledger$" 
+    :config
+    (setq ledger-reconcile-default-commodity "CNY"))
+
+  (use-package ledger-capture
+    :after ledger-mode)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; org-brain
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package org-brain
+    :ensure t
+    :bind
+    (("C-z b" . org-brain-visualize))
+    :config
+    (setq org-id-track-globally t)
+    (push '("b" "Brain" plain (function org-brain-goto-end)
+            "* %i%?" :empty-lines 1)
+          org-capture-templates)
+    (setq org-brain-visualize-default-choices 'all)
+    (setq org-brain-title-max-length 12))
+
+  (use-package z-org-checkbox
+    :config
+    (z/checked-to-todo-enable)
+    :after org)
+
+  (use-package z-org-repeat
+    :config
+    (z/org-repeat-enable))
+
+  (use-package simplenote2
+    :ensure t)
+
+  #+END_SRC
+* sys
+  #+BEGIN_SRC emacs-lisp
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; dired
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package dired-x)
+  (use-package dired-single
+    :ensure t)
+
+  (defun my-dired-init ()
+    "Bunch of stuff to run for dired, either immediately or when it's
+     loaded."
+    ;; <add other stuff here>
+    (define-key dired-mode-map [return] 'dired-single-buffer)
+    (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+    (define-key dired-mode-map "^"
+      (function
+       (lambda nil (interactive) (dired-single-buffer ".."))))
+    (define-key dired-mode-map (kbd "K") 'dired-k))
+
+  ;; if dired's already loaded, then the keymap will be bound
+  (if (boundp 'dired-mode-map)
+      ;; we're good to go; just add our bindings
+      (my-dired-init)
+    ;; it's not loaded yet, so add our bindings to the load-hook
+    (add-hook 'dired-load-hook 'my-dired-init))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; shell
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package eshell
+    :config
+    (setq eshell-directory-name (locate-runtimes-file "eshell"))
+    (add-hook 'eshell-mode-hook
+              (lambda ()
+                (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
+                (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
+                )))
+
+  (use-package exec-path-from-shell
+    :ensure t
+    :init
+    (setq exec-path-from-shell-check-startup-files nil)
+    :config
+    (exec-path-from-shell-initialize))
+
+  #+END_SRC
+* erc
+  #+BEGIN_SRC emacs-lisp
+  (setq erc-log-channels-directory "~/.erc/logs/")
+
+  (defun z/erc-generate-log-file-name (buffer target nick server port)
+    "Generates a log-file name in the way ERC always did it.
+  This results in a file name of the form #channel!nick@server:port.txt.
+  This function is a possible value for `erc-generate-log-file-name-function'."
+    (let ((file (concat
+                 (if target (concat target "!"))
+                 nick "@" server "_" (cond ((stringp port) port)
+                                           ((numberp port)
+                                            (number-to-string port))) ".txt")))
+      ;; we need a make-safe-file-name function.
+      (convert-standard-filename file)))
+
+  (setq erc-generate-log-file-name-function 'z/erc-generate-log-file-name)
+  (setq erc-log-file-coding-system 'utf-8)
+
+  (defun z/bitlbee-connect ()
+    (interactive)
+    (erc :server "localhost"
+         :nick z/bitlbee-nickname))
+  ;;; set z/bitlbee-nickname in custom.el
+
+  (defalias 'z/erc 'z/bitlbee-connect)
+
+  ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
+  ;; http://emacs-fu.blogspot.de/2012/03/social-networking-with-bitlbee-and-erc.html
+  (defun fg/bitlbee-identify ()
+    (when (and (string= "localhost" erc-session-server)
+               (string= "&bitlbee" (buffer-name)))
+      (erc-message "PRIVMSG" (format "%s identify %s"
+                                     (erc-default-target)
+                                     z/bitlbee-password))))
+  ;;; set z/bitlbee-password in custom.el
+
+  (add-hook 'erc-join-hook 'fg/bitlbee-identify)
+
+  ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
+  (defun fg/notify-privmsg (proc parsed)
+    (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
+          (target (car (erc-response.command-args parsed)))
+          (msg (erc-response.contents parsed)))
+      (when (and (erc-current-nick-p target)
+                 (not (erc-is-message-ctcp-and-not-action-p msg)))
+        (todochiku-message (format "ERC message from: %s" nick)
+                           msg
+                           (todochiku-icon 'irc)
+                           nil)))
+    nil)
+
+  (add-hook 'erc-server-PRIVMSG-functions 'fg/notify-privmsg t)
+
+  #+END_SRC
+* dev
+  #+BEGIN_SRC emacs-lisp
+  (use-package compile
+    :bind ("<f12>" . compile))
+
+  (use-package magit
+    :ensure t
+    :init
+    (setq auto-revert-check-vc-info t)
+    :bind
+    (("C-x g" . magit-status)
+     ("C-x M-g" . magit-dispatch-popup)))
+
+  (use-package dired-k
+    :ensure t)
+
+  (use-package diff-hl
+    :ensure t
+    :init
+    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+    :config    
+    (global-diff-hl-mode 1))
+
+  (use-package eshell-git-prompt
+    :ensure t
+    :config
+    (eshell-git-prompt-use-theme 'git-radar))
+
+  (use-package git-messenger
+    :ensure t
+    :bind ("C-x v p" . git-messenger:popup-message))
+
+  (use-package git-timemachine
+    :ensure t
+    :commands (git-timemachine git-timemachine-toggle))
+
+  (use-package realgud
+    :defer t
+    :ensure t)
+
+  (use-package edbi
+    :defer t
+    :ensure t
+    :config
+    (setq edbi:query-result-fix-header nil)
+    (setq edbi:ds-history-file (locate-runtimes-file ".edbi-ds-history")))
+
+  (use-package edbi-database-url
+    :ensure t
+    :commands (edbi-database-url))
+  #+END_SRC
+* lang
+  #+BEGIN_SRC emacs-lisp
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; javascript
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package js2-mode
+    :ensure t
+    :defer t
+    :mode ("\\.js\\'" . js2-mode)
+    :init
+    (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2"))))
+
+  (use-package tern
+    :ensure t
+    :defer t
+    :init
+    (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+    :after js2-mode)
+
+  (use-package tern-auto-complete
+    :ensure t
+    :defer
+    :init
+    (add-hook 'js2-mode-hook 'auto-complete-mode)
+    (add-hook 'js2-mode-hook 'tern-ac-setup)
+    :after (js2-mode tern))
+
+  (use-package js-comint
+    :ensure t
+    :defer t
+    :init
+    (setenv "NODE_NO_READLINE" "1")		;http://stackoverflow.com/questions/9390770/node-js-prompt-can-not-show-in-eshell
+    :config
+    (setq inferior-js-program-command "node")
+
+    (add-hook
+     'js2-mode-hook
+     '(lambda () 
+        (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+        (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+        (local-set-key "\C-cb" 'js-send-buffer)
+        (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+        (local-set-key "\C-cl" 'js-load-file-and-go)
+        ))  
+    )
+
+  (use-package indium
+    :ensure t
+    :config
+    (add-hook 'js2-mode-hook #'indium-interaction-mode))
+
+  (use-package skewer-mode
+    :ensure t
+    :defer t)
+
+  (use-package json-mode
+    :ensure t
+    :defer t)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; lisp
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package paredit
+    :ensure t
+    :diminish paredit-mode
+    :commands paredit-mode
+    :defer t)
+
+  (add-hook
+   'emacs-lisp-mode-hook
+   (lambda ()
+     (show-paren-mode 1)
+     (turn-on-eldoc-mode)
+     (paredit-mode)
+     (auto-complete-mode)
+     (local-set-key (kbd "C-c s") 'elisp-index-search)))
+
+  (add-hook
+   'lisp-interaction-mode-hook
+   (lambda ()
+     (add-to-list 'ac-sources 'ac-source-variables)
+     (add-to-list 'ac-sources 'ac-source-symbols)
+     (add-to-list 'ac-sources 'ac-source-functions)
+     (add-to-list 'ac-sources 'ac-source-features)
+     (auto-complete-mode)
+     ))
+
+  (add-hook
+   'ielm-mode-hook
+   (lambda ()
+     (add-to-list 'ac-sources 'ac-source-variables)
+     (add-to-list 'ac-sources 'ac-source-symbols)
+     (add-to-list 'ac-sources 'ac-source-functions)
+     (add-to-list 'ac-sources 'ac-source-features)
+     (auto-complete-mode)
+     (eldoc-mode)
+     ))
+
+  (use-package slime
+    :ensure t
+    :defer t
+    :config
+    (setq inferior-lisp-program "sbcl")
+    (slime-setup '(slime-fancy)))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; python
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package python
+    :config
+    (setq python-indent-guess-indent-offset nil))
+
+  (use-package python-environment
+    :config
+    (setq python-environment-directory (locate-runtimes-file ".python-environments")))
+
+  (use-package jedi
+    :ensure t
+    :init
+    (setq jedi:environment-root "py3jedi")
+    (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+    (setq jedi:setup-keys t)
+    (setq jedi:complete-on-dot t)
+    (setq jedi:tooltip-method nil)
+    :config
+    (add-hook 'python-mode-hook
+              (lambda ()
+                (jedi:setup)
+                (yas-minor-mode)
+                (setq ac-sources (append ac-sources '(ac-source-yasnippet))))))
+
+  (use-package pyvenv
+    :ensure t
+    :after jedi
+    :init
+    ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
+    (with-eval-after-load 'jedi
+      (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
+        (add-hook hook
+                  (lambda ()
+                    (if (and pyvenv-virtual-env
+                             (not (member pyvenv-virtual-env jedi:server-args))
+                             (not (file-remote-p pyvenv-virtual-env)))
+                        (setq jedi:server-args (list "--virtual-env" pyvenv-virtual-env))
+                      (setq jedi:server-args nil))
+                    (jedi:stop-server))))))
+
+  (use-package python-django
+    :ensure t
+    :bind ("C-x j" . python-django-open-project))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; rust
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package rust-mode
+    :ensure t
+    :defer t)
+
+  (use-package racer
+    :ensure t
+    :init
+    ;;; set racer-rust-src-path, racer-cmd in custom.el
+
+    (add-hook 'rust-mode-hook (lambda ()
+                                (racer-mode)
+                                (if (not (string-match "rust" compile-command))
+                                    (set (make-local-variable 'compile-command)
+                                         "cargo run"))
+                                ))
+    :after rust-mode)
+
+  (use-package ac-racer
+    :ensure t
+    :init
+    (add-hook 'racer-mode-hook (lambda ()
+                                 (eldoc-mode)
+                                 (ac-racer-setup)
+                                 ;; workaround to prevent completion menu open after type space
+                                 (ac-define-source racer
+                                   '((prefix . ac-racer--prefix)
+                                     (candidates . ac-racer--candidates)
+                                     (requires . 1)))
+                                 ))
+    :after (rust-mode racer))
+
+  (use-package rust-playground
+    :ensure t
+    :config
+    (setq rust-playground-basedir (locate-contents-file "rust-playground") ))
+
+  (use-package toml-mode
+    :ensure t
+    :defer t
+    :mode ("Cargo.lock\\'" . toml-mode))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; ruby
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package robe
+    :ensure t
+    :defer t
+    :init
+    (add-hook 'ruby-mode-hook 'robe-mode)
+    :config
+    (add-hook 'robe-mode-hook 'ac-robe-setup))
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; go
+  ;;;
+  ;;; ------------------------------------------------------------
+  ;;; configuration based on http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
+  ;;; go get github.com/rogpeppe/godef
+  ;;; go get -u github.com/nsf/gocode
+  (use-package go-mode
+    :ensure t
+    :defer t
+    :config
+    (add-hook 'go-mode-hook
+              (lambda ()
+                (setq tab-width 4)
+                (setq standard-indent 4)
+                (setq indent-tabs-mode nil)
+                (local-set-key (kbd "C-c .") 'godef-jump)
+                (local-set-key (kbd "C-c ,") 'pop-tag-mark)
+                (auto-complete-mode 1)
+                (if (not (string-match "go" compile-command))
+                    (set (make-local-variable 'compile-command)
+                         "go build -v && go test -v && go vet"))
+                )))
+
+  (use-package go-autocomplete
+    :ensure t
+    :after go-mode)
+
+  ;;; ------------------------------------------------------------
+  ;;;
+  ;;; yaml
+  ;;;
+  ;;; ------------------------------------------------------------
+  (use-package yaml-mode
+    :ensure t
+    :defer t)
+
+  (use-package solidity-mode
+    :ensure t
+    :mode ("\\.sol\\'" . solidity-mode)
+    :config
+    (setq c-basic-offset 4))
+  #+END_SRC
+* web
+  #+BEGIN_SRC emacs-lisp
+  (use-package ac-html
+    :ensure t
+    :defer t)
+
+  (use-package web-mode
+    :ensure t
+    :defer t
+    :mode (("\\.phtml\\'" . web-mode)
+           ("\\.tpl\\'" . web-mode)
+           ("\\.tpl\\.php\\'" . web-mode)
+           ("layout.*\\.php\\'" . web-mode)
+           ("\\.jsp\\'" . web-mode)
+           ("\\.as[cp]x\\'" . web-mode)
+           ("\\.erb\\'" . web-mode)
+           ("\\.mustache\\'" . web-mode)
+           ("\\.djhtml\\'" . web-mode)
+           ("\\.html\\'" . web-mode)
+           ("\\.htm\\'" . web-mode)
+           ("\\.swig\\'" . web-mode))
+    :config
+    (setq sgml-basic-offset 4)
+    (setq web-mode-engines-alist
+          '(("django" . "\\.swig\\'")
+            ("django" . "\\.djhtml\\'")))
+    ;;; redefine the django engine keywords with new ones
+    (setq web-mode-django-keywords
+          (regexp-opt
+           '("and" "as" "assign"
+             "break" "cache" "call" "case" "context" "continue"
+             "do" "flush" "from" "ignore" "import" "in" "is"
+             "layout" "load" "missing" "none" "not" "or" "pluralize"
+             "random" "set" "unless" "use" "var"
+             "with"                         ; new added
+             )))
+    (setq web-mode-markup-indent-offset 4
+          web-mode-css-indent-offset 4
+          web-mode-code-indent-offset 4
+          web-mode-indent-style 2
+          web-mode-style-padding 1
+          web-mode-script-padding 1
+          web-mode-block-padding 0
+          web-mode-comment-style 2
+          web-mode-enable-auto-pairing nil)
+    (setq web-mode-enable-current-column-highlight t)
+    (setq web-mode-enable-current-element-highlight t)
+    (add-hook
+     'web-mode-hook
+     (lambda ()
+       (setq-local
+        electric-pair-pairs
+        (append electric-pair-pairs '((?% . ?%))))
+       (emmet-mode)
+       (setq emmet-preview-default t)
+       (auto-complete-mode)
+       (require 'ac-html)
+       (add-to-list
+        'web-mode-ac-sources-alist
+        '("html" . (
+                    ;; attribute-value better to be first
+                    ac-source-html-attribute-value
+                    ac-source-html-tag
+                    ac-source-html-attribute)))
+
+       (add-to-list
+        'web-mode-ac-sources-alist
+        '("css" . (ac-source-css-property)))
+       )))
+
+  (use-package emmet-mode
+    :ensure t
+    :defer t
+    :init
+    (add-hook 'css-mode-hook 'emmet-mode))
+
+  (use-package rainbow-mode
+    :ensure t
+    :defer t)
+
+  (use-package less-css-mode
+    :ensure t
+    :defer t)
+
+  (use-package sass-mode
+    :ensure t
+    :defer t)
+
+  (use-package scss-mode
+    :ensure t
+    :defer t)
+
+  (use-package impatient-mode
+    :ensure t
+    :defer t)
+
+  (use-package restclient
+    :ensure t
+    :defer t
+    :config
+    (defun restclient nil
+      (interactive)
+      (switch-to-buffer (generate-new-buffer "*restclient*"))
+      (restclient-mode))
+    )
+
+  (use-package php-mode
+    :ensure t
+    :mode ("\\.php\\'" . php-mode))
+
+  (use-package geben
+    :ensure t
+    :config
+    (setq geben-pause-at-entry-line nil)
+    (setq geben-display-window-function 'pop-to-buffer-same-window)
+    (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
+
+  (use-package web-beautify
+    :ensure t
+    :bind (:map
+           js2-mode-map
+           ("C-c b" . web-beautify-js)
+           :map
+           json-mode-map
+           ("C-c b" . web-beautify-js)
+           :map
+           css-mode-map
+           ("C-c b" . web-beautify-css)
+           :map
+           html-mode-map
+           ("C-c b" . web-beautify-html))
+    :after (js2-mode json-mode css-mode sgml-mode))
+
+  (use-package apib-mode
+    :ensure t
+    :defer t
+    :mode ("\\.apib\\'" . apib-mode))
+  #+END_SRC
+* media
+  #+BEGIN_SRC emacs-lisp
+  (use-package emms
+    :ensure t
+    :defer t
+    :init
+    (setq default-process-coding-system '(utf-8 . utf-8))
+    :config
+    (require 'emms-setup)
+    (emms-standard)
+    (emms-default-players))
+  #+END_SRC

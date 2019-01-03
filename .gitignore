@@ -13,3 +13,4 @@ url/*
 session.*
 cnfonts/*
 emms/*
+settings.el
