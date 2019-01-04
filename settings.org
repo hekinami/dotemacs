@@ -1,712 +1,639 @@
-* path
-  #+BEGIN_SRC emacs-lisp
-  (add-to-list 'load-path (locate-user-emacs-file "init/"))
-  (add-to-list 'load-path (locate-user-emacs-file "extension/"))
-  #+END_SRC
-* prepare
-  #+BEGIN_SRC emacs-lisp
-  ;;; customization group for z's
-  (defgroup z nil
-    "z's customization."
-    :group 'emacs)
+* global
+** behavior
+   #+BEGIN_SRC emacs-lisp
+   (setq custom-file (locate-user-emacs-file "custom.el"))
 
-  ;;; performance
-  (defun z/time-difference-in-millis (start end)
-    (* 1000.0 (float-time (time-subtract end start))))
+   ;;; https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
+   (setq ad-redefinition-action 'accept)
 
-  (defvar z/feature-loading-times nil
-    "A list of (FEATURE . LOAD-DURATION).
-  LOAD-DURATION is the time taken in milliseconds to load FEATURE.")
+   (fset 'yes-or-no-p 'y-or-n-p)
+   #+END_SRC
+** information
+   #+BEGIN_SRC emacs-lisp
+   (setq user-full-name "Zou Bibo")
+   (setq user-mail-address "hekinami@amiunique.net")
+   #+END_SRC
+** configuration helpers
+*** file location
+    #+BEGIN_SRC emacs-lisp
+    (defun locate-runtimes-file (file)
+      (let ((base (locate-user-emacs-file "runtimes/")))
+	(make-directory base t)
+	(concat base file)))
 
-  (defadvice require (around z/record-feature-loading-times (feature &optional filename noerror) activate)
-    "Note in `z/feature-loading-times' the time taken to require each feature."
-    (let* ((already-loaded (memq feature features))
-           (require-start-time (and (not already-loaded) (current-time))))
-      (prog1
-          ad-do-it
-        (when (and (not already-loaded) (memq feature features))
-          (let ((time (z/time-difference-in-millis require-start-time (current-time) )))
-            (add-to-list 'z/feature-loading-times
-                         (cons feature time)
-                         t))))))
+    (defun locate-contents-file (file)
+      (let ((base (locate-user-emacs-file "contents/")))
+	(make-directory base t)
+	(concat base file)))
 
-  (defun locate-runtimes-file (file)
-    (let ((base (locate-user-emacs-file "runtimes/")))
-      (make-directory base t)
-      (concat base file)))
+    (defun locate-stuff-file (file)
+      (let ((base (locate-user-emacs-file "stuff/")))
+	(make-directory base t)
+	(concat base file)))
 
-  (defun locate-contents-file (file)
-    (let ((base (locate-user-emacs-file "contents/")))
-      (make-directory base t)
-      (concat base file)))
+    (defun locate-tools-file (file)
+      (let ((base (locate-user-emacs-file "tools/")))
+	(make-directory base t)
+	(concat base file)))
+    #+END_SRC
+*** time
+    #+BEGIN_SRC emacs-lisp
+    (defun z/timestamp-format-setting ()
+      (set (make-local-variable 'system-time-locale) "C")
+      (set (make-local-variable 'system-messages-locale) "C")
+      )
+    #+END_SRC
+** package management
+*** package.el
+    #+BEGIN_SRC emacs-lisp
+      (setq package-enable-at-startup nil)
+      (package-initialize)
+      (setq package-archives
+	    '(;; ("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+	      ;; ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+	      ;; ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
+	      ;; ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
+	      ;; ("org-cn" . "http://elpa.emacs-china.org/org/")
+	      ;; ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
+	      ;; ("user42-cn" . "http://elpa.emacs-china.org/user42/")
+	      ("melpa" . "http://melpa.org/packages/")
+	      ("org" . "http://orgmode.org/elpa/")
+	      ("melpa-stable" . "http://stable.melpa.org/packages/")
+	      ))
+    #+END_SRC
+*** assistent
+**** a common function for installing package from elpa
+     #+BEGIN_SRC emacs-lisp
+     (defun require-package (package &optional min-version no-refresh)
+       "Install given PACKAGE, optionally requiring MIN-VERSION.
+       If NO-REFRESH is non-nil, the available package lists will not be
+       re-downloaded in order to locate PACKAGE."
+       (if (package-installed-p package min-version)
+           t
+         (if (or (assoc package package-archive-contents) no-refresh)
+             (package-install package)
+           (progn
+             (package-refresh-contents)
+             (require-package package min-version t)))))
+     #+END_SRC
+**** benchmark
+     #+BEGIN_SRC emacs-lisp
+     (require-package 'benchmark-init)
+     (require 'benchmark-init)
+     #+END_SRC
+**** use-package
+     #+BEGIN_SRC emacs-lisp
+     (require-package 'use-package)
+     #+END_SRC
 
-  (defun locate-stuff-file (file)
-    (let ((base (locate-user-emacs-file "stuff/")))
-      (make-directory base t)
-      (concat base file)))
+**** quelpa
+     #+BEGIN_SRC emacs-lisp
+     (use-package quelpa-use-package
+       :ensure t
+       :init
+       (setq quelpa-update-melpa-p nil)) 
+     #+END_SRC
 
-  (defun locate-tools-file (file)
-    (let ((base (locate-user-emacs-file "tools/")))
-      (make-directory base t)
-      (concat base file)))
+**** trying
+     #+BEGIN_SRC emacs-lisp
+     (use-package try
+       :defer t
+       :ensure t)
+     #+END_SRC
+*** extension
+**** use packages written by self
+     #+BEGIN_SRC emacs-lisp
+     (add-to-list 'load-path (locate-user-emacs-file "extension/"))
+     #+END_SRC
 
-  (require 'cl)
-  (require 'cl-lib)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; package management infrastructure
-  ;;;
-  ;;; ------------------------------------------------------------
-  (setq package-enable-at-startup nil)
-  (package-initialize)
-
-  (defun require-package (package &optional min-version no-refresh)
-    "Install given PACKAGE, optionally requiring MIN-VERSION.
-  If NO-REFRESH is non-nil, the available package lists will not be
-  re-downloaded in order to locate PACKAGE."
-    (if (package-installed-p package min-version)
-        t
-      (if (or (assoc package package-archive-contents) no-refresh)
-          (package-install package)
-        (progn
-          (package-refresh-contents)
-          (require-package package min-version t)))))
-
-  (setq package-archives
-        '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
-          ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-          ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
-          ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
-          ("org-cn" . "http://elpa.emacs-china.org/org/")
-          ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
-          ("user42-cn" . "http://elpa.emacs-china.org/user42/")
-          ("melpa" . "http://melpa.org/packages/")
-          ("org" . "http://orgmode.org/elpa/")
-          ("melpa-stable" . "http://stable.melpa.org/packages/")
-          )
-        )
-
-  (setq ad-redefinition-action 'accept)   ;https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
-
-  (require-package 'use-package)
-
-  (use-package quelpa-use-package
-    :ensure t
-    :init
-    (setq quelpa-update-melpa-p nil)) 
-
-  (use-package try
-    :defer t
-    :ensure t)
-  #+END_SRC
-* looks
-  #+BEGIN_SRC emacs-lisp
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; theme
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package molokai-theme
-    :ensure t
-    :config
-    (load-theme 'molokai t)
-    (setq z/current-theme-name "molokai"))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; fonts
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package cnfonts
-    :ensure t
-    :config
-    (cnfonts-enable))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; frame
-  ;;;
-  ;;; ------------------------------------------------------------
-  (setq frame-title-format "[%F]")
-
-  (setq init-frame-alist
-        (append
-         `((height . 25)
-           (width . 100)) default-frame-alist))
-
-  (setq default-frame-alist
-        (append
-         `((height . 25)
-           (width . 100)) default-frame-alist))
-
-  (use-package frame
-    :bind (("C-x C-a f" . toggle-frame-fullscreen)
-           ("C-x C-a m" . toggle-frame-maximized)))
-
-  (use-package z-ui-extension
-    :bind (("C-x C-a t" . z/toggle-transparency)
-           ("C-x \\" . z/swap-window-positions)
-           ("C-x |" . z/toggle-window-split)))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; miscellaneous
-  ;;;
-  ;;; ------------------------------------------------------------
-  (global-unset-key (kbd "C-z"))
-
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (menu-bar-mode -1)
-  (global-hl-line-mode 1)
-  (column-number-mode 1)
-  (setq visible-bell t)
-  (setq inhibit-startup-message t)
-  (setq initial-scratch-message nil)
-
-  (global-set-key (kbd "<f10>") 'menu-bar-mode)
-
-  (use-package sr-speedbar
-    :ensure t
-    :bind ("C-z s" . sr-speedbar-toggle))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; cursor
-  ;;;
-  ;;; ------------------------------------------------------------
-  ;; (use-package highlight-tail
-  ;;   :ensure t
-  ;;   :config
-  ;;   (highlight-tail-mode)
-  ;;   (setq highlight-tail-timer 0.01)
-  ;;   (diminish 'highlight-tail-mode))
-
-  (blink-cursor-mode 1)
-  (setq blink-cursor-blinks 0)
-
-  (setq hcz-set-cursor-color-color "")
-  (setq hcz-set-cursor-color-buffer "")
-  (defun hcz-set-cursor-color-according-to-mode ()
-    "change cursor color according to some minor modes."
-    ;; set-cursor-color is somewhat costly, so we only call it when needed:
-    (let ((color
-           (if buffer-read-only "blue"
-             (if overwrite-mode "red"
-               "white"))))
-      (unless (and
-               (string= color hcz-set-cursor-color-color)
-               (string= (buffer-name) hcz-set-cursor-color-buffer))
-        (set-cursor-color (setq hcz-set-cursor-color-color color))
-        (setq hcz-set-cursor-color-buffer (buffer-name)))))
-  (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; scrollbar
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package yascroll
-    :ensure t
-    :config
+** appearence
+*** hide something first
+    #+BEGIN_SRC emacs-lisp
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)
     (scroll-bar-mode -1)
-    (global-yascroll-bar-mode))
+    (setq visible-bell t)
+    (setq inhibit-startup-message t)
+    (setq initial-scratch-message nil)
+    #+END_SRC
+*** theme
+    #+BEGIN_SRC emacs-lisp
+    (use-package molokai-theme
+      :ensure t
+      :config
+      (load-theme 'molokai t))
+    #+END_SRC
+*** fonts
+    #+BEGIN_SRC emacs-lisp
+    (use-package cnfonts
+      :ensure t
+      :config
+      (cnfonts-enable))
+    #+END_SRC
+*** frame
+    #+BEGIN_SRC emacs-lisp
+    (setq frame-title-format "[%F]")
 
-  (setq auto-hscroll-mode 'current-line)
+    (setq init-frame-alist
+          (append
+           `((height . 25)
+             (width . 100)) default-frame-alist))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; assistant
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package on-screen
-    :ensure t
-    :config
-    (on-screen-global-mode +1))
+    (setq default-frame-alist
+          (append
+           `((height . 25)
+             (width . 100)) default-frame-alist))
 
-  (use-package linum
-    :defer t
-    :config
-    (add-hook 'linum-before-numbering-hook
-              (lambda ()
-                (set-face-foreground 'linum "#4B8DF8"))))
+    (use-package frame
+      :bind (("C-x C-a f" . toggle-frame-fullscreen)
+             ("C-x C-a m" . toggle-frame-maximized)))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; modeline
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package smart-mode-line
-    :ensure t
-    :config
-    (setq sml/no-confirm-load-theme t)
-    (sml/setup)
-    (setq sml/mode-width 5)
-    (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t))
+    (use-package z-ui-extension
+      :bind (("C-x C-a t" . z/toggle-transparency)
+             ("C-x \\" . z/swap-window-positions)
+             ("C-x |" . z/toggle-window-split)))
+    #+END_SRC
+*** modeline
+    #+BEGIN_SRC emacs-lisp
+    (use-package smart-mode-line
+      :ensure t
+      :config
+      (setq sml/no-confirm-load-theme t)
+      (sml/setup)
+      (setq sml/mode-width 5)
+      (add-to-list 'sml/replacer-regexp-list '("^:ED:gtd/" ":GTD:") t))
 
-  (use-package smart-mode-line-powerline-theme
-    :ensure t
-    :config
-    (sml/apply-theme 'powerline)
-    (setq powerline-default-separator 'arrow-fade))
+    (use-package smart-mode-line-powerline-theme
+      :ensure t
+      :config
+      (sml/apply-theme 'powerline)
+      (setq powerline-default-separator 'arrow-fade))
 
-  (require-package 'spacemacs-theme)      ;use-package don't work, why?
+    (require-package 'spacemacs-theme)      ;use-package don't work, why?
 
-  (use-package spaceline
-    :ensure t
-    :config
-    (require 'spaceline-config)
-    (spaceline-spacemacs-theme)
-    (add-hook
-     'spaceline-pre-hook
-     (lambda nil
-       (set-face-attribute 'mode-line nil  :height 100)
-       (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
-       (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
-       (set-face-attribute 'sml/vc nil :foreground "lawn green")
-       (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
-       (set-face-attribute 'sml/vc-edited nil :foreground "red")
-       ))
-    (setq spaceline-minor-modes-separator nil))
+    (use-package spaceline
+      :ensure t
+      :config
+      (require 'spaceline-config)
+      (spaceline-spacemacs-theme)
+      (add-hook
+       'spaceline-pre-hook
+       (lambda nil
+         (set-face-attribute 'mode-line nil  :height 100)
+         (set-face-attribute 'sml/filename nil :background (face-attribute 'powerline-active1 :background))
+         (set-face-attribute 'sml/vc nil :background (face-attribute 'mode-line :background))
+         (set-face-attribute 'sml/vc nil :foreground "lawn green")
+         (set-face-attribute 'sml/vc-edited nil :background (face-attribute 'mode-line :background))
+         (set-face-attribute 'sml/vc-edited nil :foreground "red")
+         ))
+      (setq spaceline-minor-modes-separator nil))
 
-  (use-package diminish
-    :ensure t)
+    (use-package diminish
+      :ensure t)
+    #+END_SRC
+*** cursor
+    #+BEGIN_SRC emacs-lisp
+    (blink-cursor-mode 1)
+    (setq blink-cursor-blinks 0)
 
-  (use-package mode-icons
-    :ensure t
-    :config
-    (mode-icons-mode))
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; window
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package popwin
-    ;; | Key    | Command                               |
-    ;; |--------+---------------------------------------|
-    ;; | b      | popwin:popup-buffer                   |
-    ;; | l      | popwin:popup-last-buffer              |
-    ;; | o      | popwin:display-buffer                 |
-    ;; | C-b    | popwin:switch-to-last-buffer          |
-    ;; | C-p    | popwin:original-pop-to-last-buffer    |
-    ;; | C-o    | popwin:original-display-last-buffer   |
-    ;; | SPC    | popwin:select-popup-window            |
-    ;; | s      | popwin:stick-popup-window             |
-    ;; | 0      | popwin:close-popup-window             |
-    ;; | f, C-f | popwin:find-file                      |
-    ;; | e      | popwin:messages                       |
-    ;; | C-u    | popwin:universal-display              |
-    ;; | 1      | popwin:one-window                     |
-    :ensure t
-    :config
-    (popwin-mode)
-    (bind-key "C-z p" popwin:keymap)
-    (push '("*Backtrace*" :height 15) popwin:special-display-config)
-    (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
-    (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
-    (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-    ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-    ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
-    (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
-    (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
-    (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
-    (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
-    (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
-    (push '("*js*" :position bottom :width 20) popwin:special-display-config))
+    (setq hcz-set-cursor-color-color "")
+    (setq hcz-set-cursor-color-buffer "")
+    (defun hcz-set-cursor-color-according-to-mode ()
+      "change cursor color according to some minor modes."
+      ;; set-cursor-color is somewhat costly, so we only call it when needed:
+      (let ((color
+             (if buffer-read-only "blue"
+               (if overwrite-mode "red"
+                 "white"))))
+        (unless (and
+                 (string= color hcz-set-cursor-color-color)
+                 (string= (buffer-name) hcz-set-cursor-color-buffer))
+          (set-cursor-color (setq hcz-set-cursor-color-color color))
+          (setq hcz-set-cursor-color-buffer (buffer-name)))))
+    (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
+    #+END_SRC
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; shackle
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package shackle
-    :ensure t
-    :config
-    (setq shackle-rules '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
-                          (magit-status-mode :select t :inhibit-window-quit t :same t)
-                          (magit-log-mode :select t :inhibit-window-quit t :same t)
-                          (magit-revision-mode :select t :inhibit-window-quit t :align right :size 0.7)
-                          (magit-diff-mode :noselect t :align right :size 0.7)
-                          ("*hackernews top stories*" :same t)
-                          ))
-    (shackle-mode))
+    #+BEGIN_SRC emacs-lisp
+    ;; (use-package highlight-tail
+    ;;   :ensure t
+    ;;   :config
+    ;;   (highlight-tail-mode)
+    ;;   (setq highlight-tail-timer 0.01)
+    ;;   (diminish 'highlight-tail-mode))
+    #+END_SRC
+*** scrollbar
+    #+BEGIN_SRC emacs-lisp
+    (use-package yascroll
+      :ensure t
+      :config
+      (global-yascroll-bar-mode))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; utility
-  ;;;
-  ;;; ------------------------------------------------------------
-  (defun z/timestamp-format-setting ()
-    (set (make-local-variable 'system-time-locale) "C")
-    (set (make-local-variable 'system-messages-locale) "C")
-    )
+    (setq auto-hscroll-mode 'current-line)
+    #+END_SRC
+*** icons
+    #+BEGIN_SRC emacs-lisp
+    (use-package mode-icons
+      :ensure t
+      :config
+      (mode-icons-mode))
 
-  (use-package all-the-icons
-    ;; M-x all-the-icons-install-fonts
-    :ensure t)
+    (use-package all-the-icons
+      ;; M-x all-the-icons-install-fonts
+      :ensure t)
+    #+END_SRC
+*** indicators
+    #+BEGIN_SRC emacs-lisp
+    (global-hl-line-mode 1)
+    (column-number-mode 1)
 
-  #+END_SRC
-* framework
-  #+BEGIN_SRC emacs-lisp
-  (use-package which-key
-    :ensure t
-    :diminish which-key-mode
-    :config
-    (which-key-mode))
+    (use-package on-screen
+      :ensure t
+      :config
+      (on-screen-global-mode +1))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; auto-complete
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package auto-complete
-    :ensure t
-    :diminish auto-complete-mode
-    :bind
-    (:map ac-completing-map
-          ("M-/" . ac-stop))
-    :config
-    (ac-linum-workaround)
-    (require 'auto-complete-config)
-    (add-to-list 'ac-dictionary-directories (locate-contents-file "ac-dict"))
-    (setq ac-comphist-file (locate-runtimes-file "ac-comphist.dat")) 
-    (ac-config-default)
-    (global-auto-complete-mode t)
-    (ac-set-trigger-key "TAB")
-    (ac-set-trigger-key "<tab>"))
+    (use-package linum
+      :defer t
+      :config
+      (add-hook 'linum-before-numbering-hook
+                (lambda ()
+                  (set-face-foreground 'linum "#4B8DF8"))))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; yasnippet
-  ;;;
-  ;;; ------------------------------------------------------------
-  (add-hook 'after-init-hook 'yas-global-mode)
-  (use-package yasnippet
-    :ensure t
-    :diminish yas-minor-mode
-    :bind
-    (:map yas-minor-mode-map
-          ("<tab>" . nil)
-          ("TAB" . nil)
-          ("<backtab>" . yas-expand))
-    :config
+    (use-package fancy-narrow
+      :ensure t
+      :diminish fancy-narrow-mode
+      :config
+      (fancy-narrow-mode))
+
+    (use-package uniquify
+      :config
+      (setq  uniquify-buffer-name-style 'post-forward
+             uniquify-separator ":"))
+    #+END_SRC
+** desktop, session, history
+   #+BEGIN_SRC emacs-lisp
+   (use-package savehist
+     :config
+     (setq savehist-file (locate-runtimes-file "history")))
+
+   (defun emacs-session-filename (session-id)
+     "override the original one"
+     (let ((basename (concat "runtimes/session." session-id)))
+       (locate-user-emacs-file basename
+                               (concat ".emacs-" basename))))
+   (setq auto-save-list-file-prefix (locate-runtimes-file "auto-save-list/.saves-"))
+   (setq tramp-persistency-file-name (locate-runtimes-file "tramp"))
+   (global-auto-revert-mode)
+   (setq make-backup-files nil)
+   (auto-compression-mode t)
+   (auto-image-file-mode t)
+   (setq auto-save-mode -1)
+   (desktop-save-mode 0)
+   #+END_SRC
+** server
+   #+BEGIN_SRC emacs-lisp
+   (setq server-auth-dir (locate-runtimes-file "emacsserver"))
+   (unless (and (functionp 'server-running-p)
+                (server-running-p))
+     (server-start))   
+   #+END_SRC
+
+** key configuration
+   #+BEGIN_SRC emacs-lisp
+   (global-unset-key (kbd "C-z"))
+   (global-unset-key (kbd "C-x c"))
+
+   (global-set-key (kbd "<f10>") 'menu-bar-mode)
+   (global-set-key (kbd "C-c r") 'replace-regexp)
+   (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
+   (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
+   #+END_SRC
+* navigation
+** helm
+   #+BEGIN_SRC emacs-lisp
+   (use-package helm
+     :ensure t
+     :diminish helm-mode
+     :bind
+     (("C-c h" . helm-command-prefix)
+      ("M-x" . helm-M-x)
+      ("C-x r l" . helm-filtered-bookmarks)
+      ("C-x C-f" . helm-find-files))
+     :init
+     (setq bookmark-file (locate-runtimes-file "bookmarks")) ; must be set before enable helm-mode
+     :config
+     (require 'helm-config)
+     (add-hook
+      'helm-minibuffer-set-up-hook
+      (lambda ()
+        (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
+        (set-face-attribute 'helm-source-header nil :background nil)
+        (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
+        ))
+     (helm-mode 1))
+   #+END_SRC
+** bookmark
+   #+BEGIN_SRC emacs-lisp
+   (use-package bm
+     :ensure t
+     :bind
+     (("C-<f2>" . bm-toggle)
+      ("<f2>" . bm-next)
+      ("S-<f2>" . bm-previous)))
+
+   (use-package helm-bm
+     :ensure t
+     :bind ("C-S-<f2>" . helm-bm))
+   #+END_SRC
+** hints
+   #+BEGIN_SRC emacs-lisp
+   (use-package which-key
+     :ensure t
+     :diminish which-key-mode
+     :config
+     (which-key-mode))
+   #+END_SRC
+** speedbar
+   #+BEGIN_SRC emacs-lisp
+   (use-package sr-speedbar
+     :ensure t
+     :bind ("C-z s" . sr-speedbar-toggle))
+   #+END_SRC
+** avy
+   #+BEGIN_SRC emacs-lisp
+   (use-package avy
+     :ensure t
+     :bind ("M-z" . avy-goto-word-1)
+     :config
+     (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
+     (setq avy-style 'at)
+     (setq avy-background t)
+          ;;; select current position to the position jumped to
+     (advice-add 'avy-goto-char :around 
+                 (lambda (orig-fun &rest args)
+                   (push-mark)
+                   (apply orig-fun args)
+                   (forward-char))))
+
+      (use-package ace-pinyin
+        :ensure t
+        :bind
+        (("M-/" . ace-pinyin-dwim)))
+   #+END_SRC
+** searching
+*** swoop
+    #+BEGIN_SRC emacs-lisp
+    (use-package swoop
+      :ensure t
+      :bind
+      (("C-o" . swoop)
+       ("M-o" . swoop-pcre-regexp)
+       ("C-S-o" . swoop-back-to-last-position)
+       :map swoop-map
+       ("C-o" . swoop-multi-from-swoop))
+      :config
+      (setq swoop-use-target-magnifier: nil)
+      (setq swoop-font-size-change: nil)
+      )
+    #+END_SRC
+* resource management
+** project management
+   #+BEGIN_SRC emacs-lisp
+   (use-package projectile
+     :ensure t
+     :bind ("C-x C-b" . helm-projectile-switch-to-buffer)
+     :bind-keymap ("C-c p" . projectile-command-map)
+     :config
+     (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
+     (setq projectile-mode-line-prefix "")
+     (projectile-global-mode)
+     (setq projectile-completion-system 'helm))
+
+   (use-package helm-projectile
+     :ensure t
+     :config (helm-projectile-on)
+     :after projectile)
+   #+END_SRC
+** system file management
+*** dired
+    #+BEGIN_SRC emacs-lisp
+    (use-package dired-x)
+    (use-package dired-single
+      :ensure t)
+
+    (defun my-dired-init ()
+      "Bunch of stuff to run for dired, either immediately or when it's
+         loaded."
+      ;; <add other stuff here>
+      (define-key dired-mode-map [return] 'dired-single-buffer)
+      (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+      (define-key dired-mode-map "^"
+        (function
+         (lambda nil (interactive) (dired-single-buffer ".."))))
+      (define-key dired-mode-map (kbd "K") 'dired-k))
+
+    ;; if dired's already loaded, then the keymap will be bound
+    (if (boundp 'dired-mode-map)
+        ;; we're good to go; just add our bindings
+        (my-dired-init)
+      ;; it's not loaded yet, so add our bindings to the load-hook
+      (add-hook 'dired-load-hook 'my-dired-init))
+    #+END_SRC
+** buffer management
+   #+BEGIN_SRC emacs-lisp
+   (use-package z-edit-ext
+     :init
+     (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'jdb-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'pdb-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'comint-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'shell-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'inferior-python-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
+     (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
+   #+END_SRC
+** sudo
+   #+BEGIN_SRC emacs-lisp
+   (use-package z-sudo
+     :bind ("C-x C-r" . find-file-root))
+   #+END_SRC
+* screen organization
+** window management
+*** shackle
+    #+BEGIN_SRC emacs-lisp
+    (use-package shackle
+      :ensure t
+      :config
+      (setq shackle-rules
+            '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
+              (magit-status-mode :select t :inhibit-window-quit t :same t)
+              (magit-log-mode :select t :inhibit-window-quit t :same t)
+              (magit-revision-mode :select t :inhibit-window-quit t :align right :size 0.7)
+              (magit-diff-mode :noselect t :align right :size 0.7)
+              ("*hackernews top stories*" :same t)
+              ("*shell*" :align bottom :size 0.3)
+              ))
+      (shackle-mode))
+    #+END_SRC
+*** popwin
+    #+BEGIN_SRC emacs-lisp
+    (use-package popwin
+      :ensure t
+      :config
+      (popwin-mode)
+      (bind-key "C-z p" popwin:keymap)
+      (push '("*Backtrace*" :height 15) popwin:special-display-config)
+      (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
+      (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
+      (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
+      ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+      ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+      (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
+      (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
+      (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
+      (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
+      (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
+      (push '("*js*" :position bottom :width 20) popwin:special-display-config))
+    #+END_SRC
+
+**** usage
+     | Key    | Command                             |
+     |--------+-------------------------------------|
+     | b      | popwin:popup-buffer                 |
+     | l      | popwin:popup-last-buffer            |
+     | o      | popwin:display-buffer               |
+     | C-b    | popwin:switch-to-last-buffer        |
+     | C-p    | popwin:original-pop-to-last-buffer  |
+     | C-o    | popwin:original-display-last-buffer |
+     | SPC    | popwin:select-popup-window          |
+     | s      | popwin:stick-popup-window           |
+     | 0      | popwin:close-popup-window           |
+     | f, C-f | popwin:find-file                    |
+     | e      | popwin:messages                     |
+     | C-u    | popwin:universal-display            |
+     | 1      | popwin:one-window                   |
+* editing
+** editorconfig
+   #+BEGIN_SRC emacs-lisp
+   (use-package editorconfig
+     :ensure t
+     :diminish editorconfig-mode
+     :config
+     (editorconfig-mode 1))
+   #+END_SRC
+** language and localization
+   #+BEGIN_SRC emacs-lisp
+   (set-language-environment 'utf-8)
+   (setq encoding 'utf-8)
+   (set-terminal-coding-system 'utf-8)
+   (prefer-coding-system 'utf-8)
+   (set-default-coding-systems 'utf-8)
+   (set-keyboard-coding-system 'utf-8)
+   (set-buffer-file-coding-system 'utf-8)
+   (setq default-buffer-file-coding-system 'utf-8)
+   (setq coding-system-for-read 'utf-8)
+   (set-clipboard-coding-system 'utf-8)
+   (setq file-name-coding-system 'utf-8)
+
+   (set-locale-environment "C")
+   #+END_SRC
+** undo
+   #+BEGIN_SRC emacs-lisp
+   (use-package undo-tree
+     :ensure t
+     :diminish undo-tree-mode
+     :bind ("C-x u" . undo-tree-visualize)
+     :config
+     (global-undo-tree-mode))
+   #+END_SRC
+** input assistent
+*** auto-complete
+    #+BEGIN_SRC emacs-lisp
+    (use-package auto-complete
+      :ensure t
+      :diminish auto-complete-mode
+      :bind
+      (:map ac-completing-map
+            ("M-/" . ac-stop))
+      :config
+      (ac-linum-workaround)
+      (require 'auto-complete-config)
+      (add-to-list 'ac-dictionary-directories (locate-contents-file "ac-dict"))
+      (setq ac-comphist-file (locate-runtimes-file "ac-comphist.dat")) 
+      (ac-config-default)
+      (global-auto-complete-mode t)
+      (ac-set-trigger-key "TAB")
+      (ac-set-trigger-key "<tab>"))
+    #+END_SRC
+*** yasnippet
+    #+BEGIN_SRC emacs-lisp
+    (use-package yasnippet
+      :ensure t
+      :diminish yas-minor-mode
+      :bind
+      (:map yas-minor-mode-map
+            ("<tab>" . nil)
+            ("TAB" . nil)
+            ("<backtab>" . yas-expand))
+      :init (add-hook 'after-init-hook 'yas-global-mode)
+      :config
+      (setq yas-triggers-in-field t)
+      (setq yas-also-auto-indent-first-line t)
+      (setq yas-prompt-functions
+            '(yas-ido-prompt
+              yas-completing-prompt
+              yas-x-prompt yas-dropdown-prompt yas-no-prompt)))
+
     (use-package yasnippet-snippets
       :defer t
-      :ensure t)
-    (setq yas-also-auto-indent-first-line t)
-    (setq yas-prompt-functions
-          '(yas-ido-prompt
-            yas-completing-prompt
-            yas-x-prompt yas-dropdown-prompt yas-no-prompt))
-    (setq yas-triggers-in-field t)
-    (yas-reload-all))
+      :ensure t
+      :config (yas-reload-all))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; helm
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package helm
-    :ensure t
-    :diminish helm-mode
-    :init
-    (global-unset-key (kbd "C-x c"))
-    :bind
-    (("C-c h" . helm-command-prefix)
-     ("M-x" . helm-M-x)
-     ("C-x r l" . helm-filtered-bookmarks)
-     ("C-x C-f" . helm-find-files))
-    :init
-    (setq bookmark-file (locate-runtimes-file "bookmarks")) ; must be set before enable helm-mode
-    :config
-    (require 'helm-config)
-    (add-hook
-     'helm-minibuffer-set-up-hook
-     (lambda ()
-       (set-face-attribute 'helm-selection nil :background (face-attribute 'hl-line :background))
-       (set-face-attribute 'helm-source-header nil :background nil)
-       (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
-       ))
-    (helm-mode 1))
+    #+END_SRC
+*** multiple cursors
+    #+BEGIN_SRC emacs-lisp
+    (use-package multiple-cursors
+      :ensure t
+      :bind (("C-S-c C-S-c" . mc/edit-lines)
+             ("C->" . mc/mark-next-like-this)
+             ("C-<" . mc/mark-previous-like-this)
+             ("C-c C-<" . mc/mark-all-like-this)
+             :map mc/keymap
+             ("C-z n" . mc/insert-numbers)
+             ("C-z l" . mc/insert-letters))
+      :init
+      (setq mc/list-file (locate-runtimes-file ".mc-lists.el"))
+      (add-hook 'multiple-cursors-mode-hook
+                (lambda ()
+                  (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
+                  (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
+                  )))
+    #+END_SRC
+*** quotation
+    #+BEGIN_SRC emacs-lisp
+    (use-package ciel
+      :ensure t
+      :bind
+      (("C-c i" . ciel-ci)
+       ("C-c o" . ciel-co)))
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; projectile
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package projectile
-    :ensure t
-    :bind ("C-x C-b" . helm-projectile-switch-to-buffer)
-    :bind-keymap ("C-c p" . projectile-command-map)
-    :config
-    (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
-    (setq projectile-mode-line-prefix "")
-    (projectile-global-mode)
-    (setq projectile-completion-system 'helm))
+    (use-package embrace
+      :ensure t
+      :bind ("C-," . embrace-commander)
+      :init
+      (add-hook 'org-mode-hook #'embrace-org-mode-hook))
 
-  (use-package helm-projectile
-    :ensure t
-    :config
-    (helm-projectile-on)
-    :after
-    projectile)
-  #+END_SRC
-* editing
-  #+BEGIN_SRC emacs-lisp
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; miscellaneous
-  ;;;
-  ;;; ------------------------------------------------------------
-  (setq user-full-name "Zou Bibo")
-  (setq user-mail-address "hekinami@amiunique.net")
+    (electric-pair-mode)
+    #+END_SRC
+*** indentation
+    #+BEGIN_SRC emacs-lisp
+    (setq-default indent-tabs-mode nil)
 
-  (use-package savehist
-    :config
-    (setq savehist-file (locate-runtimes-file "history")))
-
-  (defun emacs-session-filename (session-id)
-    "override the original one"
-    (let ((basename (concat "runtimes/session." session-id)))
-      (locate-user-emacs-file basename
-                              (concat ".emacs-" basename))))
-  (setq auto-save-list-file-prefix (locate-runtimes-file "auto-save-list/.saves-"))
-  (setq tramp-persistency-file-name (locate-runtimes-file "tramp"))
-  (global-auto-revert-mode)
-  (setq make-backup-files nil)
-  (auto-compression-mode t)
-  (auto-image-file-mode t)
-  (setq auto-save-mode -1)
-  (desktop-save-mode 0)
-
-  (use-package undo-tree
-    :ensure t
-    :diminish undo-tree-mode
-    :bind ("C-x u" . undo-tree-visualize)
-    :config
-    (global-undo-tree-mode))
-
-  (fset 'yes-or-no-p 'y-or-n-p)
-
-  (global-set-key (kbd "C-c r") 'replace-regexp)
-  (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
-
-  (setq-default indent-tabs-mode nil)
-
-  (use-package aggressive-indent
-    :ensure t
-    :diminish aggressive-indent-mode
-    :config
-    (global-aggressive-indent-mode 1))
-
-  (electric-pair-mode)
-
-  (use-package fancy-narrow
-    :ensure t
-    :diminish fancy-narrow-mode
-    :config
-    (fancy-narrow-mode))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; encoding
-  ;;;
-  ;;; ------------------------------------------------------------
-  (set-language-environment 'utf-8)
-  (setq encoding 'utf-8)
-  (set-terminal-coding-system 'utf-8)
-  (prefer-coding-system 'utf-8)
-  (set-default-coding-systems 'utf-8)
-  (set-keyboard-coding-system 'utf-8)
-  (set-buffer-file-coding-system 'utf-8)
-  (setq default-buffer-file-coding-system 'utf-8)
-  (setq coding-system-for-read 'utf-8)
-  (set-clipboard-coding-system 'utf-8)
-  (setq file-name-coding-system 'utf-8)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; locale
-  ;;;
-  ;;; ------------------------------------------------------------
-  (set-locale-environment "C")
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; buffer
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package uniquify
-    :config
-    (setq  uniquify-buffer-name-style 'post-forward
-           uniquify-separator ":"))
-
-  ;; (use-package ido
-  ;;   :config
-  ;;   (setq ido-enable-flex-matching t)
-  ;;   (setq ido-everywhere t)
-  ;;   (ido-mode 1)
-  ;;   (setq ido-create-new-buffer 'always)
-  ;;   (setq ido-ignore-buffers '("gtd.org$" "\\*"))
-  ;;   (setq ido-save-directory-list-file (locate-runtimes-file "ido.last")))
-
-  (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; navigation
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package avy
-    :ensure t
-    :bind ("M-z" . avy-goto-word-1)
-    :config
-    (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
-    (setq avy-style 'at)
-    (setq avy-background t)
-    ;;; select current position to the position jumped to
-    (advice-add 'avy-goto-char :around (lambda (orig-fun &rest args)
-                                         (push-mark)
-                                         (apply orig-fun args)
-                                         (forward-char))))
-
-  (use-package ace-pinyin
-    :ensure t
-    :bind
-    (("M-/" . ace-pinyin-dwim)))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; server
-  ;;;
-  ;;; ------------------------------------------------------------
-  (setq server-auth-dir (locate-runtimes-file "emacsserver"))
-  (unless (and (functionp 'server-running-p)
-               (server-running-p))
-    (server-start))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; multiple cursors
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package multiple-cursors
-    :ensure t
-    :bind (("C-S-c C-S-c" . mc/edit-lines)
-           ("C->" . mc/mark-next-like-this)
-           ("C-<" . mc/mark-previous-like-this)
-           ("C-c C-<" . mc/mark-all-like-this)
-           :map mc/keymap
-           ("C-z n" . mc/insert-numbers)
-           ("C-z l" . mc/insert-letters))
-    :init
-    (setq mc/list-file (locate-runtimes-file ".mc-lists.el"))
-    (add-hook 'multiple-cursors-mode-hook
-              (lambda ()
-                (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
-                (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
-                )))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; bm.el
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package bm
-    :ensure t
-    :bind
-    (("C-<f2>" . bm-toggle)
-     ("<f2>" . bm-next)
-     ("S-<f2>" . bm-previous)))
-
-  (use-package helm-bm
-    :ensure t
-    :bind ("C-S-<f2>" . helm-bm))
-
-  (use-package z-sudo
-    :bind ("C-x C-r" . find-file-root))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; swoop
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package swoop
-    :ensure t
-    :bind
-    (("C-o" . swoop)
-     ("M-o" . swoop-pcre-regexp)
-     ("C-S-o" . swoop-back-to-last-position)
-     :map swoop-map
-     ("C-o" . swoop-multi-from-swoop))
-    :config
-    (setq swoop-use-target-magnifier: nil)
-    (setq swoop-font-size-change: nil)
-    )
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; ciel
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package ciel
-    :ensure t
-    :bind
-    (("C-c i" . ciel-ci)
-     ("C-c o" . ciel-co)))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; markdown
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package markdown-mode
-    :ensure t
-    :defer t)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; dockerfile
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package dockerfile-mode
-    :ensure t
-    :defer t)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; terraform
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package terraform-mode
-    :ensure t
-    :defer t)
-
-  (use-package embrace
-    :ensure t
-    :bind ("C-," . embrace-commander)
-    :init
-    (add-hook 'org-mode-hook #'embrace-org-mode-hook))
-
-  (use-package z-edit-ext
-    :init
-    (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'jdb-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'pdb-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'comint-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'shell-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'inferior-python-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
-    (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
-
-  (use-package editorconfig
-    :ensure t
-    :diminish editorconfig-mode
-    :config
-    (editorconfig-mode 1))
-
-  #+END_SRC
+    (use-package aggressive-indent
+      :ensure t
+      :diminish aggressive-indent-mode
+      :config
+      (global-aggressive-indent-mode 1))
+    #+END_SRC
 * reading
   #+BEGIN_SRC emacs-lisp
   (use-package engine-mode
@@ -824,57 +751,57 @@
     (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
   #+END_SRC
 * writing
-  #+BEGIN_SRC emacs-lisp
-  (use-package cobalt
-    :ensure t
-    :config
-    (setq cobalt-posts-org-source (locate-contents-file "earl/posts.amiunique.net"))
-    (setq cobalt-source (locate-contents-file "earl/cobalt.amiunique.net"))
-    (setq cobalt-dest-base (locate-contents-file "earl/hekinami.gitlab.io"))
-    (setq cobalt-site-paths '(cobalt-source))
-    (setq cobalt--current-site cobalt-source)
+** generate static site
+   #+BEGIN_SRC emacs-lisp
+   (use-package cobalt
+     :ensure t
+     :config
+     (setq cobalt-posts-org-source (locate-contents-file "earl/posts.amiunique.net"))
+     (setq cobalt-source (locate-contents-file "earl/cobalt.amiunique.net"))
+     (setq cobalt-dest-base (locate-contents-file "earl/hekinami.gitlab.io"))
+     (setq cobalt-site-paths '(cobalt-source))
+     (setq cobalt--current-site cobalt-source)
 
-    (defun cobalt-generate-posts-source-from-org ()
-      ""
-      (interactive)
-      (let* ((org-publish-project-alist
-              `(("cobalt-posts"
-                 :base-directory ,cobalt-posts-org-source
-                 :publishing-directory ,(concat cobalt-source "/posts")
-                 :publishing-function org-html-publish-to-html
-                 :section-numbers nil
-                 :with-toc nil
-                 :body-only t
-                 )
-                ("cobalt-post-images"
-                 :base-directory ,(concat cobalt-posts-org-source "/images")
-                 :base-extension "jpg\\|gif\\|png"
-                 :publishing-directory ,(concat cobalt-source "/posts/images")
-                 :publishing-function org-publish-attachment)
-                ("cobalt" :components ("cobalt-posts" "cobalt-post-images"))
-                ))
-             )
+     (defun cobalt-generate-posts-source-from-org ()
+       ""
+       (interactive)
+       (let* ((org-publish-project-alist
+               `(("cobalt-posts"
+                  :base-directory ,cobalt-posts-org-source
+                  :publishing-directory ,(concat cobalt-source "/posts")
+                  :publishing-function org-html-publish-to-html
+                  :section-numbers nil
+                  :with-toc nil
+                  :body-only t
+                  )
+                 ("cobalt-post-images"
+                  :base-directory ,(concat cobalt-posts-org-source "/images")
+                  :base-extension "jpg\\|gif\\|png"
+                  :publishing-directory ,(concat cobalt-source "/posts/images")
+                  :publishing-function org-publish-attachment)
+                 ("cobalt" :components ("cobalt-posts" "cobalt-post-images"))
+                 ))
+              )
 
-        (org-publish-project "cobalt")
-        )
-      )
+         (org-publish-project "cobalt")
+         )
+       )
 
-    (defun cobalt-build-with-posts-from-org ()
-      ""
-      (interactive)
-      (cobalt-generate-posts-source-from-org)
-      (cobalt-build nil)
-      )
+     (defun cobalt-build-with-posts-from-org ()
+       ""
+       (interactive)
+       (cobalt-generate-posts-source-from-org)
+       (cobalt-build nil)
+       )
 
-    (defun cobalt-deploy ()
-      ""
-      (interactive)
-      (cobalt-build-with-posts-from-org)
-      (magit-status cobalt-dest-base)
-      )
-    )
-
-  #+END_SRC
+     (defun cobalt-deploy ()
+       ""
+       (interactive)
+       (cobalt-build-with-posts-from-org)
+       (magit-status cobalt-dest-base)
+       )
+     )
+   #+END_SRC
 * organizer
   #+BEGIN_SRC emacs-lisp
   (use-package org
@@ -1553,570 +1480,576 @@
     :ensure t)
 
   #+END_SRC
-* sys
-  #+BEGIN_SRC emacs-lisp
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; dired
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package dired-x)
-  (use-package dired-single
-    :ensure t)
+* development
+** common tasks
+   #+BEGIN_SRC emacs-lisp
+   (use-package compile
+     :bind ("<f12>" . compile))
 
-  (defun my-dired-init ()
-    "Bunch of stuff to run for dired, either immediately or when it's
-     loaded."
-    ;; <add other stuff here>
-    (define-key dired-mode-map [return] 'dired-single-buffer)
-    (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-    (define-key dired-mode-map "^"
-      (function
-       (lambda nil (interactive) (dired-single-buffer ".."))))
-    (define-key dired-mode-map (kbd "K") 'dired-k))
+   (use-package realgud
+     :defer t
+     :ensure t)
+   #+END_SRC
+** version control
+   #+BEGIN_SRC emacs-lisp
+   (use-package magit
+     :ensure t
+     :init
+     (setq auto-revert-check-vc-info t)
+     :bind
+     (("C-x g" . magit-status)
+      ("C-x M-g" . magit-dispatch-popup)))
 
-  ;; if dired's already loaded, then the keymap will be bound
-  (if (boundp 'dired-mode-map)
-      ;; we're good to go; just add our bindings
-      (my-dired-init)
-    ;; it's not loaded yet, so add our bindings to the load-hook
-    (add-hook 'dired-load-hook 'my-dired-init))
+   (use-package dired-k
+     :ensure t)
 
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; shell
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package eshell
-    :config
-    (setq eshell-directory-name (locate-runtimes-file "eshell"))
-    (add-hook 'eshell-mode-hook
-              (lambda ()
-                (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
-                (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
+   (use-package diff-hl
+     :ensure t
+     :init
+     (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+     :config    
+     (global-diff-hl-mode 1))
+
+   (use-package eshell-git-prompt
+     :ensure t
+     :config
+     (eshell-git-prompt-use-theme 'git-radar))
+
+   (use-package git-messenger
+     :ensure t
+     :bind ("C-x v p" . git-messenger:popup-message))
+
+   (use-package git-timemachine
+     :ensure t
+     :commands (git-timemachine git-timemachine-toggle))
+   #+END_SRC
+** database
+   #+BEGIN_SRC emacs-lisp
+   (use-package edbi
+     :defer t
+     :ensure t
+     :config
+     (setq edbi:query-result-fix-header nil)
+     (setq edbi:ds-history-file (locate-runtimes-file ".edbi-ds-history")))
+
+   (use-package edbi-database-url
+     :ensure t
+     :commands (edbi-database-url))
+   #+END_SRC
+** web
+*** editing 
+**** input assistent
+     #+BEGIN_SRC emacs-lisp
+     (use-package ac-html
+       :ensure t
+       :defer t)
+
+     (use-package emmet-mode
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'css-mode-hook 'emmet-mode))
+
+     (use-package web-beautify
+       :ensure t
+       :bind (:map
+              js2-mode-map
+              ("C-c b" . web-beautify-js)
+              :map
+              json-mode-map
+              ("C-c b" . web-beautify-js)
+              :map
+              css-mode-map
+              ("C-c b" . web-beautify-css)
+              :map
+              html-mode-map
+              ("C-c b" . web-beautify-html))
+       :after (js2-mode json-mode css-mode sgml-mode))
+     #+END_SRC
+**** source files
+     #+BEGIN_SRC emacs-lisp
+     (use-package web-mode
+       :ensure t
+       :defer t
+       :mode (("\\.phtml\\'" . web-mode)
+              ("\\.tpl\\'" . web-mode)
+              ("\\.tpl\\.php\\'" . web-mode)
+              ("layout.*\\.php\\'" . web-mode)
+              ("\\.jsp\\'" . web-mode)
+              ("\\.as[cp]x\\'" . web-mode)
+              ("\\.erb\\'" . web-mode)
+              ("\\.mustache\\'" . web-mode)
+              ("\\.djhtml\\'" . web-mode)
+              ("\\.html\\'" . web-mode)
+              ("\\.htm\\'" . web-mode)
+              ("\\.swig\\'" . web-mode))
+       :config
+       (setq sgml-basic-offset 4)
+       (setq web-mode-engines-alist
+             '(("django" . "\\.swig\\'")
+               ("django" . "\\.djhtml\\'")))
+       ;;; redefine the django engine keywords with new ones
+       (setq web-mode-django-keywords
+             (regexp-opt
+              '("and" "as" "assign"
+                "break" "cache" "call" "case" "context" "continue"
+                "do" "flush" "from" "ignore" "import" "in" "is"
+                "layout" "load" "missing" "none" "not" "or" "pluralize"
+                "random" "set" "unless" "use" "var"
+                "with"                         ; new added
                 )))
+       (setq web-mode-markup-indent-offset 4
+             web-mode-css-indent-offset 4
+             web-mode-code-indent-offset 4
+             web-mode-indent-style 2
+             web-mode-style-padding 1
+             web-mode-script-padding 1
+             web-mode-block-padding 0
+             web-mode-comment-style 2
+             web-mode-enable-auto-pairing nil)
+       (setq web-mode-enable-current-column-highlight t)
+       (setq web-mode-enable-current-element-highlight t)
+       (add-hook
+        'web-mode-hook
+        (lambda ()
+          (setq-local
+           electric-pair-pairs
+           (append electric-pair-pairs '((?% . ?%))))
+          (emmet-mode)
+          (setq emmet-preview-default t)
+          (auto-complete-mode)
+          (require 'ac-html)
+          (add-to-list
+           'web-mode-ac-sources-alist
+           '("html" . (
+                       ;; attribute-value better to be first
+                       ac-source-html-attribute-value
+                       ac-source-html-tag
+                       ac-source-html-attribute)))
 
-  (use-package exec-path-from-shell
-    :ensure t
-    :init
-    (setq exec-path-from-shell-check-startup-files nil)
-    :config
-    (exec-path-from-shell-initialize))
+          (add-to-list
+           'web-mode-ac-sources-alist
+           '("css" . (ac-source-css-property)))
+          )))
 
-  #+END_SRC
-* erc
-  #+BEGIN_SRC emacs-lisp
-  (setq erc-log-channels-directory "~/.erc/logs/")
+     (use-package rainbow-mode
+       :ensure t
+       :defer t)
 
-  (defun z/erc-generate-log-file-name (buffer target nick server port)
-    "Generates a log-file name in the way ERC always did it.
-  This results in a file name of the form #channel!nick@server:port.txt.
-  This function is a possible value for `erc-generate-log-file-name-function'."
-    (let ((file (concat
-                 (if target (concat target "!"))
-                 nick "@" server "_" (cond ((stringp port) port)
-                                           ((numberp port)
-                                            (number-to-string port))) ".txt")))
-      ;; we need a make-safe-file-name function.
-      (convert-standard-filename file)))
+     (use-package less-css-mode
+       :ensure t
+       :defer t)
 
-  (setq erc-generate-log-file-name-function 'z/erc-generate-log-file-name)
-  (setq erc-log-file-coding-system 'utf-8)
+     (use-package sass-mode
+       :ensure t
+       :defer t)
 
-  (defun z/bitlbee-connect ()
-    (interactive)
-    (erc :server "localhost"
-         :nick z/bitlbee-nickname))
-  ;;; set z/bitlbee-nickname in custom.el
+     (use-package scss-mode
+       :ensure t
+       :defer t)
 
-  (defalias 'z/erc 'z/bitlbee-connect)
+     (use-package apib-mode
+       :ensure t
+       :defer t
+       :mode ("\\.apib\\'" . apib-mode))
+     #+END_SRC
+*** debugging
+    #+BEGIN_SRC emacs-lisp
+    (use-package impatient-mode
+      :ensure t
+      :defer t)
 
-  ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
-  ;; http://emacs-fu.blogspot.de/2012/03/social-networking-with-bitlbee-and-erc.html
-  (defun fg/bitlbee-identify ()
-    (when (and (string= "localhost" erc-session-server)
-               (string= "&bitlbee" (buffer-name)))
-      (erc-message "PRIVMSG" (format "%s identify %s"
-                                     (erc-default-target)
-                                     z/bitlbee-password))))
-  ;;; set z/bitlbee-password in custom.el
+    (use-package restclient
+      :ensure t
+      :defer t
+      :config
+      (defun restclient nil
+        (interactive)
+        (switch-to-buffer (generate-new-buffer "*restclient*"))
+        (restclient-mode))
+      )
+    #+END_SRC
 
-  (add-hook 'erc-join-hook 'fg/bitlbee-identify)
+** other programming languages
+*** javascript
+**** editing
+     #+BEGIN_SRC emacs-lisp
+     (use-package js2-mode
+       :ensure t
+       :defer t
+       :mode ("\\.js\\'" . js2-mode)
+       :init
+       (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2"))))
+     #+END_SRC
+**** completion
+     #+BEGIN_SRC emacs-lisp
+     (use-package tern
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+       :after js2-mode)
 
-  ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
-  (defun fg/notify-privmsg (proc parsed)
-    (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
-          (target (car (erc-response.command-args parsed)))
-          (msg (erc-response.contents parsed)))
-      (when (and (erc-current-nick-p target)
-                 (not (erc-is-message-ctcp-and-not-action-p msg)))
-        (todochiku-message (format "ERC message from: %s" nick)
-                           msg
-                           (todochiku-icon 'irc)
-                           nil)))
-    nil)
+     (use-package tern-auto-complete
+       :ensure t
+       :defer
+       :init
+       (add-hook 'js2-mode-hook 'auto-complete-mode)
+       (add-hook 'js2-mode-hook 'tern-ac-setup)
+       :after (js2-mode tern))
+     #+END_SRC
+**** interaction and debugging
+     #+BEGIN_SRC emacs-lisp
+     (use-package js-comint
+       :ensure t
+       :defer t
+       :init
+       (setenv "NODE_NO_READLINE" "1")		;http://stackoverflow.com/questions/9390770/node-js-prompt-can-not-show-in-eshell
+       :config
+       (setq inferior-js-program-command "node")
 
-  (add-hook 'erc-server-PRIVMSG-functions 'fg/notify-privmsg t)
+       (add-hook
+        'js2-mode-hook
+        '(lambda () 
+           (local-set-key "\C-x\C-e" 'js-send-last-sexp)
+           (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
+           (local-set-key "\C-cb" 'js-send-buffer)
+           (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
+           (local-set-key "\C-cl" 'js-load-file-and-go)
+           ))  
+       )
 
-  #+END_SRC
-* dev
-  #+BEGIN_SRC emacs-lisp
-  (use-package compile
-    :bind ("<f12>" . compile))
+     (use-package indium
+       :ensure t
+       :config
+       (add-hook 'js2-mode-hook #'indium-interaction-mode))
 
-  (use-package magit
-    :ensure t
-    :init
-    (setq auto-revert-check-vc-info t)
-    :bind
-    (("C-x g" . magit-status)
-     ("C-x M-g" . magit-dispatch-popup)))
+     (use-package skewer-mode
+       :ensure t
+       :defer t)
+     #+END_SRC
+*** python
+**** editing
+     #+BEGIN_SRC emacs-lisp
+     (use-package python
+       :config
+       (setq python-indent-guess-indent-offset nil))
+     #+END_SRC
+**** virtual
+     #+BEGIN_SRC emacs-lisp
+     (use-package python-environment
+       :config
+       (setq python-environment-directory (locate-runtimes-file ".python-environments")))
 
-  (use-package dired-k
-    :ensure t)
+     (use-package pyvenv
+       :ensure t
+       :after jedi
+       :init
+       ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
+       (with-eval-after-load 'jedi
+         (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
+           (add-hook hook
+                     (lambda ()
+                       (if (and pyvenv-virtual-env
+                                (not (member pyvenv-virtual-env jedi:server-args))
+                                (not (file-remote-p pyvenv-virtual-env)))
+                           (setq jedi:server-args (list "--virtual-env" pyvenv-virtual-env))
+                         (setq jedi:server-args nil))
+                       (jedi:stop-server))))))
+     #+END_SRC
+**** completion
+     #+BEGIN_SRC emacs-lisp
+     (use-package jedi
+       :ensure t
+       :init
+       (setq jedi:environment-root "py3jedi")
+       (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
+       (setq jedi:setup-keys t)
+       (setq jedi:complete-on-dot t)
+       (setq jedi:tooltip-method nil)
+       :config
+       (add-hook 'python-mode-hook
+                 (lambda ()
+                   (jedi:setup)
+                   (yas-minor-mode)
+                   (setq ac-sources (append ac-sources '(ac-source-yasnippet))))))
+     #+END_SRC
+**** django
+     #+BEGIN_SRC emacs-lisp
+     (use-package python-django
+       :ensure t
+       :bind ("C-x j" . python-django-open-project))
+     #+END_SRC
+*** ruby
+**** completion
+     #+BEGIN_SRC emacs-lisp
+     (use-package robe
+       :ensure t
+       :defer t
+       :init
+       (add-hook 'ruby-mode-hook 'robe-mode)
+       :config
+       (add-hook 'robe-mode-hook 'ac-robe-setup))
+     #+END_SRC
+*** go
+**** reference
+     configuration based on http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
+     #+BEGIN_EXAMPLE
+     go get github.com/rogpeppe/godef
+     go get -u github.com/nsf/gocode
+     #+END_EXAMPLE
 
-  (use-package diff-hl
-    :ensure t
-    :init
-    (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
-    :config    
-    (global-diff-hl-mode 1))
+**** editing
+     #+BEGIN_SRC emacs-lisp
+     (use-package go-mode
+       :ensure t
+       :defer t
+       :config
+       (add-hook 'go-mode-hook
+                 (lambda ()
+                   (setq tab-width 4)
+                   (setq standard-indent 4)
+                   (setq indent-tabs-mode nil)
+                   (local-set-key (kbd "C-c .") 'godef-jump)
+                   (local-set-key (kbd "C-c ,") 'pop-tag-mark)
+                   (auto-complete-mode 1)
+                   (if (not (string-match "go" compile-command))
+                       (set (make-local-variable 'compile-command)
+                            "go build -v && go test -v && go vet"))
+                   )))
+     #+END_SRC
+**** completion
+     #+BEGIN_SRC emacs-lisp
+     (use-package go-autocomplete
+       :ensure t
+       :after go-mode)
+     #+END_SRC
+*** solidity
+    #+BEGIN_SRC emacs-lisp
+    (use-package solidity-mode
+      :ensure t
+      :mode ("\\.sol\\'" . solidity-mode)
+      :config
+      (setq c-basic-offset 4))
+    #+END_SRC
+*** rust
+    #+BEGIN_SRC emacs-lisp
+    (use-package rust-mode
+      :ensure t
+      :defer t)
 
-  (use-package eshell-git-prompt
-    :ensure t
-    :config
-    (eshell-git-prompt-use-theme 'git-radar))
+    (use-package racer
+      :ensure t
+      :init
+        ;;; set racer-rust-src-path, racer-cmd in custom.el
 
-  (use-package git-messenger
-    :ensure t
-    :bind ("C-x v p" . git-messenger:popup-message))
+      (add-hook 'rust-mode-hook (lambda ()
+                                  (racer-mode)
+                                  (if (not (string-match "rust" compile-command))
+                                      (set (make-local-variable 'compile-command)
+                                           "cargo run"))
+                                  ))
+      :after rust-mode)
 
-  (use-package git-timemachine
-    :ensure t
-    :commands (git-timemachine git-timemachine-toggle))
+    (use-package ac-racer
+      :ensure t
+      :init
+      (add-hook 'racer-mode-hook (lambda ()
+                                   (eldoc-mode)
+                                   (ac-racer-setup)
+                                   ;; workaround to prevent completion menu open after type space
+                                   (ac-define-source racer
+                                     '((prefix . ac-racer--prefix)
+                                       (candidates . ac-racer--candidates)
+                                       (requires . 1)))
+                                   ))
+      :after (rust-mode racer))
 
-  (use-package realgud
-    :defer t
-    :ensure t)
-
-  (use-package edbi
-    :defer t
-    :ensure t
-    :config
-    (setq edbi:query-result-fix-header nil)
-    (setq edbi:ds-history-file (locate-runtimes-file ".edbi-ds-history")))
-
-  (use-package edbi-database-url
-    :ensure t
-    :commands (edbi-database-url))
-  #+END_SRC
-* lang
-  #+BEGIN_SRC emacs-lisp
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; javascript
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package js2-mode
-    :ensure t
-    :defer t
-    :mode ("\\.js\\'" . js2-mode)
-    :init
-    (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2"))))
-
-  (use-package tern
-    :ensure t
-    :defer t
-    :init
-    (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
-    :after js2-mode)
-
-  (use-package tern-auto-complete
-    :ensure t
-    :defer
-    :init
-    (add-hook 'js2-mode-hook 'auto-complete-mode)
-    (add-hook 'js2-mode-hook 'tern-ac-setup)
-    :after (js2-mode tern))
-
-  (use-package js-comint
-    :ensure t
-    :defer t
-    :init
-    (setenv "NODE_NO_READLINE" "1")		;http://stackoverflow.com/questions/9390770/node-js-prompt-can-not-show-in-eshell
-    :config
-    (setq inferior-js-program-command "node")
+    (use-package rust-playground
+      :ensure t
+      :config
+      (setq rust-playground-basedir (locate-contents-file "rust-playground") ))
+    #+END_SRC
+*** lisp
+    #+BEGIN_SRC emacs-lisp
+    (use-package paredit
+      :ensure t
+      :diminish paredit-mode
+      :commands paredit-mode
+      :defer t)
 
     (add-hook
-     'js2-mode-hook
-     '(lambda () 
-        (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-        (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-        (local-set-key "\C-cb" 'js-send-buffer)
-        (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-        (local-set-key "\C-cl" 'js-load-file-and-go)
-        ))  
-    )
-
-  (use-package indium
-    :ensure t
-    :config
-    (add-hook 'js2-mode-hook #'indium-interaction-mode))
-
-  (use-package skewer-mode
-    :ensure t
-    :defer t)
-
-  (use-package json-mode
-    :ensure t
-    :defer t)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; lisp
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package paredit
-    :ensure t
-    :diminish paredit-mode
-    :commands paredit-mode
-    :defer t)
-
-  (add-hook
-   'emacs-lisp-mode-hook
-   (lambda ()
-     (show-paren-mode 1)
-     (turn-on-eldoc-mode)
-     (paredit-mode)
-     (auto-complete-mode)
-     (local-set-key (kbd "C-c s") 'elisp-index-search)))
-
-  (add-hook
-   'lisp-interaction-mode-hook
-   (lambda ()
-     (add-to-list 'ac-sources 'ac-source-variables)
-     (add-to-list 'ac-sources 'ac-source-symbols)
-     (add-to-list 'ac-sources 'ac-source-functions)
-     (add-to-list 'ac-sources 'ac-source-features)
-     (auto-complete-mode)
-     ))
-
-  (add-hook
-   'ielm-mode-hook
-   (lambda ()
-     (add-to-list 'ac-sources 'ac-source-variables)
-     (add-to-list 'ac-sources 'ac-source-symbols)
-     (add-to-list 'ac-sources 'ac-source-functions)
-     (add-to-list 'ac-sources 'ac-source-features)
-     (auto-complete-mode)
-     (eldoc-mode)
-     ))
-
-  (use-package slime
-    :ensure t
-    :defer t
-    :config
-    (setq inferior-lisp-program "sbcl")
-    (slime-setup '(slime-fancy)))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; python
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package python
-    :config
-    (setq python-indent-guess-indent-offset nil))
-
-  (use-package python-environment
-    :config
-    (setq python-environment-directory (locate-runtimes-file ".python-environments")))
-
-  (use-package jedi
-    :ensure t
-    :init
-    (setq jedi:environment-root "py3jedi")
-    (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
-    (setq jedi:setup-keys t)
-    (setq jedi:complete-on-dot t)
-    (setq jedi:tooltip-method nil)
-    :config
-    (add-hook 'python-mode-hook
-              (lambda ()
-                (jedi:setup)
-                (yas-minor-mode)
-                (setq ac-sources (append ac-sources '(ac-source-yasnippet))))))
-
-  (use-package pyvenv
-    :ensure t
-    :after jedi
-    :init
-    ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
-    (with-eval-after-load 'jedi
-      (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
-        (add-hook hook
-                  (lambda ()
-                    (if (and pyvenv-virtual-env
-                             (not (member pyvenv-virtual-env jedi:server-args))
-                             (not (file-remote-p pyvenv-virtual-env)))
-                        (setq jedi:server-args (list "--virtual-env" pyvenv-virtual-env))
-                      (setq jedi:server-args nil))
-                    (jedi:stop-server))))))
-
-  (use-package python-django
-    :ensure t
-    :bind ("C-x j" . python-django-open-project))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; rust
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package rust-mode
-    :ensure t
-    :defer t)
-
-  (use-package racer
-    :ensure t
-    :init
-    ;;; set racer-rust-src-path, racer-cmd in custom.el
-
-    (add-hook 'rust-mode-hook (lambda ()
-                                (racer-mode)
-                                (if (not (string-match "rust" compile-command))
-                                    (set (make-local-variable 'compile-command)
-                                         "cargo run"))
-                                ))
-    :after rust-mode)
-
-  (use-package ac-racer
-    :ensure t
-    :init
-    (add-hook 'racer-mode-hook (lambda ()
-                                 (eldoc-mode)
-                                 (ac-racer-setup)
-                                 ;; workaround to prevent completion menu open after type space
-                                 (ac-define-source racer
-                                   '((prefix . ac-racer--prefix)
-                                     (candidates . ac-racer--candidates)
-                                     (requires . 1)))
-                                 ))
-    :after (rust-mode racer))
-
-  (use-package rust-playground
-    :ensure t
-    :config
-    (setq rust-playground-basedir (locate-contents-file "rust-playground") ))
-
-  (use-package toml-mode
-    :ensure t
-    :defer t
-    :mode ("Cargo.lock\\'" . toml-mode))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; ruby
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package robe
-    :ensure t
-    :defer t
-    :init
-    (add-hook 'ruby-mode-hook 'robe-mode)
-    :config
-    (add-hook 'robe-mode-hook 'ac-robe-setup))
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; go
-  ;;;
-  ;;; ------------------------------------------------------------
-  ;;; configuration based on http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
-  ;;; go get github.com/rogpeppe/godef
-  ;;; go get -u github.com/nsf/gocode
-  (use-package go-mode
-    :ensure t
-    :defer t
-    :config
-    (add-hook 'go-mode-hook
-              (lambda ()
-                (setq tab-width 4)
-                (setq standard-indent 4)
-                (setq indent-tabs-mode nil)
-                (local-set-key (kbd "C-c .") 'godef-jump)
-                (local-set-key (kbd "C-c ,") 'pop-tag-mark)
-                (auto-complete-mode 1)
-                (if (not (string-match "go" compile-command))
-                    (set (make-local-variable 'compile-command)
-                         "go build -v && go test -v && go vet"))
-                )))
-
-  (use-package go-autocomplete
-    :ensure t
-    :after go-mode)
-
-  ;;; ------------------------------------------------------------
-  ;;;
-  ;;; yaml
-  ;;;
-  ;;; ------------------------------------------------------------
-  (use-package yaml-mode
-    :ensure t
-    :defer t)
-
-  (use-package solidity-mode
-    :ensure t
-    :mode ("\\.sol\\'" . solidity-mode)
-    :config
-    (setq c-basic-offset 4))
-  #+END_SRC
-* web
-  #+BEGIN_SRC emacs-lisp
-  (use-package ac-html
-    :ensure t
-    :defer t)
-
-  (use-package web-mode
-    :ensure t
-    :defer t
-    :mode (("\\.phtml\\'" . web-mode)
-           ("\\.tpl\\'" . web-mode)
-           ("\\.tpl\\.php\\'" . web-mode)
-           ("layout.*\\.php\\'" . web-mode)
-           ("\\.jsp\\'" . web-mode)
-           ("\\.as[cp]x\\'" . web-mode)
-           ("\\.erb\\'" . web-mode)
-           ("\\.mustache\\'" . web-mode)
-           ("\\.djhtml\\'" . web-mode)
-           ("\\.html\\'" . web-mode)
-           ("\\.htm\\'" . web-mode)
-           ("\\.swig\\'" . web-mode))
-    :config
-    (setq sgml-basic-offset 4)
-    (setq web-mode-engines-alist
-          '(("django" . "\\.swig\\'")
-            ("django" . "\\.djhtml\\'")))
-    ;;; redefine the django engine keywords with new ones
-    (setq web-mode-django-keywords
-          (regexp-opt
-           '("and" "as" "assign"
-             "break" "cache" "call" "case" "context" "continue"
-             "do" "flush" "from" "ignore" "import" "in" "is"
-             "layout" "load" "missing" "none" "not" "or" "pluralize"
-             "random" "set" "unless" "use" "var"
-             "with"                         ; new added
-             )))
-    (setq web-mode-markup-indent-offset 4
-          web-mode-css-indent-offset 4
-          web-mode-code-indent-offset 4
-          web-mode-indent-style 2
-          web-mode-style-padding 1
-          web-mode-script-padding 1
-          web-mode-block-padding 0
-          web-mode-comment-style 2
-          web-mode-enable-auto-pairing nil)
-    (setq web-mode-enable-current-column-highlight t)
-    (setq web-mode-enable-current-element-highlight t)
-    (add-hook
-     'web-mode-hook
+     'emacs-lisp-mode-hook
      (lambda ()
-       (setq-local
-        electric-pair-pairs
-        (append electric-pair-pairs '((?% . ?%))))
-       (emmet-mode)
-       (setq emmet-preview-default t)
+       (show-paren-mode 1)
+       (turn-on-eldoc-mode)
+       (paredit-mode)
        (auto-complete-mode)
-       (require 'ac-html)
-       (add-to-list
-        'web-mode-ac-sources-alist
-        '("html" . (
-                    ;; attribute-value better to be first
-                    ac-source-html-attribute-value
-                    ac-source-html-tag
-                    ac-source-html-attribute)))
+       (local-set-key (kbd "C-c s") 'elisp-index-search)))
 
-       (add-to-list
-        'web-mode-ac-sources-alist
-        '("css" . (ac-source-css-property)))
-       )))
+    (add-hook
+     'lisp-interaction-mode-hook
+     (lambda ()
+       (add-to-list 'ac-sources 'ac-source-variables)
+       (add-to-list 'ac-sources 'ac-source-symbols)
+       (add-to-list 'ac-sources 'ac-source-functions)
+       (add-to-list 'ac-sources 'ac-source-features)
+       (auto-complete-mode)
+       ))
 
-  (use-package emmet-mode
-    :ensure t
-    :defer t
-    :init
-    (add-hook 'css-mode-hook 'emmet-mode))
+    (add-hook
+     'ielm-mode-hook
+     (lambda ()
+       (add-to-list 'ac-sources 'ac-source-variables)
+       (add-to-list 'ac-sources 'ac-source-symbols)
+       (add-to-list 'ac-sources 'ac-source-functions)
+       (add-to-list 'ac-sources 'ac-source-features)
+       (auto-complete-mode)
+       (eldoc-mode)
+       ))
 
-  (use-package rainbow-mode
-    :ensure t
-    :defer t)
+    (use-package slime
+      :ensure t
+      :defer t
+      :config
+      (setq inferior-lisp-program "sbcl")
+      (slime-setup '(slime-fancy)))
+    #+END_SRC
+*** php
+    #+BEGIN_SRC emacs-lisp
+    (use-package php-mode
+      :ensure t
+      :mode ("\\.php\\'" . php-mode))
 
-  (use-package less-css-mode
-    :ensure t
-    :defer t)
+    (use-package geben
+      :ensure t
+      :config
+      (setq geben-pause-at-entry-line nil)
+      (setq geben-display-window-function 'pop-to-buffer-same-window)
+      (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
+    #+END_SRC
+** other data formats
+*** json
+    #+BEGIN_SRC emacs-lisp
+    (use-package json-mode
+      :ensure t
+      :defer t)
+    #+END_SRC
+*** toml
+    #+BEGIN_SRC emacs-lisp
+    (use-package toml-mode
+      :ensure t
+      :defer t
+      :mode ("Cargo.lock\\'" . toml-mode))
+    #+END_SRC
+*** yaml
+    #+BEGIN_SRC emacs-lisp
+    (use-package yaml-mode
+      :ensure t
+      :defer t)
+    #+END_SRC
+*** markdown
+    #+BEGIN_SRC emacs-lisp
+    (use-package markdown-mode
+      :ensure t
+      :defer t)
+    #+END_SRC
+*** dockerfile
+    #+BEGIN_SRC emacs-lisp
+    (use-package dockerfile-mode
+      :ensure t
+      :defer t)
+    #+END_SRC
+*** terraform
+    #+BEGIN_SRC emacs-lisp
+    (use-package terraform-mode
+      :ensure t
+      :defer t)
+    #+END_SRC
+* multimedia
+** the emacs multimedia system
+   #+BEGIN_SRC emacs-lisp
+   (use-package emms
+     :ensure t
+     :defer t
+     :init
+     (setq default-process-coding-system '(utf-8 . utf-8))
+     :config
+     (require 'emms-setup)
+     (emms-standard)
+     (emms-default-players))
+   #+END_SRC
+* interaction with other systems
+** shell
+   #+BEGIN_SRC emacs-lisp
+   (use-package eshell
+     :config
+     (setq eshell-directory-name (locate-runtimes-file "eshell"))
+     (add-hook 'eshell-mode-hook
+               (lambda ()
+                 (define-key eshell-mode-map (kbd "M-p") 'helm-eshell-history)
+                 (define-key eshell-mode-map (kbd "M-n") 'helm-esh-pcomplete)
+                 )))
 
-  (use-package sass-mode
-    :ensure t
-    :defer t)
+   (use-package exec-path-from-shell
+     :ensure t
+     :init
+     (setq exec-path-from-shell-check-startup-files nil)
+     :config
+     (exec-path-from-shell-initialize))
+   #+END_SRC
+** erc
+   #+BEGIN_SRC emacs-lisp
+   (setq erc-log-channels-directory "~/.erc/logs/")
 
-  (use-package scss-mode
-    :ensure t
-    :defer t)
+   (defun z/erc-generate-log-file-name (buffer target nick server port)
+     "Generates a log-file name in the way ERC always did it.
+   This results in a file name of the form #channel!nick@server:port.txt.
+   This function is a possible value for `erc-generate-log-file-name-function'."
+     (let ((file (concat
+                  (if target (concat target "!"))
+                  nick "@" server "_" (cond ((stringp port) port)
+                                            ((numberp port)
+                                             (number-to-string port))) ".txt")))
+       ;; we need a make-safe-file-name function.
+       (convert-standard-filename file)))
 
-  (use-package impatient-mode
-    :ensure t
-    :defer t)
+   (setq erc-generate-log-file-name-function 'z/erc-generate-log-file-name)
+   (setq erc-log-file-coding-system 'utf-8)
 
-  (use-package restclient
-    :ensure t
-    :defer t
-    :config
-    (defun restclient nil
-      (interactive)
-      (switch-to-buffer (generate-new-buffer "*restclient*"))
-      (restclient-mode))
-    )
+   (defun z/bitlbee-connect ()
+     (interactive)
+     (erc :server "localhost"
+          :nick z/bitlbee-nickname))
+   ;;; set z/bitlbee-nickname in custom.el
 
-  (use-package php-mode
-    :ensure t
-    :mode ("\\.php\\'" . php-mode))
+   (defalias 'z/erc 'z/bitlbee-connect)
 
-  (use-package geben
-    :ensure t
-    :config
-    (setq geben-pause-at-entry-line nil)
-    (setq geben-display-window-function 'pop-to-buffer-same-window)
-    (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
+   ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
+   ;; http://emacs-fu.blogspot.de/2012/03/social-networking-with-bitlbee-and-erc.html
+   (defun fg/bitlbee-identify ()
+     (when (and (string= "localhost" erc-session-server)
+                (string= "&bitlbee" (buffer-name)))
+       (erc-message "PRIVMSG" (format "%s identify %s"
+                                      (erc-default-target)
+                                      z/bitlbee-password))))
+   ;;; set z/bitlbee-password in custom.el
 
-  (use-package web-beautify
-    :ensure t
-    :bind (:map
-           js2-mode-map
-           ("C-c b" . web-beautify-js)
-           :map
-           json-mode-map
-           ("C-c b" . web-beautify-js)
-           :map
-           css-mode-map
-           ("C-c b" . web-beautify-css)
-           :map
-           html-mode-map
-           ("C-c b" . web-beautify-html))
-    :after (js2-mode json-mode css-mode sgml-mode))
+   (add-hook 'erc-join-hook 'fg/bitlbee-identify)
 
-  (use-package apib-mode
-    :ensure t
-    :defer t
-    :mode ("\\.apib\\'" . apib-mode))
-  #+END_SRC
-* media
-  #+BEGIN_SRC emacs-lisp
-  (use-package emms
-    :ensure t
-    :defer t
-    :init
-    (setq default-process-coding-system '(utf-8 . utf-8))
-    :config
-    (require 'emms-setup)
-    (emms-standard)
-    (emms-default-players))
-  #+END_SRC
+   ;;; https://github.com/fgeller/emacs-init/blob/master/init-erc.el
+   (defun fg/notify-privmsg (proc parsed)
+     (let ((nick (car (erc-parse-user (erc-response.sender parsed))))
+           (target (car (erc-response.command-args parsed)))
+           (msg (erc-response.contents parsed)))
+       (when (and (erc-current-nick-p target)
+                  (not (erc-is-message-ctcp-and-not-action-p msg)))
+         (todochiku-message (format "ERC message from: %s" nick)
+                            msg
+                            (todochiku-icon 'irc)
+                            nil)))
+     nil)
+
+   (add-hook 'erc-server-PRIVMSG-functions 'fg/notify-privmsg t)
+
+   #+END_SRC
