@@ -44,20 +44,20 @@
 ** package management
 *** package.el
     #+BEGIN_SRC emacs-lisp
-      (setq package-enable-at-startup nil)
-      (package-initialize)
-      (setq package-archives
-	    '(;; ("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
-	      ;; ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-	      ;; ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
-	      ;; ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
-	      ;; ("org-cn" . "http://elpa.emacs-china.org/org/")
-	      ;; ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
-	      ;; ("user42-cn" . "http://elpa.emacs-china.org/user42/")
-	      ("melpa" . "http://melpa.org/packages/")
-	      ("org" . "http://orgmode.org/elpa/")
-	      ("melpa-stable" . "http://stable.melpa.org/packages/")
-	      ))
+    (setq package-enable-at-startup nil)
+    (package-initialize)
+    (setq package-archives
+          '(;; ("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+            ;; ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+            ;; ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
+            ;; ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
+            ;; ("org-cn" . "http://elpa.emacs-china.org/org/")
+            ;; ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
+            ;; ("user42-cn" . "http://elpa.emacs-china.org/user42/")
+            ("melpa" . "http://melpa.org/packages/")
+            ("org" . "http://orgmode.org/elpa/")
+            ("melpa-stable" . "http://stable.melpa.org/packages/")
+            ))
     #+END_SRC
 *** assistent
 **** a common function for installing package from elpa
@@ -776,7 +776,8 @@
    #+BEGIN_SRC emacs-lisp
    (use-package cobalt
      :ensure t
-     :defer t
+     :bind (("C-z c d" . cobalt-deploy)
+            ("C-z c p" . cobalt-generate-posts-source-from-org))
      :config
      (setq cobalt-posts-org-source (locate-contents-file "earl/posts.amiunique.net"))
      (setq cobalt-source (locate-contents-file "earl/cobalt.amiunique.net"))
