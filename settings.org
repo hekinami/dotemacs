@@ -47,16 +47,16 @@
     (setq package-enable-at-startup nil)
     (package-initialize)
     (setq package-archives
-          '(;; ("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
-            ;; ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-            ;; ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
-            ;; ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
-            ;; ("org-cn" . "http://elpa.emacs-china.org/org/")
-            ;; ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
-            ;; ("user42-cn" . "http://elpa.emacs-china.org/user42/")
-            ("melpa" . "http://melpa.org/packages/")
-            ("org" . "http://orgmode.org/elpa/")
-            ("melpa-stable" . "http://stable.melpa.org/packages/")
+          '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
+            ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+            ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
+            ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
+            ("org-cn" . "http://elpa.emacs-china.org/org/")
+            ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
+            ("user42-cn" . "http://elpa.emacs-china.org/user42/")
+            ;; ("melpa" . "http://melpa.org/packages/")
+            ;; ("org" . "http://orgmode.org/elpa/")
+            ;; ("melpa-stable" . "http://stable.melpa.org/packages/")
             ))
     #+END_SRC
 *** assistent
@@ -566,6 +566,12 @@
      (global-undo-tree-mode))
    #+END_SRC
 ** input assistent
+*** company-mode
+    #+BEGIN_SRC emacs-lisp
+    (use-package company
+      :ensure t
+      :diminish company-mode)
+    #+END_SRC
 *** auto-complete
     #+BEGIN_SRC emacs-lisp
     (use-package auto-complete
@@ -1798,29 +1804,14 @@
     (use-package racer
       :ensure t
       :init
-        ;;; set racer-rust-src-path, racer-cmd in custom.el
-
-      (add-hook 'rust-mode-hook (lambda ()
-                                  (racer-mode)
-                                  (if (not (string-match "rust" compile-command))
-                                      (set (make-local-variable 'compile-command)
-                                           "cargo run"))
-                                  ))
+      ;;; set racer-rust-src-path, racer-cmd in custom.el
+      (add-hook 'rust-mode-hook #'racer-mode)
+      (add-hook 'racer-mode-hook #'eldoc-mode)
+      (add-hook 'racer-mode-hook #'company-mode)
+      :config
+      (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+      (setq company-tooltip-align-annotations t)
       :after rust-mode)
-
-    (use-package ac-racer
-      :ensure t
-      :init
-      (add-hook 'racer-mode-hook (lambda ()
-                                   (eldoc-mode)
-                                   (ac-racer-setup)
-                                   ;; workaround to prevent completion menu open after type space
-                                   (ac-define-source racer
-                                     '((prefix . ac-racer--prefix)
-                                       (candidates . ac-racer--candidates)
-                                       (requires . 1)))
-                                   ))
-      :after (rust-mode racer))
 
     (use-package rust-playground
       :ensure t
