@@ -1826,7 +1826,11 @@
       :ensure t
       :commands (rust-playground)
       :config
-      (setq rust-playground-basedir (locate-contents-file "rust-playground") ))
+      (setq rust-playground-basedir (locate-contents-file "rust-playground")))
+
+    (use-package cargo
+      :ensure t
+      :defer t)
     #+END_SRC
 *** lisp
     #+BEGIN_SRC emacs-lisp
