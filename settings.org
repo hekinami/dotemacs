@@ -570,25 +570,9 @@
     #+BEGIN_SRC emacs-lisp
     (use-package company
       :ensure t
-      :diminish company-mode)
-    #+END_SRC
-*** auto-complete
-    #+BEGIN_SRC emacs-lisp
-    (use-package auto-complete
-      :ensure t
-      :diminish auto-complete-mode
-      :bind
-      (:map ac-completing-map
-            ("M-/" . ac-stop))
-      :config
-      (ac-linum-workaround)
-      (require 'auto-complete-config)
-      (add-to-list 'ac-dictionary-directories (locate-contents-file "ac-dict"))
-      (setq ac-comphist-file (locate-runtimes-file "ac-comphist.dat")) 
-      (ac-config-default)
-      (global-auto-complete-mode t)
-      (ac-set-trigger-key "TAB")
-      (ac-set-trigger-key "<tab>"))
+      :diminish (company-mode global-company-mode)
+      :init
+      (global-company-mode))
     #+END_SRC
 *** yasnippet
     #+BEGIN_SRC emacs-lisp
@@ -1576,19 +1560,6 @@
            (append electric-pair-pairs '((?% . ?%))))
           (emmet-mode)
           (setq emmet-preview-default t)
-          (auto-complete-mode)
-          (require 'ac-html)
-          (add-to-list
-           'web-mode-ac-sources-alist
-           '("html" . (
-                       ;; attribute-value better to be first
-                       ac-source-html-attribute-value
-                       ac-source-html-tag
-                       ac-source-html-attribute)))
-
-          (add-to-list
-           'web-mode-ac-sources-alist
-           '("css" . (ac-source-css-property)))
           )))
 
      (use-package rainbow-mode
@@ -1649,13 +1620,10 @@
        (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
        :after js2-mode)
 
-     (use-package tern-auto-complete
+     (use-package company-tern
        :ensure t
-       :defer
-       :init
-       (add-hook 'js2-mode-hook 'auto-complete-mode)
-       (add-hook 'js2-mode-hook 'tern-ac-setup)
-       :after (js2-mode tern))
+       :config
+       (add-to-list 'company-backends 'company-tern))
      #+END_SRC
 **** interaction and debugging
      #+BEGIN_SRC emacs-lisp
@@ -1705,10 +1673,10 @@
 
      (use-package pyvenv
        :ensure t
-       :after jedi
+       :after company-jedi
        :init
        ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
-       (with-eval-after-load 'jedi
+       (with-eval-after-load 'company-jedi
          (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
            (add-hook hook
                      (lambda ()
@@ -1721,21 +1689,18 @@
      #+END_SRC
 **** completion
      #+BEGIN_SRC emacs-lisp
-     (use-package jedi
+     (use-package company-jedi
        :ensure t
-       :defer t
        :init
        (setq jedi:environment-root "py3jedi")
        (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
        (setq jedi:setup-keys t)
        (setq jedi:complete-on-dot t)
        (setq jedi:tooltip-method nil)
-       :config
-       (add-hook 'python-mode-hook
-                 (lambda ()
-                   (jedi:setup)
-                   (yas-minor-mode)
-                   (setq ac-sources (append ac-sources '(ac-source-yasnippet))))))
+       (defun my/python-mode-hook ()
+         (add-to-list 'company-backends 'company-jedi))
+
+       (add-hook 'python-mode-hook 'my/python-mode-hook))
      #+END_SRC
 **** django
      #+BEGIN_SRC emacs-lisp
@@ -1775,7 +1740,6 @@
                    (setq indent-tabs-mode nil)
                    (local-set-key (kbd "C-c .") 'godef-jump)
                    (local-set-key (kbd "C-c ,") 'pop-tag-mark)
-                   (auto-complete-mode 1)
                    (if (not (string-match "go" compile-command))
                        (set (make-local-variable 'compile-command)
                             "go build -v && go test -v && go vet"))
@@ -1783,7 +1747,11 @@
      #+END_SRC
 **** completion
      #+BEGIN_SRC emacs-lisp
-     (use-package go-autocomplete
+     ;; (use-package go-autocomplete
+     ;;   :ensure t
+     ;;   :after go-mode)
+
+     (use-package company-go
        :ensure t
        :after go-mode)
      #+END_SRC
@@ -1837,27 +1805,11 @@
        (show-paren-mode 1)
        (turn-on-eldoc-mode)
        (paredit-mode)
-       (auto-complete-mode)
        (local-set-key (kbd "C-c s") 'elisp-index-search)))
-
-    (add-hook
-     'lisp-interaction-mode-hook
-     (lambda ()
-       (add-to-list 'ac-sources 'ac-source-variables)
-       (add-to-list 'ac-sources 'ac-source-symbols)
-       (add-to-list 'ac-sources 'ac-source-functions)
-       (add-to-list 'ac-sources 'ac-source-features)
-       (auto-complete-mode)
-       ))
 
     (add-hook
      'ielm-mode-hook
      (lambda ()
-       (add-to-list 'ac-sources 'ac-source-variables)
-       (add-to-list 'ac-sources 'ac-source-symbols)
-       (add-to-list 'ac-sources 'ac-source-functions)
-       (add-to-list 'ac-sources 'ac-source-features)
-       (auto-complete-mode)
        (eldoc-mode)
        ))
 
