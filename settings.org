@@ -1834,6 +1834,12 @@
       (setq geben-display-window-function 'pop-to-buffer-same-window)
       (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
     #+END_SRC
+*** shader
+    #+BEGIN_SRC emacs-lisp
+    (use-package shader-mode
+      :ensure t
+      :mode "shader-mode")
+    #+END_SRC
 ** other data formats
 *** json
     #+BEGIN_SRC emacs-lisp
