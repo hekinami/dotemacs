@@ -531,6 +531,19 @@
      | e      | popwin:messages                     |
      | C-u    | popwin:universal-display            |
      | 1      | popwin:one-window                   |
+*** purpose
+    #+BEGIN_SRC emacs-lisp
+    (use-package window-purpose
+      :ensure t
+      :config
+      (purpose-mode)
+      (setq purpose-preferred-prompt 'helm)
+      (define-key purpose-mode-map (kbd "C-x C-f") nil)
+      (define-key purpose-mode-map (kbd "C-x b") nil)
+      (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
+      (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
+      (purpose-compile-user-configuration))
+    #+END_SRC
 * editing
 ** editorconfig
    #+BEGIN_SRC emacs-lisp
@@ -1426,7 +1439,6 @@
      :bind ("<f12>" . compile))
 
    (use-package realgud
-     :defer t
      :ensure t)
 
    (use-package flymake
