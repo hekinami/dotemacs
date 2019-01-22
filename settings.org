@@ -382,17 +382,17 @@
      (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
      (setq avy-style 'at)
      (setq avy-background t)
-          ;;; select current position to the position jumped to
+             ;;; select current position to the position jumped to
      (advice-add 'avy-goto-char :around 
                  (lambda (orig-fun &rest args)
                    (push-mark)
                    (apply orig-fun args)
                    (forward-char))))
 
-      (use-package ace-pinyin
-        :ensure t
-        :bind
-        (("M-/" . ace-pinyin-dwim)))
+   (use-package ace-pinyin
+     :quelpa (ace-pinyin :fetcher github :repo "hekinami/ace-pinyin")
+     :bind
+     (("M-/" . ace-pinyin-dwim)))
    #+END_SRC
 ** searching
 *** swoop
