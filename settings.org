@@ -1439,7 +1439,8 @@
      :bind ("<f12>" . compile))
 
    (use-package realgud
-     :ensure t)
+     :ensure t
+     :commands (realgud:gdb))
 
    (use-package flymake
      :defer t)
