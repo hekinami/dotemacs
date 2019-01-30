@@ -1,6 +1,6 @@
 (use-package subr-x)
 
-(defvar bibo/ledger-file (concat org-directory "/fin/fin.ledger")
+(defvar bibo/ledger-file (locate-contents-file "organizer/fin/fin.ledger")
   "Ledger file")
 
 (defun bibo/ledger-accounts nil
@@ -27,10 +27,10 @@
                           (bibo/ledger-payees)
                           (bibo/ledger-accounts)
                           (bibo/ledger-accounts))))
-  (setq org-capture-templates
-        (append `(("f" "记账" plain
-                   (file ,(concat org-directory "/fin/fin.ledger")) ,tpl-string :empty-lines 1))
-                org-capture-templates)))
+(setq org-capture-templates
+      (append `(("f" "记账" plain
+                 (file ,bibo/ledger-file) ,tpl-string :empty-lines 1))
+              org-capture-templates)))
 
 
 (provide 'ledger-capture)
