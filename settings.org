@@ -662,7 +662,7 @@
   (use-package engine-mode
     :ensure t
     :init
-    (engine/set-keymap-prefix (kbd "C-c C-s"))
+    (engine/set-keymap-prefix (kbd "C-z C-s"))
     (defengine github
       "https://github.com/search?ref=simplesearch&q=%s"
       :keybinding "g")
@@ -835,12 +835,11 @@
      :ensure org-plus-contrib
      :bind
      (("C-c l" . org-store-link)
-      ("C-c b" . org-switchb)
-      ("C-c c" . org-capture))
+      ("C-c b" . org-switchb))
      :config
+     (setq org-directory (locate-contents-file "organizer"))
      (setq org-modules '(org-crypt org-checklist org-habit))
      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
-     (load (locate-stuff-file "org-capture-templates") t)
 
      (use-package z-org-ext
        :bind (("<f8>" . z/open-browser)
@@ -908,6 +907,7 @@
      #+BEGIN_SRC emacs-lisp
      (use-package org-agenda
        :bind ("C-c a" . org-agenda)
+       :after org
        :config
        (setq org-agenda-overriding-columns-format "%25ITEM %TODO %CATEGORY %3PRIORITY %20TAGS")
        (setq org-agenda-todo-ignore-scheduled t)
@@ -922,7 +922,6 @@
                                          (define-key org-agenda-mode-map " " 'org-agenda-cycle-show)
                                          ))
 
-       (setq org-directory (locate-contents-file "organizer"))
        (setq org-agenda-files `(,(concat org-directory "/gtd")
                                 ,(concat org-directory "/info")))
 
@@ -944,9 +943,18 @@
          (let ((split-width-threshold nil))
            ad-do-it))
 
+       )
+     #+END_SRC
+**** capture
+     #+BEGIN_SRC emacs-lisp
+     (use-package org-capture
+       :bind ("C-c c" . org-capture)
+       :after org
+       :config
        (defadvice org-capture (around split-vertically activate)
          (let ((split-width-threshold nil))
-           ad-do-it)))
+           ad-do-it))
+       (load (locate-stuff-file "org-capture-templates") t))
      #+END_SRC
 **** pomodoro
      #+BEGIN_SRC emacs-lisp
@@ -1858,6 +1866,12 @@
     (use-package shader-mode
       :ensure t
       :mode "shader-mode")
+    #+END_SRC
+*** dart
+    #+BEGIN_SRC emacs-lisp
+    (use-package dart-mode
+      :ensure t
+      :mode "dart-mode")
     #+END_SRC
 ** other data formats
 *** json
