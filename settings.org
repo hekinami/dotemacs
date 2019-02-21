@@ -1074,7 +1074,7 @@
     #+END_SRC
 *** export
     #+BEGIN_SRC emacs-lisp
-    (setq org-tpl-directory (locate-stuff-file "orgtemplate"))
+    (setq org-tpl-directory (locate-stuff-file "orgtemplate/"))
 
     (setq org-html-head-include-default-style nil)
     (setq org-html-head-include-scripts nil)
