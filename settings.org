@@ -1036,8 +1036,8 @@
     #+END_SRC
 *** projects and publish
     #+BEGIN_SRC emacs-lisp
-    (setq org-projects-base (locate-contents-file "org"))
-    (setq org-projects-publish (locate-contents-file "orgp"))
+    (setq org-projects-base (locate-contents-file "org/"))
+    (setq org-projects-publish (locate-contents-file "orgp/"))
 
             ;;; use a .org-project file in each project directory to define a project
             ;;; org-publish-project-alist would be set just before we try to publish
@@ -1416,7 +1416,7 @@
      (setq ledger-reconcile-default-commodity "CNY"))
 
    (use-package ledger-capture
-     :after ledger-mode)
+     :after org-capture)
    #+END_SRC
 ** todochiku
    #+BEGIN_SRC emacs-lisp
