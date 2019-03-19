@@ -1412,6 +1412,7 @@
    (use-package ledger-mode
      :ensure t
      :mode "\\.ledger$" 
+     :commands (ledger-payees-in-buffer)
      :config
      (setq ledger-reconcile-default-commodity "CNY"))
 
