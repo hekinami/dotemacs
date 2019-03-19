@@ -19,4 +19,6 @@
          (file+headline ,(concat org-directory "/gtd/reading.gtd.org") "Reading list") "* TOREAD %? %^g\n\n %i\n")
         ("i" "Idea" entry
          (file+headline ,(concat org-directory "/gtd/idea.gtd.org") "Idea list") "* %? %^g\n\n %i\n")
+        ("l" "Link" entry
+         (file ,(concat org-directory "/info/link.info.org")) "* [[%^{Link}][%^{Description}]] %^g")
         ))
