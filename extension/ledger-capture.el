@@ -23,12 +23,12 @@
   "Parse date for capturing ledger entries via org mode"
   (replace-regexp-in-string "-" "/" (org-read-date)))
 
-(let ((tpl-string (format "%%(bibo/read-date) %%^{收款人|%s}\n    %%^{付款账号|%s}  -%%^{金额} CNY\n    %%^{收款账号|%s}\n\n"
+(let ((tpl-string (format "%%(bibo/read-date) %%^{Payee|%s}\n    %%^{Target Account|%s}  %%^{Amount} CNY\n    %%^{Source Account|%s}\n\n"
                           (bibo/ledger-payees)
                           (bibo/ledger-accounts)
                           (bibo/ledger-accounts))))
 (setq org-capture-templates
-      (append `(("f" "记账" plain
+      (append `(("f" "Ledger" plain
                  (file ,bibo/ledger-file) ,tpl-string :empty-lines 1))
               org-capture-templates)))
 
