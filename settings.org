@@ -838,7 +838,7 @@
       ("C-c b" . org-switchb))
      :config
      (setq org-directory (locate-contents-file "organizer"))
-     (setq org-modules '(org-crypt org-checklist org-habit))
+     (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
 
      (use-package z-org-ext
