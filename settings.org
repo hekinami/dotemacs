@@ -865,7 +865,7 @@
 
      (use-package uuidgen
        :ensure t
-       :defer t)
+       :commands (uuidgen-4))
 
      ;; https://emacs-china.org/t/org-agenda/8679/2
      (defun my:org-agenda-time-grid-spacing ()
