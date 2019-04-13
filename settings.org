@@ -304,7 +304,7 @@
       :config
       (setq url-cache-directory (locate-runtimes-file "url/cache"))
       (setq httpd-port 3721)
-      (setq httpd-root (locate-contents-file "orgp"))
+      (setq httpd-root (locate-runtimes-file "notebook"))
       (httpd-start)
       (advice-add 'save-buffers-kill-terminal :around (lambda (orig-fun &rest args)
                                                         (httpd-stop)
@@ -314,6 +314,7 @@
 ** key configuration
    #+BEGIN_SRC emacs-lisp
    (global-unset-key (kbd "C-z"))
+   (global-unset-key (kbd "<f8>"))
    (global-unset-key (kbd "C-x c"))
    (global-unset-key (kbd "<f5>"))
 
@@ -846,7 +847,7 @@
      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
 
      (use-package z-org-ext
-       :bind (("<f8>" . z/open-browser)
+       :bind (("<f8> <f8>" . z/open-browser)
               :map org-mode-map
               (("C-c s" . z/org-screenshot)
                ("C-c d" . z/org-delete-linked-file-in-point)))
@@ -1441,6 +1442,21 @@
       (setq diary-manager-enable-git-integration nil)
       (setq diary-manager-entry-extension ".org"))
     #+END_SRC
+*** zote
+    #+begin_src emacs-lisp
+    (use-package zote
+      :bind (("<f8> p" . zote-publish)
+             ("<f8> v a" . zote-volume-add)
+             ("<f8> v d" . zote-volume-delete)
+             ("<f8> v v" . zote-volume-view)
+             ("<f8> e e" . zote-volume-edit-1)
+             ("<f8> e v" . zote-volume-edit))
+      :config
+      (setq zote-source-dir (locate-contents-file "organizer/notebook"))
+      (setq zote-target-dir (locate-runtimes-file "notebook"))
+      (setq zote-theme "simple"))
+    #+end_src
+
 ** ledger
    #+BEGIN_SRC emacs-lisp
    (use-package ledger-mode
