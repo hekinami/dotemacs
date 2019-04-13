@@ -582,7 +582,7 @@
 ** input assistent
 *** whitespace
     #+begin_src emacs-lisp
-    (set-default 'show-trailing-whitespace t)
+    ;; (set-default 'show-trailing-whitespace t)
     #+end_src
 *** company-mode
     #+BEGIN_SRC emacs-lisp
