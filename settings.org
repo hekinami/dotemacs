@@ -844,6 +844,7 @@
      (setq org-directory (locate-contents-file "organizer"))
      (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
+     (setq org-bookmark-names-plist nil)
 
      (use-package z-org-ext
        :bind (("<f8> <f8>" . z/open-browser)
