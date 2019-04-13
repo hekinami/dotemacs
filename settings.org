@@ -658,9 +658,8 @@
 
     (use-package aggressive-indent
       :ensure t
-      :diminish aggressive-indent-mode
-      :config
-      (global-aggressive-indent-mode 1))
+      :mode ("aggressive-indent-mode")
+      :diminish aggressive-indent-mode)
     #+END_SRC
 * reading
   #+BEGIN_SRC emacs-lisp
