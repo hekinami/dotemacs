@@ -851,6 +851,12 @@
               :map org-mode-map
               (("C-c s" . z/org-screenshot)
                ("C-c d" . z/org-delete-linked-file-in-point)))
+       :commands (z/org-clock-in-if-todo-keywords z/org-clock-out-if-todo-keywords)
+       :init
+       (add-hook 'org-after-todo-state-change-hook
+                 'z/org-clock-in-if-todo-keywords)
+       (add-hook 'org-after-todo-state-change-hook
+                 'z/org-clock-out-if-todo-keywords)
        )
 
      ;; Priority Definition

@@ -1,3 +1,5 @@
+(require 'org-clock)
+
 (defun z/open-browser nil
   (interactive)
   (browse-url "http://localhost:3721"))
@@ -34,6 +36,34 @@
       )
     )
   )
+
+(defvar z/org-clock-in-todo-keywords '("DOING" "READING")
+  "the todo keywords when changed into, trigger clock in")
+
+(defvar z/org-clock-out-todo-keywords '("WAITING" "CONTINUE" "TODO" "TOREAD")
+  "the todo keywords when changed into, trigger clock out")
+
+(defun z/org-clock-in-if-todo-keywords ()
+       "Clock in when the task is marked as z/org-clock-in-todo-keywords"
+       (let* ((ele (org-element-at-point))
+              (state (substring-no-properties (or (org-element-property :todo-keyword ele) ""))))
+         (when (and (member state z/org-clock-in-todo-keywords)
+                    (not (org-clocking-p)))
+	 (org-clock-in)))
+       )
+
+(defun z/org-clock-out-if-todo-keywords ()
+      "Clock out when the task is marked as z/org-clock-out-todo-keywords"
+      (let* ((state (or (substring-no-properties (or (org-element-property :todo-keyword (org-element-at-point)) "")))))
+        (when (and (org-clocking-p)
+               (member state z/org-clock-out-todo-keywords)
+               (equal (marker-buffer org-clock-marker) (current-buffer))
+               (< (point) org-clock-marker)
+               (> (save-excursion (outline-next-heading) (point))
+                  org-clock-marker)
+               )
+          (org-clock-out)))
+      )
 
 
 (provide 'z-org-ext)
