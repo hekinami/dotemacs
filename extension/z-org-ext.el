@@ -40,7 +40,7 @@
 (defvar z/org-clock-in-todo-keywords '("DOING" "READING")
   "the todo keywords when changed into, trigger clock in")
 
-(defvar z/org-clock-out-todo-keywords '("WAITING" "CONTINUE" "TODO" "TOREAD")
+(defvar z/org-clock-out-todo-keywords '("WAITING" "CONTINUE" "TODO" "TOREAD" "BREAK")
   "the todo keywords when changed into, trigger clock out")
 
 (defun z/org-clock-in-if-todo-keywords ()
