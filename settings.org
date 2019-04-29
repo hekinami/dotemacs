@@ -1155,8 +1155,7 @@
       )
 
     (use-package ox-reveal
-      :ensure t
-      :defer t
+      :quelpa (ox-reveal :fetcher github :repo "hekinami/org-reveal")
       :config
       (setq org-reveal-root "file:///home/hekinami/git/reveal.js"))
 
