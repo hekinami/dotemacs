@@ -1,4 +1,4 @@
-* global
+e* global
 ** general
    #+BEGIN_SRC emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -832,6 +832,13 @@
        )
      )
    #+END_SRC
+** lilypond
+   #+begin_src emacs-lisp
+   (use-package lilypond-mode
+     :quelpa (lilypond-mode :fetcher github :repo "hekinami/lilypond-mode")
+     :init
+     (add-to-list 'auto-mode-alist '("\\.ly$" . LilyPond-mode)))
+   #+end_src
 * organizer
 ** org-mode
    #+BEGIN_SRC emacs-lisp
@@ -1062,6 +1069,7 @@
        (rust . t)
        (gnuplot . t)
        (org . t)
+       (lilypond . t)
        ))
     (setq org-src-fontify-natively t)
     (setq org-src-tab-acts-natively t)
