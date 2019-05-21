@@ -1,0 +1,18 @@
+# key: hugo
+# name: hugo# key: hugo
+# name: hugo# key: hugo
+# name: hugo
+# --
+#+HUGO_BASE_DIR: `org-hugo-basedir`
+#+TITLE: $1
+#+DATE: `(format-time-string "%Y-%m-%d")`
+#+HUGO_AUTO_SET_LASTMOD: t
+#+HUGO_TAGS: $2
+#+HUGO_CATEGORIES: $3
+#+HUGO_DRAFT: false
+#+HUGO_CUSTOM_FRONT_MATTER: :thumbnailImagePosition left
+#+HUGO_CUSTOM_FRONT_MATTER: :thumbnailImage /img/default_thumbnail.jpg
+#+HUGO_CUSTOM_FRONT_MATTER: :coverImage /img/default_post_cover.jpg
+#+HUGO_CUSTOM_FRONT_MATTER: :coverSize partial
+
+$0

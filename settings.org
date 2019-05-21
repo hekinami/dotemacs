@@ -780,6 +780,21 @@ e* global
   #+END_SRC
 * writing
 ** generate static site
+   #+begin_src emacs-lisp
+   (use-package ox-hugo
+     :ensure t
+     :after ox
+     :config
+     (setq org-hugo-section "post")
+     (setq org-hugo-default-static-subdirectory-for-externals "images")
+     (setq org-hugo-basedir "~/hugo"))     ;not a native variable of ox-hugo
+
+   (use-package easy-hugo
+     :ensure t
+     :config
+     (setq easy-hugo-basedir "~/hugo/"))
+   #+end_src
+
    #+BEGIN_SRC emacs-lisp
    (use-package cobalt
      :ensure t
@@ -1014,6 +1029,9 @@ e* global
        (setq org-pomodoro-short-break-length 5)
        (setq org-pomodoro-long-break-length 10)
        (setq org-pomodoro-format "P:%s")
+       (setq org-pomodoro-short-break-sound (locate-stuff-file "short-break-sound.mp3"))
+       (setq org-pomodoro-long-break-sound (locate-stuff-file "long-break-sound.mp3"))
+       (setq org-pomodoro-audio-player "/usr/bin/mpv")
        )
      #+END_SRC
 **** kanban
