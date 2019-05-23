@@ -690,6 +690,7 @@
     :ensure t
     :defer t
     :config
+    (setq irfc-download-base-url "https://www.ietf.org/rfc/")
     (setq irfc-directory (locate-runtimes-file "RFC"))
     (setq irfc-assoc-mode t))
 
