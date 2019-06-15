@@ -1817,7 +1817,7 @@
      #+BEGIN_SRC emacs-lisp
      (use-package python-django
        :ensure t
-       :bind ("C-x j" . python-django-open-project))
+       :bind ("C-z j" . python-django-open-project))
      #+END_SRC
 *** ruby
 **** completion
