@@ -1722,6 +1722,12 @@
        :init
        (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2"))))
      #+END_SRC
+
+     #+begin_src emacs-lisp
+     (use-package rjsx-mode
+       :ensure t
+       :defer t)
+     #+end_src
 **** completion
      #+BEGIN_SRC emacs-lisp
      (use-package tern
