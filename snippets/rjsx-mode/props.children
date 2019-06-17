@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: props.children
+# key: p.c
+# --
+{this.props.children}
