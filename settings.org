@@ -1463,7 +1463,7 @@
       :bind
       (("C-c C-j" . org-journal-new-entry))
       :config
-      (setq org-journal-dir (locate-contents-file "org/journal")))
+      (setq org-journal-dir (locate-contents-file "journal")))
     #+END_SRC
 *** diary-manager
     #+BEGIN_SRC emacs-lisp
