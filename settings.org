@@ -1,4 +1,4 @@
-e* global
+* global
 ** general
    #+BEGIN_SRC emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -1886,17 +1886,16 @@ e* global
       :ensure t
       :defer t)
 
-    (use-package racer
+    (use-package lsp-mode
       :ensure t
-      :init
-      ;;; set racer-rust-src-path, racer-cmd in custom.el
-      (add-hook 'rust-mode-hook #'racer-mode)
-      (add-hook 'racer-mode-hook #'eldoc-mode)
-      (add-hook 'racer-mode-hook #'company-mode)
+      :hook (rust-mode . lsp)
+      :commands (lsp lsp-deferred)
+      )
+
+    (use-package company-lsp
+      :ensure t
       :config
-      (define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
-      (setq company-tooltip-align-annotations t)
-      :after rust-mode)
+      (push 'company-lsp company-backends))
 
     (use-package rust-playground
       :ensure t
