@@ -1,4 +1,4 @@
-* global
+e* global
 ** general
    #+BEGIN_SRC emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -2004,6 +2004,12 @@
 *** gnuplot
     #+begin_src emacs-lisp
     (use-package gnuplot
+      :ensure t
+      :defer t)
+    #+end_src
+*** protobuf
+    #+begin_src emacs-lisp
+    (use-package protobuf-mode
       :ensure t
       :defer t)
     #+end_src
