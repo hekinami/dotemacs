@@ -368,12 +368,6 @@
      :config
      (which-key-mode))
    #+END_SRC
-** speedbar
-   #+BEGIN_SRC emacs-lisp
-   (use-package sr-speedbar
-     :ensure t
-     :bind ("C-z s" . sr-speedbar-toggle))
-   #+END_SRC
 ** avy
    #+BEGIN_SRC emacs-lisp
    (use-package avy
@@ -411,6 +405,13 @@
       (setq swoop-font-size-change: nil)
       )
     #+END_SRC
+** treemacs
+   #+begin_src emacs-lisp
+   (use-package treemacs
+     :ensure t
+     :bind ("C-z s" . treemacs)
+     )
+   #+end_src
 * resource management
 ** project management
    #+BEGIN_SRC emacs-lisp
