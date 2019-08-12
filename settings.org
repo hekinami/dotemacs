@@ -429,6 +429,9 @@
      :ensure t
      :config (helm-projectile-on)
      :after projectile)
+
+   (use-package treemacs-projectile
+     :ensure t)
    #+END_SRC
 ** system file management
 *** dired
