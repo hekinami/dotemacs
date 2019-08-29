@@ -2,6 +2,7 @@
 ** general
    #+BEGIN_SRC emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
+   (add-hook 'after-init-hook (lambda nil (load-file custom-file)))
 
    ;;; https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/
    (setq ad-redefinition-action 'accept)
@@ -873,6 +874,7 @@
      (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
      (setq org-bookmark-names-plist nil)
+     (org-super-agenda-mode)
 
      (use-package z-org-ext
        :bind (("<f8> <f8>" . z/open-browser)
@@ -931,6 +933,27 @@
      (add-hook 'org-agenda-finalize-hook 'my:org-agenda-time-grid-spacing)
      )
     #+END_SRC
+
+    #+begin_src emacs-lisp
+    (use-package org-super-agenda
+      :ensure t
+      :commands (org-super-agenda-mode)
+      :config
+      (advice-add 'org-agenda-list :around
+                  (lambda (orig-fun &rest args)
+                    (let ((org-super-agenda-groups org-agenda-list-super-groups))
+                      (apply orig-fun args)))
+                  )
+      (advice-add 'org-todo-list :around
+                  (lambda (orig-fun &rest args)
+                    (let ((org-super-agenda-groups org-todo-list-super-groups))
+                      (apply orig-fun args)))
+                     )
+      ;; define groups in custom.el avoiding too verbose here.
+      (setq org-agenda-list-super-groups nil)
+      (setq org-todo-list-super-groups nil)
+      )
+    #+end_src
 
 *** appearence
     #+BEGIN_SRC emacs-lisp
