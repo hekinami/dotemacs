@@ -122,6 +122,10 @@
       :config
       (load-theme 'molokai t))
     #+END_SRC
+
+    #+begin_src emacs-lisp
+    (set-face-attribute 'default nil :foreground "#F8F8d2")
+    #+end_src
 *** fonts
     #+BEGIN_SRC emacs-lisp
     (use-package cnfonts
@@ -935,14 +939,25 @@
     #+END_SRC
 
 *** appearence
+    #+begin_src emacs-lisp
+    (setq org-ellipsis " »")
+    (set-face-attribute 'org-ellipsis nil :underline nil :foreground "green")
+    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold)
+    (set-face-attribute 'org-level-2 nil :underline nil :foreground "#e76f51" :slant 'normal :weight 'bold)
+    (set-face-attribute 'org-level-3 nil :underline nil :foreground "#f4a261" :slant 'normal :weight 'bold)
+    (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
+    (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box t)
+    (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box t)
+    #+end_src
+
     #+BEGIN_SRC emacs-lisp
     (use-package org-bullets
       :ensure t
       :defer t
+      :hook
+      (org-mode . (org-bullets-mode))
       :config
       (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
-      (add-hook 'org-mode-hook (lambda ()
-                                 (org-bullets-mode 1)))
       :after org)
 
     (setq org-hide-leading-stars t)
@@ -971,6 +986,23 @@
                     )
                   ))
     #+END_SRC
+
+    #+begin_src emacs-lisp
+    (use-package org-fancy-priorities
+      :ensure t
+      :hook
+      (org-mode . org-fancy-priorities-mode)
+      :diminish org-fancy-priorities-mode
+      :config
+      (setq org-fancy-priorities-list '("🅰" "🅱" "🅲" "🅳" "🅴"))
+      (setq org-priority-faces
+          '((?A . (:foreground "#a63d40" :weight bold))
+            (?B . (:foreground "#e9b872" :weight bold))
+            (?C . (:foreground "#6494aa" :weight bold))
+            (?D . (:foreground "white" :weight bold))
+            (?E . (:foreground "#90a959" :weight bold))))
+      )
+    #+end_src
 *** efficiency
 **** agenda
      #+BEGIN_SRC emacs-lisp
