@@ -867,75 +867,76 @@
    #+end_src
 * organizer
 ** org-mode
-   #+BEGIN_SRC emacs-lisp
-   (use-package org
-     :ensure org-plus-contrib
-     :bind
-     (("C-c l" . org-store-link)
-      ("C-c b" . org-switchb))
-     :config
-     (setq org-directory (locate-contents-file "organizer"))
-     (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
-     (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
-     (setq org-bookmark-names-plist nil)
-     (org-super-agenda-mode)
+*** general
+    #+BEGIN_SRC emacs-lisp
+    (use-package org
+      :ensure org-plus-contrib
+      :bind
+      (("C-c l" . org-store-link)
+       ("C-c b" . org-switchb))
+      :config
+      (setq org-directory (locate-contents-file "organizer"))
+      (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
+      (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
+      (setq org-bookmark-names-plist nil)
+      (org-super-agenda-mode)
 
-     (use-package z-org-ext
-       :bind (("<f8> <f8>" . z/open-browser)
-              :map org-mode-map
-              (("C-c s" . z/org-screenshot)
-               ("C-c d" . z/org-delete-linked-file-in-point)))
-       :commands (z/org-clock-in-if-todo-keywords z/org-clock-out-if-todo-keywords)
-       :init
-       (add-hook 'org-after-todo-state-change-hook
-                 'z/org-clock-in-if-todo-keywords)
-       (add-hook 'org-after-todo-state-change-hook
-                 'z/org-clock-out-if-todo-keywords)
-       )
+      (use-package z-org-ext
+        :bind (("<f8> <f8>" . z/open-browser)
+               :map org-mode-map
+               (("C-c s" . z/org-screenshot)
+                ("C-c d" . z/org-delete-linked-file-in-point)))
+        :commands (z/org-clock-in-if-todo-keywords z/org-clock-out-if-todo-keywords)
+        :init
+        (add-hook 'org-after-todo-state-change-hook
+                  'z/org-clock-in-if-todo-keywords)
+        (add-hook 'org-after-todo-state-change-hook
+                  'z/org-clock-out-if-todo-keywords)
+        )
 
-     ;; Priority Definition
-     ;;
-     ;; A: do: good, don't: harm, cannot atone
-     ;; B: do: good, don't: harm, can atone
-     ;; C: do: good, don't: may be harmful
-     ;; D: do: good, don't: no harm
-     ;; E: do: may be good, don't: no harm
-     (setq org-highest-priority ?A)
-     (setq org-lowest-priority ?E)
-     (setq org-default-priority ?C)
+      ;; Priority Definition
+      ;;
+      ;; A: do: good, don't: harm, cannot atone
+      ;; B: do: good, don't: harm, can atone
+      ;; C: do: good, don't: may be harmful
+      ;; D: do: good, don't: no harm
+      ;; E: do: may be good, don't: no harm
+      (setq org-highest-priority ?A)
+      (setq org-lowest-priority ?E)
+      (setq org-default-priority ?C)
 
-     (use-package uuidgen
-       :ensure t
-       :commands (uuidgen-4))
+      (use-package uuidgen
+        :ensure t
+        :commands (uuidgen-4))
 
-     ;; https://emacs-china.org/t/org-agenda/8679/2
-     ;; (defun my:org-agenda-time-grid-spacing ()
-     ;;   "Set different line spacing w.r.t. time duration."
-     ;;   (save-excursion
-     ;;     (let* ((background (alist-get 'background-mode (frame-parameters)))
-     ;;            (background-dark-p (string= background "dark"))
-     ;;            (colors (if background-dark-p
-     ;;                        (list "#a63d40" "#e9b872" "#90a959" "#6494aa")
-     ;;                      (list "#F6B1C3" "#FFFF9D" "#BEEB9F" "#ADD5F7")))
-     ;;            pos
-     ;;            duration)
-     ;;       (nconc colors colors)
-     ;;       (goto-char (point-min))
-     ;;       (while (setq pos (next-single-property-change (point) 'duration))
-     ;;         (goto-char pos)
-     ;;         (when (and (not (equal pos (point-at-eol)))
-     ;;                    (setq duration (org-get-at-bol 'duration)))
-     ;;           (let ((line-height (if (< duration 30) 1.0 (+ 0.5 (/ duration 60))))
-     ;;                 (ov (make-overlay (point-at-bol) (1+ (point-at-eol)))))
-     ;;             (overlay-put ov 'face `(:background ,(car colors)
-     ;;                                                 :foreground
-     ;;                                                 ,(if background-dark-p "black" "white")))
-     ;;             (setq colors (cdr colors))
-     ;;             (overlay-put ov 'line-height line-height)
-     ;;             (overlay-put ov 'line-spacing (1- line-height))))))))
+      ;; https://emacs-china.org/t/org-agenda/8679/2
+      ;; (defun my:org-agenda-time-grid-spacing ()
+      ;;   "Set different line spacing w.r.t. time duration."
+      ;;   (save-excursion
+      ;;     (let* ((background (alist-get 'background-mode (frame-parameters)))
+      ;;            (background-dark-p (string= background "dark"))
+      ;;            (colors (if background-dark-p
+      ;;                        (list "#a63d40" "#e9b872" "#90a959" "#6494aa")
+      ;;                      (list "#F6B1C3" "#FFFF9D" "#BEEB9F" "#ADD5F7")))
+      ;;            pos
+      ;;            duration)
+      ;;       (nconc colors colors)
+      ;;       (goto-char (point-min))
+      ;;       (while (setq pos (next-single-property-change (point) 'duration))
+      ;;         (goto-char pos)
+      ;;         (when (and (not (equal pos (point-at-eol)))
+      ;;                    (setq duration (org-get-at-bol 'duration)))
+      ;;           (let ((line-height (if (< duration 30) 1.0 (+ 0.5 (/ duration 60))))
+      ;;                 (ov (make-overlay (point-at-bol) (1+ (point-at-eol)))))
+      ;;             (overlay-put ov 'face `(:background ,(car colors)
+      ;;                                                 :foreground
+      ;;                                                 ,(if background-dark-p "black" "white")))
+      ;;             (setq colors (cdr colors))
+      ;;             (overlay-put ov 'line-height line-height)
+      ;;             (overlay-put ov 'line-spacing (1- line-height))))))))
 
-     ;; (add-hook 'org-agenda-finalize-hook 'my:org-agenda-time-grid-spacing)
-     )
+      ;; (add-hook 'org-agenda-finalize-hook 'my:org-agenda-time-grid-spacing)
+      )
     #+END_SRC
 
 *** appearence
@@ -948,6 +949,8 @@
     (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box t)
     (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box t)
+    (set-face-attribute 'org-checkbox-statistics-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box nil)
+    (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
     #+end_src
 
     #+BEGIN_SRC emacs-lisp
@@ -998,8 +1001,8 @@
       (setq org-priority-faces
           '((?A . (:foreground "#a63d40" :weight bold))
             (?B . (:foreground "#e9b872" :weight bold))
-            (?C . (:foreground "#6494aa" :weight bold))
-            (?D . (:foreground "white" :weight bold))
+            (?C . (:foreground "white" :weight bold))
+            (?D . (:foreground "#6494aa" :weight bold))
             (?E . (:foreground "#90a959" :weight bold))))
       )
     #+end_src
