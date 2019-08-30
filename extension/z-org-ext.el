@@ -65,5 +65,11 @@
           (org-clock-out)))
       )
 
+(advice-add 'org-insert-todo-heading :around
+            (lambda (orig-fun &rest args)
+              (apply orig-fun args)
+              (org-priority-up)
+              ))
+
 
 (provide 'z-org-ext)
