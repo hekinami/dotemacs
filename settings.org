@@ -957,8 +957,6 @@
     (use-package org-bullets
       :ensure t
       :defer t
-      :hook
-      (org-mode . (org-bullets-mode))
       :config
       (setq org-bullets-bullet-list '("♠" "♥" "♣" "♦"))
       :after org)
@@ -1014,6 +1012,14 @@
       (push '("[X]" . "☑" ) prettify-symbols-alist)
       (push '("[-]" . "☐" ) prettify-symbols-alist)
       (prettify-symbols-mode)))
+    #+end_src
+*** editing
+    #+begin_src emacs-lisp
+    (advice-add 'org-insert-todo-heading :around
+                (lambda (orig-fun &rest args)
+                  (apply orig-fun args)
+                  (org-priority-up)
+                  ))
     #+end_src
 *** efficiency
 **** agenda
