@@ -1030,7 +1030,8 @@
     #+begin_src emacs-lisp
     (setq org-ellipsis " »")
     (set-face-attribute 'org-ellipsis nil :underline nil :foreground "green")
-    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold)
+    ;; badwolf theme set outline-1 face (inherited by org-level-1) of height 1.2, use 1.0 to reset it
+    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold :height 1.0)
     (set-face-attribute 'org-level-2 nil :underline nil :foreground "#e76f51" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-level-3 nil :underline nil :foreground "#f4a261" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
