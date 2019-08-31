@@ -582,34 +582,30 @@
       :config
       (setq shackle-rules
             '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
-              (magit-status-mode :select t :inhibit-window-quit t :same t)
-              (magit-log-mode :select t :inhibit-window-quit t :same t)
-              (magit-revision-mode :select t :inhibit-window-quit t :align right :size 0.7)
               (magit-diff-mode :noselect t :align right :size 0.7)
-              ("*hackernews top stories*" :same t)
-              ("*shell*" :align bottom :size 0.3)
+              ("*Help*" :select t :align bottom :size 0.6)
               ))
       (shackle-mode))
     #+END_SRC
 *** popwin
     #+BEGIN_SRC emacs-lisp
-    (use-package popwin
-      :ensure t
-      :bind-keymap ("C-z p" . popwin:keymap)
-      :config
-      (popwin-mode)
-      (push '("*Backtrace*" :height 15) popwin:special-display-config)
-      (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
-      (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
-      (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-      ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-      ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
-      (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
-      (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
-      (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
-      (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
-      (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
-      (push '("*js*" :position bottom :width 20) popwin:special-display-config))
+    ;; (use-package popwin
+    ;;   :ensure t
+    ;;   :bind-keymap ("C-z p" . popwin:keymap)
+    ;;   :config
+    ;;   (popwin-mode)
+    ;;   (push '("*Backtrace*" :height 15) popwin:special-display-config)
+    ;;   (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
+    ;;   ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+    ;;   ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
+    ;;   (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
+    ;;   (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
+    ;;   (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
+    ;;   (push '("*js*" :position bottom :width 20) popwin:special-display-config))
     #+END_SRC
 
 **** usage
@@ -630,16 +626,16 @@
      | 1      | popwin:one-window                   |
 *** purpose
     #+BEGIN_SRC emacs-lisp
-    (use-package window-purpose
-      :ensure t
-      :config
-      (purpose-mode)
-      (setq purpose-preferred-prompt 'helm)
-      (define-key purpose-mode-map (kbd "C-x C-f") nil)
-      (define-key purpose-mode-map (kbd "C-x b") nil)
-      (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
-      (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
-      (purpose-compile-user-configuration))
+    ;; (use-package window-purpose
+    ;;   :ensure t
+    ;;   :config
+    ;;   (purpose-mode)
+    ;;   (setq purpose-preferred-prompt 'helm)
+    ;;   (define-key purpose-mode-map (kbd "C-x C-f") nil)
+    ;;   (define-key purpose-mode-map (kbd "C-x b") nil)
+    ;;   (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
+    ;;   (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
+    ;;   (purpose-compile-user-configuration))
     #+END_SRC
 * editing
 ** editorconfig
