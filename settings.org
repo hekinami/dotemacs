@@ -1030,13 +1030,14 @@
     #+begin_src emacs-lisp
     (setq org-ellipsis " »")
     (set-face-attribute 'org-ellipsis nil :underline nil :foreground "green")
-    ;; badwolf theme set outline-1 face (inherited by org-level-1) of height 1.2, use 1.0 to reset it
-    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold :height 1.0)
+    ;; badwolf theme set outline-1 face (inherited by org-level-1) with height 1.2, use default value to reset it
+    (set-face-attribute 'outline-1 nil :height (plist-get face--attributes-unspecified :height))
+    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-level-2 nil :underline nil :foreground "#e76f51" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-level-3 nil :underline nil :foreground "#f4a261" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box t)
-    (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box t)
+    (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold)
+    (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-checkbox-statistics-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box nil)
     (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
     #+end_src
