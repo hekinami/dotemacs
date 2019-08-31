@@ -637,6 +637,11 @@
     ;;   (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
     ;;   (purpose-compile-user-configuration))
     #+END_SRC
+*** extension
+    #+begin_src emacs-lisp
+    (use-package screen-ext
+      :bind ("C-x 5 p" . z/pop-window-into-frame))
+    #+end_src
 * editing
 ** editorconfig
    #+BEGIN_SRC emacs-lisp
