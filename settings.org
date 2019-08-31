@@ -1716,6 +1716,16 @@
    (use-package flymake
      :defer t)
    #+END_SRC
+
+   #+begin_src emacs-lisp
+   (use-package helm-xref
+     :ensure t
+     :init
+     (if (< emacs-major-version 27)
+         (setq xref-show-xrefs-function 'helm-xref-show-xrefs)
+       (setq xref-show-xrefs-function 'helm-xref-show-xrefs-27))
+     )
+   #+end_src
 ** version control
    #+BEGIN_SRC emacs-lisp
    (use-package magit
