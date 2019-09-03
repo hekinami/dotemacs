@@ -575,6 +575,20 @@
     (use-package winner
       :defer t)
     #+END_SRC
+*** purpose
+    #+BEGIN_SRC emacs-lisp
+    (use-package window-purpose
+      :ensure t
+      :config
+      (purpose-mode)
+      (setq purpose-preferred-prompt 'helm)
+
+      (define-key purpose-mode-map (kbd "C-x C-f") nil)
+      (define-key purpose-mode-map (kbd "C-x b") nil)
+      (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
+      (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
+      (purpose-compile-user-configuration))
+    #+END_SRC
 *** shackle
     #+BEGIN_SRC emacs-lisp
     (use-package shackle
@@ -583,8 +597,21 @@
       (setq shackle-rules
             '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
               (magit-diff-mode :noselect t :align right :size 0.7)
-              ("*Help*" :select t :align bottom :size 0.6)
               ))
+
+      (defmacro shackle-rule-with-purpose-mode (shackle-rule)
+        "define shackle rule coexisting with purpose-mode."
+        ;; https://github.com/bmag/emacs-purpose/issues/157
+        ;; https://github.com/bmag/emacs-purpose/issues/124
+        `(progn
+           (add-to-list 'shackle-rules ,shackle-rule)
+           (add-to-list 'purpose-action-function-ignore-buffer-names (car ,shackle-rule)))
+        )
+
+      (shackle-rule-with-purpose-mode '("^\\*Help\\*" :regexp t :select t :align bottom :size 0.6))
+      (shackle-rule-with-purpose-mode '("^\\*shell\\*" :regexp t :select t :align bottom :size 0.3))
+      (shackle-rule-with-purpose-mode '("^\\*eshell\\*" :regexp t :select t :align bottom :size 0.3))
+      (shackle-rule-with-purpose-mode '("^\\*compilation\\*" :regexp t :select t :align bottom :size 0.3))
       (shackle-mode))
     #+END_SRC
 *** popwin
@@ -624,24 +651,6 @@
      | e      | popwin:messages                     |
      | C-u    | popwin:universal-display            |
      | 1      | popwin:one-window                   |
-*** purpose
-    #+BEGIN_SRC emacs-lisp
-    (use-package window-purpose
-      :ensure t
-      :config
-      (purpose-mode)
-      (setq purpose-preferred-prompt 'helm)
-
-      ;; https://github.com/bmag/emacs-purpose/issues/157
-      ;; https://github.com/bmag/emacs-purpose/issues/124
-      (add-to-list 'purpose-action-function-ignore-buffer-names "^\\*Help")
-
-      (define-key purpose-mode-map (kbd "C-x C-f") nil)
-      (define-key purpose-mode-map (kbd "C-x b") nil)
-      (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
-      (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
-      (purpose-compile-user-configuration))
-    #+END_SRC
 *** extension
     #+begin_src emacs-lisp
     (use-package screen-ext
