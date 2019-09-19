@@ -439,6 +439,15 @@
         ))
      (helm-mode 1))
    #+END_SRC
+** windmove
+   #+begin_src emacs-lisp
+   (use-package windmove
+     :ensure t
+     :bind (("C-x <up>" . windmove-up)
+            ("C-x <down>" . windmove-down)
+            ("C-x <left>" . windmove-left)
+            ("C-x <right>" . windmove-right)))
+   #+end_src
 ** bookmark
    #+BEGIN_SRC emacs-lisp
    (use-package bm
@@ -612,6 +621,9 @@
       (shackle-rule-with-purpose-mode '("^\\*shell\\*" :regexp t :select t :align bottom :size 0.3))
       (shackle-rule-with-purpose-mode '("^\\*eshell\\*" :regexp t :select t :align bottom :size 0.3))
       (shackle-rule-with-purpose-mode '("^\\*compilation\\*" :regexp t :select t :align bottom :size 0.3))
+      (shackle-rule-with-purpose-mode '("manage.py shell\\*" :regexp t :select t :align bottom :size 0.3))
+      (shackle-rule-with-purpose-mode '("manage.py runserver" :regexp t :select t :align bottom :size 0.3))
+      (shackle-rule-with-purpose-mode '("^\\*hackernews top stories\\*" :regexp t :select t :align left :size 0.7))
       (shackle-mode))
     #+END_SRC
 *** popwin
@@ -625,8 +637,8 @@
     ;;   (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
     ;;   (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
     ;;   (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-    ;;   ;; (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-    ;;   ;; (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
+    ;;   (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
     ;;   (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
     ;;   (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
     ;;   (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
@@ -1740,6 +1752,22 @@
        (setq xref-show-xrefs-function 'helm-xref-show-xrefs-27))
      )
    #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package lsp-mode
+     :ensure t
+     :hook (rust-mode . lsp)
+     :commands (lsp lsp-deferred)
+     )
+
+   (use-package company-lsp
+     :ensure t
+     :config
+     (push 'company-lsp company-backends))
+
+   (use-package lsp-ui
+     :ensure t)
+   #+end_src
 ** version control
    #+BEGIN_SRC emacs-lisp
    (use-package magit
@@ -2082,17 +2110,6 @@
     (use-package rust-mode
       :ensure t
       :defer t)
-
-    (use-package lsp-mode
-      :ensure t
-      :hook (rust-mode . lsp)
-      :commands (lsp lsp-deferred)
-      )
-
-    (use-package company-lsp
-      :ensure t
-      :config
-      (push 'company-lsp company-backends))
 
     (use-package rust-playground
       :ensure t
