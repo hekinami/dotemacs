@@ -1861,6 +1861,7 @@
               ("\\.djhtml\\'" . web-mode)
               ("\\.html\\'" . web-mode)
               ("\\.htm\\'" . web-mode)
+              ("\\.vue\\'" . web-mode)
               ("\\.swig\\'" . web-mode))
        :config
        (setq sgml-basic-offset 4)
