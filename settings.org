@@ -2164,6 +2164,14 @@
       :ensure t
       :mode "dart-mode")
     #+END_SRC
+*** sql
+    #+begin_src emacs-lisp
+    (use-package sql-indent
+      :quelpa (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
+      :config
+      (add-hook 'sql-mode-hook 'sqlind-minor-mode)
+      )
+    #+end_src
 ** other data formats
 *** json
     #+BEGIN_SRC emacs-lisp
