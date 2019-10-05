@@ -1066,6 +1066,7 @@
     (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold)
     (set-face-attribute 'org-agenda-done nil :foreground "#666462")
+    (set-face-attribute 'org-upcoming-deadline nil :foreground "#edce85")
     (set-face-attribute 'org-checkbox-statistics-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box nil)
     (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
     #+end_src
