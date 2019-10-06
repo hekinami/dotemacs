@@ -2,8 +2,8 @@
 (setq org-lang-directory "/home/hekinami/.emacs.d/contents/org/languages")
 (setq org-capture-templates
       `(("t" "Task")
-        ("tt" "Unclassified" entry
-         (file+headline ,(concat org-directory "/gtd/unclassified.gtd.org") "One Time Tasks") "* TODO %?\n\n %i\n")
+        ("tt" "Task" entry
+         (file ,(concat org-directory "/gtd/tasks.gtd.org")) "* TODO [#C] %?\n\n %i\n")
         ("tw" "Company" entry
          (file+headline ,(concat org-directory "/gtd/company.gtd.org") "One Time Tasks") "* TODO %?\n\n %i\n")
         ("tp" "Private" entry
