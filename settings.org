@@ -404,6 +404,16 @@
                                                         )))
     #+END_SRC
 ** key configuration
+   #+begin_src emacs-lisp
+   (use-package key-chord
+     :ensure t)
+
+   (use-package use-package-chords
+     :ensure t
+     :config
+     (key-chord-mode 1))
+   #+end_src
+
    #+BEGIN_SRC emacs-lisp
    (global-unset-key (kbd "C-z"))
    (global-unset-key (kbd "<f8>"))
@@ -474,6 +484,8 @@
    (use-package avy
      :ensure t
      :bind ("M-z" . avy-goto-word-1)
+     :chords (("fj" . avy-goto-word-1)
+              ("dk" . avy-kill-whole-line))
      :config
      (setq avy-keys (append (number-sequence ?a ?z) (number-sequence ?A ?Z)))
      (setq avy-style 'at)
@@ -487,8 +499,8 @@
 
    (use-package ace-pinyin
      :quelpa (ace-pinyin :fetcher github :repo "hekinami/ace-pinyin")
-     :bind
-     (("M-/" . ace-pinyin-dwim)))
+     :bind (("M-/" . ace-pinyin-dwim))
+     :chords (("gh" . ace-pinyin-dwim)))
    #+END_SRC
 ** searching
 *** swoop
