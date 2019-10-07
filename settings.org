@@ -1005,7 +1005,6 @@
       (setq org-modules '(org-crypt org-checklist org-habit org-tempo))
       (setq org-time-stamp-custom-formats '("<%y/%m/%d %w>" . "<%y/%m/%d %w %H:%M>"))
       (setq org-bookmark-names-plist nil)
-      (org-super-agenda-mode)
 
       (use-package z-org-ext
         :bind (("<f8> <f8>" . z/open-browser)
@@ -1204,7 +1203,6 @@
      #+begin_src emacs-lisp
      (use-package org-super-agenda
        :ensure t
-       :commands (org-super-agenda-mode)
        :config
        (advice-add 'org-agenda-list :around
                    (lambda (orig-fun &rest args)
@@ -1219,6 +1217,7 @@
        ;; define groups in custom.el avoiding too verbose here.
        (setq org-agenda-list-super-groups nil)
        (setq org-todo-list-super-groups nil)
+       (org-super-agenda-mode)
        )
      #+end_src
 **** capture
