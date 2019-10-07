@@ -14,3 +14,4 @@ session.*
 cnfonts/*
 emms/*
 settings.el
+.cache/*

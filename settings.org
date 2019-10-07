@@ -380,6 +380,7 @@
    (auto-image-file-mode t)
    (setq auto-save-mode -1)
    (desktop-save-mode 0)
+   (setq transient-history-file (locate-runtimes-file "transient-history.el"))
    #+END_SRC
 ** server
 *** emacs server
@@ -1675,7 +1676,8 @@
       :bind
       (("C-c C-j" . org-journal-new-entry))
       :config
-      (setq org-journal-dir (locate-contents-file "journal")))
+      (setq org-journal-dir (locate-contents-file "journal"))
+      (setq org-journal-cache-file (locate-runtimes-file "org-journal.cache")))
     #+END_SRC
 *** diary-manager
     #+BEGIN_SRC emacs-lisp
@@ -1771,6 +1773,8 @@
      :ensure t
      :hook (rust-mode . lsp)
      :commands (lsp lsp-deferred)
+     :config
+     (setq lsp-session-file (locate-runtimes-file ".lsp-session-v1"))
      )
 
    (use-package company-lsp
