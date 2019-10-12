@@ -799,6 +799,19 @@
     #+END_SRC
 * reading
   #+BEGIN_SRC emacs-lisp
+  (use-package google-translate
+    :ensure t
+    :bind (("C-c t" . google-translate-at-point)
+           ("C-c T" . google-translate-query-translate))
+    :init
+    (setq google-translate-base-url
+          "http://translate.google.cn/translate_a/single")
+    (setq google-translate-listen-url
+          "http://translate.google.cn/translate_tts")
+    (setq google-translate--tkk-url
+          "http://translate.google.cn/")  
+    )
+
   (use-package engine-mode
     :ensure t
     :init
