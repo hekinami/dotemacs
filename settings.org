@@ -904,7 +904,7 @@
     :config
     (setq nov-save-place-file (locate-runtimes-file "nov-places"))
     (require 'justify-kp)
-    (setq nov-text-width most-positive-fixnum)
+    (setq nov-text-width t)
 
     (defun my-nov-font-setup ()
       (face-remap-add-relative 'variable-pitch :family "Liberation Serif"
@@ -1246,6 +1246,7 @@
      #+BEGIN_SRC emacs-lisp
      (use-package org-capture
        :bind ("C-c c" . org-capture)
+       :demand t
        :after org
        :config
        (defadvice org-capture (around split-vertically activate)
