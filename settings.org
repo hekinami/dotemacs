@@ -827,9 +827,19 @@
       "https://github.com/search?ref=simplesearch&q=%s"
       :keybinding "g")
 
+    (defengine esdict.cn
+      "https://www.esdict.cn/dicts/es/%s"
+      :keybinding "e"
+      :browser 'eww-browse-url)
+
     (defengine dict.cn
       "https://dict.cn/%s"
       :keybinding "d"
+      :browser 'eww-browse-url)
+
+    (defengine dictionary.com
+      "https://www.dictionary.com/browse/%s"
+      :keybinding "i"
       :browser 'eww-browse-url)
 
     (defengine bing
