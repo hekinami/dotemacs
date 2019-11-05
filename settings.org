@@ -951,7 +951,7 @@
      :ensure t
      :after ox
      :config
-     (setq org-hugo-section "post")
+     (setq org-hugo-section "posts")
      (setq org-hugo-default-static-subdirectory-for-externals "images")
      (setq org-hugo-basedir "~/hugo"))     ;not a native variable of ox-hugo
 
