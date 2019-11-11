@@ -519,6 +519,11 @@
       (setq swoop-font-size-change: nil)
       )
     #+END_SRC
+*** rg
+    #+begin_src emacs-lisp
+    (use-package rg :ensure t)
+    (use-package helm-rg :ensure t)
+    #+end_src
 ** treemacs
    #+begin_src emacs-lisp
    (use-package treemacs
