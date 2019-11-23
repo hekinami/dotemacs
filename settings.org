@@ -1926,7 +1926,6 @@
               ("\\.vue\\'" . web-mode)
               ("\\.swig\\'" . web-mode))
        :config
-       (setq sgml-basic-offset 4)
        (setq web-mode-engines-alist
              '(("django" . "\\.swig\\'")
                ("django" . "\\.djhtml\\'")))
@@ -2009,7 +2008,9 @@
        :mode ("\\.js\\'" . js2-mode)
        :init
        (add-hook 'js2-mode-hook #'lsp)
-       (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2"))))
+       (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2")))
+       :config
+       (setq js2-basic-offset 2))
      #+END_SRC
 
      #+begin_src emacs-lisp
