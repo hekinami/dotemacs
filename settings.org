@@ -2020,7 +2020,9 @@
      #+begin_src emacs-lisp
      (use-package rjsx-mode
        :ensure t
-       :defer t)
+       :defer t
+       :init
+       (add-hook 'rjsx-mode-hook 'emmet-mode))
      #+end_src
 **** interaction and debugging
      #+BEGIN_SRC emacs-lisp
