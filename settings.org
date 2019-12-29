@@ -126,13 +126,35 @@
     #+begin_src emacs-lisp
     (set-face-attribute 'default nil :foreground "#F8F8d2")
     #+end_src
-*** fonts
+*** fonts & icons
     #+BEGIN_SRC emacs-lisp
     (use-package cnfonts
       :ensure t
+      :after all-the-icons
+      :hook (cnfonts-set-font-finish
+             . (lambda (fontsizes-list)     ; https://github.com/seagle0128/doom-modeline/issues/278
+                 (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
+                 (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
+                 (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
+                 (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
+                 (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
+                 (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil 'append)))
       :config
       (cnfonts-enable))
     #+END_SRC
+
+    #+BEGIN_SRC emacs-lisp
+    (use-package mode-icons
+      :ensure t
+      :config
+      (mode-icons-mode))
+
+    (use-package all-the-icons
+      ;; M-x all-the-icons-install-fonts
+      :ensure t
+      )
+    #+END_SRC
+
 *** frame
     #+BEGIN_SRC emacs-lisp
     (setq frame-title-format "[%F]")
@@ -319,17 +341,6 @@
       (global-yascroll-bar-mode))
 
     (setq auto-hscroll-mode 'current-line)
-    #+END_SRC
-*** icons
-    #+BEGIN_SRC emacs-lisp
-    (use-package mode-icons
-      :ensure t
-      :config
-      (mode-icons-mode))
-
-    (use-package all-the-icons
-      ;; M-x all-the-icons-install-fonts
-      :ensure t)
     #+END_SRC
 *** indicators
     #+BEGIN_SRC emacs-lisp
