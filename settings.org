@@ -941,8 +941,9 @@
     (setq nov-variable-pitch t)
 
     (defun my-nov-font-setup ()
-      (face-remap-add-relative 'variable-pitch :family "Sawasdee"
-                               :height 1.3 :slant 'italic :weight 'bold :foreground "#C7C4B7")
+      (face-remap-add-relative 'variable-pitch :family "Sorts Mill Goudy"
+                               :slant 'italic :height 1.5 :foreground "#C7C4B7")
+      (set (make-variable-buffer-local 'shr-width) 88)
       )
     (add-hook 'nov-mode-hook 'my-nov-font-setup)
 
@@ -959,18 +960,18 @@
 
     (defun my-nov-post-html-render-hook ()
       (if (get-buffer-window)
-          (let ((max-width (pj-line-width))
-                buffer-read-only)
-            (save-excursion
-              (goto-char (point-min))
-              (while (not (eobp))
-                (when (not (looking-at "^[[:space:]]*$"))
-                  (goto-char (line-end-position))
-                  (when (> (shr-pixel-column) max-width)
-                    (goto-char (line-beginning-position))
-                    (pj-justify)))
-                (forward-line 1))))
-        ))
+          (cl-letf (((symbol-function 'pj-line-width) (lambda () 800)))
+            (let ((max-width (pj-line-width))
+                  buffer-read-only)
+              (save-excursion
+                (goto-char (point-min))
+                (while (not (eobp))
+                  (when (not (looking-at "^[[:space:]]*$"))
+                    (goto-char (line-end-position))
+                    (when (> (shr-pixel-column) max-width)
+                      (goto-char (line-beginning-position))
+                      (pj-justify)))
+                  (forward-line 1)))))))
 
     (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
   #+END_SRC
