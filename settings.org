@@ -1377,6 +1377,30 @@
     (setq org-src-tab-acts-natively t)
     (setq org-edit-src-content-indentation 0)
     #+END_SRC
+
+    #+begin_src emacs-lisp
+    ;; https://emacs.stackexchange.com/questions/44914/choose-individual-startup-visibility-of-org-modes-source-blocks
+    (defun individual-visibility-source-blocks ()
+      "Fold some blocks in the current buffer."
+      (interactive)
+      (org-show-block-all)
+      (org-block-map
+       (lambda ()
+         (let ((case-fold-search t))
+           (when (and
+                  (save-excursion
+                    (beginning-of-line 1)
+                    (looking-at org-block-regexp))
+                  (cl-assoc
+                   ':hidden
+                   (cl-third
+                    (org-babel-get-src-block-info))))
+             (org-hide-block-toggle))))))
+
+    (add-hook
+     'org-mode-hook
+     (function individual-visibility-source-blocks))
+    #+end_src
 *** projects and publish
     #+BEGIN_SRC emacs-lisp
     (setq org-projects-base (locate-contents-file "org/"))
