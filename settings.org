@@ -181,7 +181,7 @@
 *** modeline
     #+BEGIN_SRC emacs-lisp
     (use-package doom-modeline
-      :ensure t
+      :quelpa (doom-modeline :repo "seagle0128/doom-modeline" :fetcher github :stable t)
       :hook (after-init . doom-modeline-mode)
       :init
       ;; How tall the mode-line should be. It's only respected in GUI.
