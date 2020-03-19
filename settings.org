@@ -1830,6 +1830,7 @@
    (use-package compile
      :bind ("<f12>" . compile)
      :config
+     (setq compilation-scroll-output t)
      (defun colorize-compilation-buffer ()
        (toggle-read-only)
        (ansi-color-apply-on-region compilation-filter-start (point))
