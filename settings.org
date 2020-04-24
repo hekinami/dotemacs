@@ -2332,7 +2332,10 @@
     #+begin_src emacs-lisp
     (use-package gnuplot
       :ensure t
-      :defer t)
+      :defer t
+      :config
+      ;; https://www.mail-archive.com/emacs-orgmode@gnu.org/msg127209.html
+      (setq gnuplot-insertions-menu-flag nil))
     #+end_src
 *** protobuf
     #+begin_src emacs-lisp
