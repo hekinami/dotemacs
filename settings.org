@@ -1051,6 +1051,21 @@
      :init
      (add-to-list 'auto-mode-alist '("\\.ly$" . LilyPond-mode)))
    #+end_src
+** plantuml
+   #+begin_src emacs-lisp
+   (use-package plantuml-mode :ensure t
+     :config
+     (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+     (setq plantuml-jar-path "/opt/plantuml/plantuml.jar")
+     (setq plantuml-default-exec-mode 'jar)
+     (eval-after-load "org"
+       '(progn
+          (setq org-plantuml-jar-path "/opt/plantuml/plantuml.jar")
+          (add-to-list
+           'org-src-lang-modes '("plantuml" . plantuml)))
+       )
+     )
+   #+end_src
 * organizer
 ** org-mode
 *** general
@@ -1372,6 +1387,7 @@
        (gnuplot . t)
        (org . t)
        (lilypond . t)
+       (plantuml . t)
        ))
     (setq org-src-fontify-natively t)
     (setq org-src-tab-acts-natively t)
