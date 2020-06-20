@@ -2306,6 +2306,11 @@
       (add-hook 'sql-mode-hook 'sqlind-minor-mode)
       )
     #+end_src
+*** lua
+    #+begin_src emacs-lisp
+    (use-package lua-mode
+      :ensure t)
+    #+end_src
 ** other data formats
 *** json
     #+BEGIN_SRC emacs-lisp
