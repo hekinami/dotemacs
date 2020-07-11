@@ -1499,7 +1499,7 @@
     (use-package ox-reveal
       :quelpa (ox-reveal :fetcher github :repo "hekinami/org-reveal")
       :config
-      (setq org-reveal-root "file:///home/hekinami/git/reveal.js"))
+      (setq org-reveal-root "./reveal.js"))
 
             ;;; latex
             ;;; font: https://www.google.com/get/noto/help/cjk/
@@ -1739,6 +1739,48 @@
      )
    #+END_SRC
 ** take notes
+*** org-roam
+    #+begin_src emacs-lisp
+    (use-package org-roam
+      :ensure t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory (locate-contents-file "roam/"))
+      :config
+      (require 'org-roam-protocol)
+      :bind (:map org-roam-mode-map
+                  (("C-c n l" . org-roam)
+                   ("C-c n f" . org-roam-find-file)
+                   ("C-c n j" . org-roam-jump-to-index)
+                   ("C-c n b" . org-roam-switch-to-buffer)
+                   ("C-c n c" . org-roam-capture)
+                   ("C-c n g" . org-roam-graph))
+                  :map org-mode-map
+                  (("C-c n i" . org-roam-insert))))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package org-roam-server
+      :ensure t
+      :config
+      (setq org-roam-server-host "127.0.0.1"
+            org-roam-server-port 8080
+            org-roam-server-export-inline-images t
+            org-roam-server-authenticate nil
+            org-roam-server-network-poll t
+            org-roam-server-network-arrows nil
+            org-roam-server-network-label-truncate t
+            org-roam-server-network-label-truncate-length 60
+            org-roam-server-network-label-wrap-length 20))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package company-org-roam
+      :ensure t
+      :config
+      (push 'company-org-roam company-backends))
+    #+end_src
 *** deft
     #+BEGIN_SRC emacs-lisp
     (use-package deft
