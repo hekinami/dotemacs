@@ -4,7 +4,7 @@
     (if (or (booleanp current)
             (= (cadr (frame-parameter nil 'alpha))
                100))
-        (set-frame-parameter nil 'alpha '(85 50))
+        (set-frame-parameter nil 'alpha '(85 95))
       (set-frame-parameter nil 'alpha '(100 100))
       )
     ))
