@@ -552,6 +552,7 @@
      :config
      (setq projectile-known-projects-file (locate-runtimes-file "projectile-bookmarks.eld"))
      (setq projectile-mode-line-prefix "")
+     (setq projectile-tags-command "ctags-exuberant -Re -f \"%s\" %s \"%s\"")
      (projectile-global-mode)
      (setq projectile-completion-system 'helm))
 
