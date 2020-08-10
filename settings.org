@@ -133,6 +133,13 @@
       :after all-the-icons
       :hook (cnfonts-set-font-finish
              . (lambda (fontsizes-list)     ; https://github.com/seagle0128/doom-modeline/issues/278
+                 (set-fontset-font
+                  nil
+                  'cyrillic
+                  (font-spec :family "Fantasque Sans Mono"
+                             :weight 'normal
+                             :slant 'normal
+                             :size 17))
                  (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
                  (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
                  (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
