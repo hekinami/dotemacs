@@ -46,7 +46,7 @@
 *** package.el
     #+BEGIN_SRC emacs-lisp
     (setq package-enable-at-startup nil)
-    (package-initialize)
+    ;; (package-initialize)
     (setq package-archives
           '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
             ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
