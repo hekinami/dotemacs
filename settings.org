@@ -1658,6 +1658,7 @@
       (:map org-mode-map
             ("C-c C-/" . org-decrypt-entry))
       :config
+      (setq epg-pinentry-mode 'loopback)
       (org-crypt-use-before-save-magic)
       (setq org-tags-exclude-from-inheritance (quote ("crypt")))
       (setq org-crypt-key "z")
@@ -1746,7 +1747,59 @@
        )
      )
    #+END_SRC
-** take notes
+** note taking
+*** deft
+    #+BEGIN_SRC emacs-lisp
+    (use-package deft
+      :ensure t
+      :bind 
+      (("C-c n n" . deft)
+       ("<f9>" . deft))
+      :config
+      (setq deft-default-extension "org")
+      (setq deft-extensions '("org"))
+      (setq deft-directory (locate-contents-file "organizer/deft"))
+      (setq deft-new-file-format "%Y-%m-%dT%H%M")
+      (setq deft-auto-save-interval 0)
+      )
+    #+END_SRC
+*** org-journal
+    #+BEGIN_SRC emacs-lisp
+    (use-package org-journal
+      :ensure t
+      :bind
+      (("C-c n j" . org-journal-new-entry))
+      :config
+      (setq org-journal-dir (locate-contents-file "organizer/journal"))
+      (setq org-journal-file-type 'weekly)
+      (setq org-journal-cache-file (locate-runtimes-file "org-journal.cache")))
+    #+END_SRC
+*** diary-manager
+    #+BEGIN_SRC emacs-lisp
+    (use-package diary-manager
+      :ensure t
+      :bind
+      (("C-c n d d" . diary-manager-edit)
+       ("C-c n d b" . diary-manager-browse))
+      :config
+      (setq diary-manager-location (locate-contents-file "organizer/diary"))
+      (setq diary-manager-enable-git-integration nil)
+      (setq diary-manager-entry-extension ".org.gpg"))
+    #+END_SRC
+*** org-brain
+    #+BEGIN_SRC emacs-lisp
+    (use-package org-brain
+      :ensure t
+      :bind
+      (("C-c n b" . org-brain-visualize))
+      :config
+      (setq org-id-track-globally t)
+      (push '("b" "Brain" plain (function org-brain-goto-end)
+              "* %i%?" :empty-lines 1)
+            org-capture-templates)
+      (setq org-brain-visualize-default-choices 'all)
+      (setq org-brain-title-max-length 12))
+    #+END_SRC
 *** org-roam
     #+begin_src emacs-lisp
     (use-package org-roam
@@ -1758,14 +1811,14 @@
       :config
       (require 'org-roam-protocol)
       :bind (:map org-roam-mode-map
-                  (("C-c n l" . org-roam)
-                   ("C-c n f" . org-roam-find-file)
-                   ("C-c n j" . org-roam-jump-to-index)
-                   ("C-c n b" . org-roam-switch-to-buffer)
-                   ("C-c n c" . org-roam-capture)
-                   ("C-c n g" . org-roam-graph))
+                  (("C-c n r l" . org-roam)
+                   ("C-c n r f" . org-roam-find-file)
+                   ("C-c n r j" . org-roam-jump-to-index)
+                   ("C-c n r b" . org-roam-switch-to-buffer)
+                   ("C-c n r c" . org-roam-capture)
+                   ("C-c n r g" . org-roam-graph))
                   :map org-mode-map
-                  (("C-c n i" . org-roam-insert))))
+                  (("C-c n r i" . org-roam-insert))))
     #+end_src
 
     #+begin_src emacs-lisp
@@ -1789,57 +1842,11 @@
       :config
       (push 'company-org-roam company-backends))
     #+end_src
-*** deft
-    #+BEGIN_SRC emacs-lisp
-    (use-package deft
-      :ensure t
-      :bind (("<f9>" . deft))
-      :config
-      (setq deft-default-extension "org")
-      (setq deft-extensions '("org"))
-      (setq deft-directory (locate-contents-file "deft"))
-      (setq deft-new-file-format "%Y-%m-%dT%H%M")
-      )
-    #+END_SRC
 *** simplenote2
     #+BEGIN_SRC emacs-lisp
     (use-package simplenote2
       :ensure t
       :defer t)
-    #+END_SRC
-*** org-brain
-    #+BEGIN_SRC emacs-lisp
-    (use-package org-brain
-      :ensure t
-      :bind
-      (("C-z b" . org-brain-visualize))
-      :config
-      (setq org-id-track-globally t)
-      (push '("b" "Brain" plain (function org-brain-goto-end)
-              "* %i%?" :empty-lines 1)
-            org-capture-templates)
-      (setq org-brain-visualize-default-choices 'all)
-      (setq org-brain-title-max-length 12))
-    #+END_SRC
-*** org-journal
-    #+BEGIN_SRC emacs-lisp
-    (use-package org-journal
-      :ensure t
-      :bind
-      (("C-c C-j" . org-journal-new-entry))
-      :config
-      (setq org-journal-dir (locate-contents-file "journal"))
-      (setq org-journal-cache-file (locate-runtimes-file "org-journal.cache")))
-    #+END_SRC
-*** diary-manager
-    #+BEGIN_SRC emacs-lisp
-    (use-package diary-manager
-      :ensure t
-      :defer t
-      :config
-      (setq diary-manager-location (locate-contents-file "org/diary"))
-      (setq diary-manager-enable-git-integration nil)
-      (setq diary-manager-entry-extension ".org"))
     #+END_SRC
 *** zote
     #+begin_src emacs-lisp
