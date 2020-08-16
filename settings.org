@@ -400,7 +400,19 @@
    (desktop-save-mode 0)
    (setq transient-history-file (locate-runtimes-file "transient-history.el"))
    #+END_SRC
-** server
+** network
+*** proxy
+    #+begin_src emacs-lisp
+    (defun toggle-network-proxy nil
+      (interactive)
+      (if url-proxy-services
+          (setq url-proxy-services nil)
+        (setq url-proxy-services
+          '(("no_proxy" . "127.0.0.1")
+            ("http" . "127.0.0.1:8118")
+            ("https" . "127.0.0.1:8118"))))
+      )
+    #+end_src
 *** emacs server
     #+BEGIN_SRC emacs-lisp
     (setq server-auth-dir (locate-runtimes-file "emacsserver"))
