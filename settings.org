@@ -10,8 +10,9 @@
    (fset 'yes-or-no-p 'y-or-n-p)
    (set-time-zone-rule "GMT-8")
    (setq user-full-name "Zou Bibo")
-   (setq user-mail-address "hekinami@amiunique.net")
+   (setq user-mail-address "zoubibo@amiunique.net")
    #+END_SRC
+
 ** configuration helpers
 *** file location
     #+BEGIN_SRC emacs-lisp
@@ -120,12 +121,10 @@
     (use-package badwolf-theme
       :ensure t
       :config
-      (load-theme 'badwolf t))
+      (load-theme 'badwolf t)
+      (set-face-attribute 'default nil :foreground "#F8F8d2"))
     #+END_SRC
 
-    #+begin_src emacs-lisp
-    (set-face-attribute 'default nil :foreground "#F8F8d2")
-    #+end_src
 *** fonts & icons
     #+BEGIN_SRC emacs-lisp
     (use-package cnfonts
@@ -551,13 +550,14 @@
     #+END_SRC
 *** rg
     #+begin_src emacs-lisp
-    (use-package rg :ensure t)
-    (use-package helm-rg :ensure t)
+    (use-package rg :ensure t :defer t)
+    (use-package helm-rg :ensure t :defer t)
     #+end_src
 ** treemacs
    #+begin_src emacs-lisp
    (use-package treemacs
      :ensure t
+     :defer t
      :bind ("C-z s" . treemacs)
      )
    #+end_src
@@ -566,6 +566,7 @@
    #+BEGIN_SRC emacs-lisp
    (use-package projectile
      :ensure t
+     :defer t
      :bind ("C-x C-b" . helm-projectile-switch-to-buffer)
      :bind-keymap ("C-c p" . projectile-command-map)
      :config
@@ -581,14 +582,15 @@
      :after projectile)
 
    (use-package treemacs-projectile
-     :ensure t)
+     :ensure t
+     :defer t)
    #+END_SRC
 ** system file management
 *** dired
     #+BEGIN_SRC emacs-lisp
-    (use-package dired-x)
+    (use-package dired-x :defer t)
     (use-package dired-single
-      :ensure t)
+      :ensure t :defer t)
 
     (defun my-dired-init ()
       "Bunch of stuff to run for dired, either immediately or when it's
@@ -763,20 +765,38 @@
    #+END_SRC
 ** language and localization
    #+BEGIN_SRC emacs-lisp
-   (set-language-environment 'utf-8)
-   (setq encoding 'utf-8)
-   (set-terminal-coding-system 'utf-8)
-   (prefer-coding-system 'utf-8)
-   (set-default-coding-systems 'utf-8)
-   (set-keyboard-coding-system 'utf-8)
-   (set-buffer-file-coding-system 'utf-8)
-   (setq default-buffer-file-coding-system 'utf-8)
-   (setq coding-system-for-read 'utf-8)
-   (set-clipboard-coding-system 'utf-8)
-   (setq file-name-coding-system 'utf-8)
+   ;; (set-language-environment 'utf-8)
+   ;; (setq encoding 'utf-8)
+   ;; (set-terminal-coding-system 'utf-8)
+   ;; (prefer-coding-system 'utf-8)
+   ;; (set-default-coding-systems 'utf-8)
+   ;; (set-keyboard-coding-system 'utf-8)
+   ;; (set-buffer-file-coding-system 'utf-8)
+   ;; (setq default-buffer-file-coding-system 'utf-8)
+   ;; (setq coding-system-for-read 'utf-8)
+   ;; (set-clipboard-coding-system 'utf-8)
+   ;; (setq file-name-coding-system 'utf-8)
 
-   (set-locale-environment "C")
+   ;; (set-locale-environment "C")
    #+END_SRC
+   #+begin_src emacs-lisp
+   (use-package mule
+     :init
+     (setq encoding 'utf-8)
+     :config
+     (prefer-coding-system 'utf-8)
+     (set-language-environment 'utf-8)
+     (set-locale-environment "C")
+     (set-default-coding-systems 'utf-8)
+     (set-terminal-coding-system 'utf-8)
+     (set-keyboard-coding-system 'utf-8)
+     (set-buffer-file-coding-system 'utf-8)
+     (set-clipboard-coding-system 'utf-8)
+     (setq default-buffer-file-coding-system 'utf-8)
+     (setq coding-system-for-read 'utf-8)
+     (setq file-name-coding-system 'utf-8)
+     )
+   #+end_src
 ** undo
    #+BEGIN_SRC emacs-lisp
    (use-package undo-tree
@@ -787,14 +807,11 @@
      (global-undo-tree-mode))
    #+END_SRC
 ** input assistent
-*** whitespace
-    #+begin_src emacs-lisp
-    ;; (set-default 'show-trailing-whitespace t)
-    #+end_src
 *** company-mode
     #+BEGIN_SRC emacs-lisp
     (use-package company
       :ensure t
+      :defer t
       :diminish (company-mode global-company-mode)
       :init
       (global-company-mode))
@@ -951,11 +968,13 @@
     :config
     (use-package elfeed-org
       :ensure t
+      :defer t
       :config
       (elfeed-org)
       (setq rmh-elfeed-org-files (list (locate-contents-file "others/elfeed.org"))))
     (use-package elfeed-goodies
       :ensure t
+      :defer t
       :config
       (elfeed-goodies/setup)))
 
@@ -965,11 +984,13 @@
 
   (use-package pdf-tools
     :ensure t
+    :defer t
     :config
     (pdf-tools-install))
 
   (use-package org-pdfview
-    :ensure t)
+    :ensure t
+    :defer t)
 
   ;;; ------------------------------------------------------------
   ;;;
@@ -1047,6 +1068,7 @@
 
    (use-package easy-hugo
      :ensure t
+     :defer t
      :config
      (setq easy-hugo-basedir "~/hugo/"))
    #+end_src
@@ -1107,12 +1129,14 @@
    #+begin_src emacs-lisp
    (use-package lilypond-mode
      :quelpa (lilypond-mode :fetcher github :repo "hekinami/lilypond-mode")
+     :defer t
      :init
      (add-to-list 'auto-mode-alist '("\\.ly$" . LilyPond-mode)))
    #+end_src
 ** plantuml
    #+begin_src emacs-lisp
    (use-package plantuml-mode :ensure t
+     :defer t
      :config
      (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
      (setq plantuml-jar-path "/opt/plantuml/plantuml.jar")
@@ -1359,7 +1383,6 @@
      #+BEGIN_SRC emacs-lisp
      (use-package org-capture
        :bind ("C-c c" . org-capture)
-       :demand t
        :after org
        :config
        (defadvice org-capture (around split-vertically activate)
@@ -1557,6 +1580,7 @@
 
     (use-package ox-reveal
       :quelpa (ox-reveal :fetcher github :repo "hekinami/org-reveal")
+      :defer t
       :config
       (setq org-reveal-root "./reveal.js"))
 
@@ -1766,6 +1790,7 @@
 
    (use-package cal-china-x
      :ensure t
+     :defer t
      :config
      (setq cal-china-x-important-holidays cal-china-x-chinese-holidays)
      (setq calendar-holidays cal-china-x-important-holidays))
@@ -1855,12 +1880,13 @@
     #+begin_src emacs-lisp
     (use-package org-roam
       :ensure t
+      :defer t
       :hook
       (after-init . org-roam-mode)
       :custom
       (org-roam-directory (locate-contents-file "roam/"))
       :config
-      (require 'org-roam-protocol)
+      ;; (require 'org-roam-protocol)
       :bind (:map org-roam-mode-map
                   (("C-c n r l" . org-roam)
                    ("C-c n r f" . org-roam-find-file)
@@ -1875,6 +1901,7 @@
     #+begin_src emacs-lisp
     (use-package org-roam-server
       :ensure t
+      :defer t
       :config
       (setq org-roam-server-host "127.0.0.1"
             org-roam-server-port 8080
@@ -1890,8 +1917,22 @@
     #+begin_src emacs-lisp
     (use-package company-org-roam
       :ensure t
+      :defer t
       :config
       (push 'company-org-roam company-backends))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package org-roam-graph :defer t)
+    (use-package org-roam-doctor :defer t)
+    (use-package org-roam-db  :defer t)
+    (use-package org-roam-dailies  :defer t)
+    (use-package org-roam-capture  :defer t)
+    (use-package org-roam-completion  :defer t)
+    (use-package org-roam-buffer  :defer t)
+    (use-package org-roam-faces  :defer t)
+    (use-package org-roam-macs  :defer t)
+    (use-package org-roam-compat  :defer t)
     #+end_src
 *** simplenote2
     #+BEGIN_SRC emacs-lisp
@@ -1924,7 +1965,7 @@
      (setq ledger-reconcile-default-commodity "CNY"))
 
    (use-package ledger-capture
-     :after org-capture)
+     :defer t)
    #+END_SRC
 ** todochiku
    #+BEGIN_SRC emacs-lisp
@@ -1950,7 +1991,9 @@
    #+END_SRC
 ** password store
    #+begin_src emacs-lisp
-   (use-package pass :ensure t)
+   (use-package pass
+     :ensure t
+     :commands (pass))
    #+end_src
 * development
 ** common tasks
@@ -1994,11 +2037,13 @@
 
    (use-package company-lsp
      :ensure t
+     :after (lsp-mode)
      :config
      (push 'company-lsp company-backends))
 
    (use-package lsp-ui
-     :ensure t)
+     :ensure t
+     :after (lsp-mode))
    #+end_src
 ** version control
    #+BEGIN_SRC emacs-lisp
@@ -2011,7 +2056,7 @@
       ("C-x M-g" . magit-dispatch-popup)))
 
    (use-package dired-k
-     :ensure t)
+     :ensure t :defer t)
 
    (use-package diff-hl
      :ensure t
@@ -2135,6 +2180,7 @@
        :defer t)
 
      (use-package css-mode
+       :defer t
        :config
        (setq css-indent-offset 2))
 
@@ -2217,6 +2263,7 @@
 
      (use-package indium
        :ensure t
+       :defer
        :init
        (setq indium-chrome-data-dir (expand-file-name (locate-runtimes-file "indium-chrome-profile")))
        :config
@@ -2263,6 +2310,7 @@
      #+BEGIN_SRC emacs-lisp
      (use-package company-jedi
        :ensure t
+       :defer t
        :init
        (setq jedi:environment-root "py3jedi")
        (setq jedi:environment-virtualenv '("virtualenv" "--system-site-packages" "-p" "python3" "--always-copy" "--quiet"))
@@ -2414,6 +2462,7 @@
     #+begin_src emacs-lisp
     (use-package sql-indent
       :quelpa (sql-indent :fetcher github :repo "alex-hhh/emacs-sql-indent")
+      :defer t
       :config
       (add-hook 'sql-mode-hook 'sqlind-minor-mode)
       )
@@ -2421,7 +2470,8 @@
 *** lua
     #+begin_src emacs-lisp
     (use-package lua-mode
-      :ensure t)
+      :ensure t
+      :defer t)
     #+end_src
 ** other data formats
 *** json
@@ -2568,6 +2618,7 @@
    #+begin_src emacs-lisp
    (use-package telega
      :ensure t
+     :commands (telega)
      :config
      (setq telega-proxies
          '(
