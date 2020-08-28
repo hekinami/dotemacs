@@ -628,17 +628,52 @@
    #+END_SRC
 * screen organization
 ** window management
+*** tab-bar
+    #+begin_src emacs-lisp
+    (use-package tab-bar
+      :init
+      (setq tab-bar-show 1)
+      :config
+      (set-face-attribute 'tab-bar nil :foreground "black" :background "grey25")
+      (set-face-attribute 'tab-bar-tab nil :box nil :background "grey45")
+      (set-face-attribute 'tab-bar-tab-inactive nil :box nil :background "grey25" :foreground "grey50")
+      ;; (tab-bar-mode)
+      )
+    #+end_src
+*** centaur-tabs
+    #+begin_src emacs-lisp
+    (use-package centaur-tabs
+      :ensure t
+      :demand
+      :hook
+      (term-mode . centaur-tabs-local-mode)
+      (calendar-mode . centaur-tabs-local-mode)
+      (org-agenda-mode . centaur-tabs-local-mode)
+      (helpful-mode . centaur-tabs-local-mode)
+      :config
+      (setq centaur-tabs-set-icons t)
+      (setq centaur-tabs-gray-out-icons 'buffer)
+      (setq centaur-tabs-set-bar 'over)
+      (setq centaur-tabs-set-modified-marker t)
+      (setq centaur-tabs-cycle-scope 'tabs)
+      (centaur-tabs-mode t)
+      (centaur-tabs-headline-match)
+      :bind
+      ("C-<prior>" . centaur-tabs-backward)
+      ("C-<next>" . centaur-tabs-forward)
+      ("C-x t g" . centaur-tabs-toggle-groups))
+    #+end_src
 *** winner
     #+BEGIN_SRC emacs-lisp
     (use-package winner
       :defer t)
     #+END_SRC
-*** purpose
+*** purpose (obsolete)
     #+BEGIN_SRC emacs-lisp
     (use-package window-purpose
       :ensure t
       :config
-      (purpose-mode)
+      ;; (purpose-mode) 
       (setq purpose-preferred-prompt 'helm)
 
       (define-key purpose-mode-map (kbd "C-x C-f") nil)
@@ -1913,6 +1948,10 @@
    ;;              (if sticky "0" (int-to-string (* 1000 todochiku-timeout)))
    ;;              title message))))
    #+END_SRC
+** password store
+   #+begin_src emacs-lisp
+   (use-package pass :ensure t)
+   #+end_src
 * development
 ** common tasks
    #+BEGIN_SRC emacs-lisp
@@ -2525,3 +2564,13 @@
    (add-hook 'erc-server-PRIVMSG-functions 'fg/notify-privmsg t)
 
    #+END_SRC
+** telega
+   #+begin_src emacs-lisp
+   (use-package telega
+     :ensure t
+     :config
+     (setq telega-proxies
+         '(
+           (:server "127.0.0.1" :port 1080 :enable t :type (:@type "proxyTypeSocks5"))))
+     )
+   #+end_src
