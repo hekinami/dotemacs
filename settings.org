@@ -2017,6 +2017,12 @@
    #+END_SRC
 
    #+begin_src emacs-lisp
+   (use-package flycheck
+     :ensure t
+     :init (global-flycheck-mode))
+   #+end_src
+
+   #+begin_src emacs-lisp
    ;; (use-package helm-xref
    ;;   :ensure t
    ;;   :init
@@ -2294,6 +2300,7 @@
        :ensure t
        :after company-jedi
        :init
+
        ;; https://www.reddit.com/r/emacs/comments/7styea/problem_with_companyjedi_after_pyvenvworkon/
        (with-eval-after-load 'company-jedi
          (dolist (hook '(pyvenv-post-activate-hooks pyvenv-post-deactivate-hooks))
@@ -2304,7 +2311,9 @@
                                 (not (file-remote-p pyvenv-virtual-env)))
                            (setq jedi:server-args (list "--virtual-env" pyvenv-virtual-env))
                          (setq jedi:server-args nil))
-                       (jedi:stop-server))))))
+                       (jedi:stop-server)))))
+       :config
+       (pyvenv-activate (concat python-environment-directory "/py3jedi")))
      #+END_SRC
 **** completion
      #+BEGIN_SRC emacs-lisp
