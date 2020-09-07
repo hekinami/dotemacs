@@ -2039,13 +2039,14 @@
      :commands (lsp lsp-deferred)
      :config
      (setq lsp-session-file (locate-runtimes-file ".lsp-session-v1"))
+     (push 'company-capf company-backends)
      )
 
-   (use-package company-lsp
-     :ensure t
-     :after (lsp-mode)
-     :config
-     (push 'company-lsp company-backends))
+   ;; (use-package company-lsp
+   ;;   :ensure t
+   ;;   :after (lsp-mode)
+   ;;   :config
+   ;;   (push 'company-lsp company-backends))
 
    (use-package lsp-ui
      :ensure t
