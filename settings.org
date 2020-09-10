@@ -129,7 +129,6 @@
     #+BEGIN_SRC emacs-lisp
     (use-package cnfonts
       :ensure t
-      :after all-the-icons
       :hook (cnfonts-set-font-finish
              . (lambda (fontsizes-list)     ; https://github.com/seagle0128/doom-modeline/issues/278
                  (set-fontset-font
@@ -139,12 +138,7 @@
                              :weight 'normal
                              :slant 'normal
                              :size 17))
-                 (set-fontset-font t 'unicode (font-spec :family "all-the-icons") nil 'append)
-                 (set-fontset-font t 'unicode (font-spec :family "file-icons") nil 'append)
-                 (set-fontset-font t 'unicode (font-spec :family "Material Icons") nil 'append)
-                 (set-fontset-font t 'unicode (font-spec :family "github-octicons") nil 'append)
-                 (set-fontset-font t 'unicode (font-spec :family "FontAwesome") nil 'append)
-                 (set-fontset-font t 'unicode (font-spec :family "Weather Icons") nil 'append)))
+                 ))
       :config
       (cnfonts-enable))
     #+END_SRC
@@ -153,6 +147,7 @@
     (use-package all-the-icons
       ;; M-x all-the-icons-install-fonts
       :ensure t
+      :after cnfonts
       )
     #+END_SRC
 
@@ -2035,12 +2030,6 @@
    #+END_SRC
 
    #+begin_src emacs-lisp
-   (use-package flycheck
-     :ensure t
-     :init (global-flycheck-mode))
-   #+end_src
-
-   #+begin_src emacs-lisp
    ;; (use-package helm-xref
    ;;   :ensure t
    ;;   :init
@@ -2069,6 +2058,23 @@
    (use-package lsp-ui
      :ensure t
      :after (lsp-mode))
+   #+end_src
+** flycheck
+   #+begin_src emacs-lisp
+   (use-package flycheck
+     :ensure t
+     :init (global-flycheck-mode))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package flycheck-rust
+     :ensure t
+     :hook (rust-mode . (lambda nil (flycheck-rust-setup))))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package flycheck-ledger
+     :ensure t)
    #+end_src
 ** version control
    #+BEGIN_SRC emacs-lisp
