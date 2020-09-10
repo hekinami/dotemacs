@@ -768,6 +768,30 @@
       :bind ("C-x 5 p" . z/pop-window-into-frame))
     #+end_src
 * editing
+** ediff
+   #+begin_src emacs-lisp
+   (use-package ediff
+     :after outline
+     :hook (ediff-prepare-buffer . org-show-all)
+     :config
+     ;; better looking for dark theme
+     (set-face-attribute 'ediff-odd-diff-A nil :background "#242321")
+     (set-face-attribute 'ediff-odd-diff-B nil :background "#242321")
+     (set-face-attribute 'ediff-odd-diff-C nil :background "#242321")
+
+     (set-face-attribute 'ediff-even-diff-A nil :background "#242321")
+     (set-face-attribute 'ediff-even-diff-B nil :background "#242321")
+     (set-face-attribute 'ediff-even-diff-C nil :background "#242321")
+
+     (set-face-attribute 'ediff-current-diff-A nil :foreground "white")
+     (set-face-attribute 'ediff-current-diff-B nil :foreground "white")
+     (set-face-attribute 'ediff-current-diff-C nil :foreground "white")
+
+     (set-face-attribute 'ediff-fine-diff-A nil :foreground "white")
+     (set-face-attribute 'ediff-fine-diff-B nil :foreground "white")
+     (set-face-attribute 'ediff-fine-diff-C nil :foreground "white")
+     )
+   #+end_src
 ** editorconfig
    #+BEGIN_SRC emacs-lisp
    (use-package editorconfig
