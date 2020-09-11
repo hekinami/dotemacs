@@ -1,6 +1,6 @@
 * global
 ** general
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
    (add-hook 'after-init-hook (lambda nil (load-file custom-file)))
 
@@ -11,11 +11,11 @@
    (set-time-zone-rule "GMT-8")
    (setq user-full-name "Zou Bibo")
    (setq user-mail-address "zoubibo@amiunique.net")
-   #+END_SRC
+   #+end_src
 
 ** configuration helpers
 *** file location
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (defun locate-runtimes-file (file)
       (let ((base (locate-user-emacs-file "runtimes/")))
 	(make-directory base t)
@@ -35,19 +35,18 @@
       (let ((base (locate-user-emacs-file "tools/")))
 	(make-directory base t)
 	(concat base file)))
-    #+END_SRC
+    #+end_src
 *** time
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (defun z/timestamp-format-setting ()
       (set (make-local-variable 'system-time-locale) "C")
       (set (make-local-variable 'system-messages-locale) "C")
       )
-    #+END_SRC
+    #+end_src
 ** package management
 *** package.el
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq package-enable-at-startup nil)
-    ;; (package-initialize)
     (setq package-archives
           '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
             ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
@@ -60,10 +59,10 @@
             ;; ("org" . "http://orgmode.org/elpa/")
             ;; ("melpa-stable" . "http://stable.melpa.org/packages/")
             ))
-    #+END_SRC
+    #+end_src
 *** assistent
 **** a common function for installing package from elpa
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (defun require-package (package &optional min-version no-refresh)
        "Install given PACKAGE, optionally requiring MIN-VERSION.
        If NO-REFRESH is non-nil, the available package lists will not be
@@ -75,58 +74,58 @@
            (progn
              (package-refresh-contents)
              (require-package package min-version t)))))
-     #+END_SRC
+     #+end_src
 **** benchmark
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (require-package 'benchmark-init)
      (require 'benchmark-init)
-     #+END_SRC
+     #+end_src
 **** use-package
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (require-package 'use-package)
-     #+END_SRC
+     #+end_src
 
 **** quelpa
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package quelpa-use-package
        :ensure t
        :init
        (setq quelpa-update-melpa-p nil)) 
-     #+END_SRC
+     #+end_src
 
 **** trying
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package try
        :defer t
        :ensure t)
-     #+END_SRC
+     #+end_src
 *** extension
 **** use packages written by self
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (add-to-list 'load-path (locate-user-emacs-file "extension/"))
-     #+END_SRC
+     #+end_src
 
 ** appearence
 *** hide something first
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (menu-bar-mode -1)
     (tool-bar-mode -1)
     (scroll-bar-mode -1)
     (setq visible-bell t)
     (setq inhibit-startup-message t)
     (setq initial-scratch-message nil)
-    #+END_SRC
+    #+end_src
 *** theme
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package badwolf-theme
       :ensure t
       :config
       (load-theme 'badwolf t)
       (set-face-attribute 'default nil :foreground "#F8F8d2"))
-    #+END_SRC
+    #+end_src
 
 *** fonts & icons
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package cnfonts
       :ensure t
       :hook (cnfonts-set-font-finish
@@ -141,18 +140,18 @@
                  ))
       :config
       (cnfonts-enable))
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package all-the-icons
       ;; M-x all-the-icons-install-fonts
       :ensure t
       :after cnfonts
       )
-    #+END_SRC
+    #+end_src
 
 *** frame
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq frame-title-format "[%F]")
 
     (setq init-frame-alist
@@ -173,9 +172,9 @@
       :bind (("C-x C-a t" . z/toggle-transparency)
              ("C-x \\" . z/swap-window-positions)
              ("C-x |" . z/toggle-window-split)))
-    #+END_SRC
+    #+end_src
 *** modeline
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
       (use-package doom-modeline
 	:ensure t
 	:hook (window-setup . doom-modeline-mode)
@@ -271,7 +270,7 @@
 	(setq doom-modeline-before-update-env-hook nil)
 	(setq doom-modeline-after-update-env-hook nil)
       )
-    #+END_SRC
+    #+end_src
 
     #+begin_src emacs-lisp
     (use-package diminish
@@ -284,7 +283,7 @@
       :hook (after-init . minions-mode))
     #+end_src
 *** cursor
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (blink-cursor-mode 1)
     (setq blink-cursor-blinks 0)
 
@@ -303,27 +302,27 @@
           (set-cursor-color (setq hcz-set-cursor-color-color color))
           (setq hcz-set-cursor-color-buffer (buffer-name)))))
     (add-hook 'post-command-hook 'hcz-set-cursor-color-according-to-mode)
-    #+END_SRC
+    #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     ;; (use-package highlight-tail
     ;;   :ensure t
     ;;   :config
     ;;   (highlight-tail-mode)
     ;;   (setq highlight-tail-timer 0.01)
     ;;   (diminish 'highlight-tail-mode))
-    #+END_SRC
+    #+end_src
 *** scrollbar
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package yascroll
       :ensure t
       :config
       (global-yascroll-bar-mode))
 
     (setq auto-hscroll-mode 'current-line)
-    #+END_SRC
+    #+end_src
 *** indicators
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (global-hl-line-mode 1)
     (column-number-mode 1)
 
@@ -350,9 +349,9 @@
       :config
       (setq  uniquify-buffer-name-style 'post-forward
              uniquify-separator ":"))
-    #+END_SRC
+    #+end_src
 ** desktop, session, history
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package savehist
      :defer t
      :config
@@ -372,7 +371,7 @@
    (setq auto-save-mode -1)
    (desktop-save-mode 0)
    (setq transient-history-file (locate-runtimes-file "transient-history.el"))
-   #+END_SRC
+   #+end_src
 ** network
 *** proxy
     #+begin_src emacs-lisp
@@ -387,14 +386,14 @@
       )
     #+end_src
 *** emacs server
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq server-auth-dir (locate-runtimes-file "emacsserver"))
     (unless (and (functionp 'server-running-p)
                  (server-running-p))
       (server-start))   
-    #+END_SRC
+    #+end_src
 *** httpd
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package simple-httpd
       :ensure t
       :config
@@ -406,7 +405,7 @@
                                                         (httpd-stop)
                                                         (apply orig-fun args)
                                                         )))
-    #+END_SRC
+    #+end_src
 ** key configuration
    #+begin_src emacs-lisp
    (use-package key-chord
@@ -418,7 +417,7 @@
      (key-chord-mode 1))
    #+end_src
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (global-unset-key (kbd "C-z"))
    (global-unset-key (kbd "<f8>"))
    (global-unset-key (kbd "C-x c"))
@@ -428,10 +427,10 @@
    (global-set-key (kbd "C-c r") 'replace-regexp)
    (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
    (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
-   #+END_SRC
+   #+end_src
 * navigation
 ** helm
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package helm
      :ensure t
      :diminish helm-mode
@@ -452,7 +451,7 @@
         (set-face-attribute 'helm-match nil :foreground (face-attribute 'font-lock-constant-face :foreground))
         ))
      (helm-mode 1))
-   #+END_SRC
+   #+end_src
 ** windmove
    #+begin_src emacs-lisp
    (use-package windmove
@@ -463,7 +462,7 @@
             ("C-x <right>" . windmove-right)))
    #+end_src
 ** bookmark
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package bm
      :ensure t
      :bind
@@ -474,17 +473,17 @@
    (use-package helm-bm
      :ensure t
      :bind ("C-S-<f2>" . helm-bm))
-   #+END_SRC
+   #+end_src
 ** hints
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package which-key
      :ensure t
      :diminish which-key-mode
      :config
      (which-key-mode))
-   #+END_SRC
+   #+end_src
 ** avy
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package avy
      :ensure t
      :bind ("M-z" . avy-goto-word-1)
@@ -505,10 +504,10 @@
      :quelpa (ace-pinyin :fetcher github :repo "hekinami/ace-pinyin")
      :bind (("M-/" . ace-pinyin-dwim))
      :chords (("gh" . ace-pinyin-dwim)))
-   #+END_SRC
+   #+end_src
 ** searching
 *** swoop
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package swoop
       :ensure t
       :bind
@@ -521,7 +520,7 @@
       (setq swoop-use-target-magnifier: nil)
       (setq swoop-font-size-change: nil)
       )
-    #+END_SRC
+    #+end_src
 *** rg
     #+begin_src emacs-lisp
     (use-package rg :ensure t :defer t)
@@ -537,7 +536,7 @@
    #+end_src
 * resource management
 ** project management
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package projectile
      :ensure t
      :defer t
@@ -558,10 +557,10 @@
    (use-package treemacs-projectile
      :ensure t
      :defer t)
-   #+END_SRC
+   #+end_src
 ** system file management
 *** dired
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package dired-x :defer t)
     (use-package dired-single
       :ensure t :defer t)
@@ -583,9 +582,9 @@
         (my-dired-init)
       ;; it's not loaded yet, so add our bindings to the load-hook
       (add-hook 'dired-load-hook 'my-dired-init))
-    #+END_SRC
+    #+end_src
 ** buffer management
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package z-edit-ext
      :init
      (add-hook 'gdb-mode-hook 'kill-buffer-when-exit)
@@ -596,12 +595,12 @@
      (add-hook 'inferior-python-mode-hook 'kill-buffer-when-exit)
      (add-hook 'inferior-js-mode-hook 'kill-buffer-when-exit)
      (add-hook 'compilation-mode-hook 'kill-buffer-when-exit))
-   #+END_SRC
+   #+end_src
 ** sudo
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package z-sudo
      :bind ("C-x C-r" . find-file-root))
-   #+END_SRC
+   #+end_src
 * screen organization
 ** window management
 *** tab-bar
@@ -679,26 +678,12 @@
 
     #+end_src
 *** winner
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package winner
       :defer t)
-    #+END_SRC
-*** purpose (obsolete)
-    #+BEGIN_SRC emacs-lisp
-    (use-package window-purpose
-      :ensure t
-      :config
-      ;; (purpose-mode) 
-      (setq purpose-preferred-prompt 'helm)
-
-      (define-key purpose-mode-map (kbd "C-x C-f") nil)
-      (define-key purpose-mode-map (kbd "C-x b") nil)
-      (add-to-list 'purpose-user-mode-purposes '(python-mode . py))
-      (add-to-list 'purpose-user-mode-purposes '(inferior-python-mode . py-repl))
-      (purpose-compile-user-configuration))
-    #+END_SRC
+    #+end_src
 *** shackle
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package shackle
       :ensure t
       :config
@@ -709,7 +694,7 @@
         `(add-to-list 'shackle-rules ,shackle-rule))
       
       (shackle-mode))
-    #+END_SRC
+    #+end_src
 *** extension
     #+begin_src emacs-lisp
     (use-package screen-ext
@@ -741,29 +726,14 @@
      )
    #+end_src
 ** editorconfig
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package editorconfig
      :ensure t
      :diminish editorconfig-mode
      :config
      (editorconfig-mode 1))
-   #+END_SRC
+   #+end_src
 ** language and localization
-   #+BEGIN_SRC emacs-lisp
-   ;; (set-language-environment 'utf-8)
-   ;; (setq encoding 'utf-8)
-   ;; (set-terminal-coding-system 'utf-8)
-   ;; (prefer-coding-system 'utf-8)
-   ;; (set-default-coding-systems 'utf-8)
-   ;; (set-keyboard-coding-system 'utf-8)
-   ;; (set-buffer-file-coding-system 'utf-8)
-   ;; (setq default-buffer-file-coding-system 'utf-8)
-   ;; (setq coding-system-for-read 'utf-8)
-   ;; (set-clipboard-coding-system 'utf-8)
-   ;; (setq file-name-coding-system 'utf-8)
-
-   ;; (set-locale-environment "C")
-   #+END_SRC
    #+begin_src emacs-lisp
    (use-package mule
      :init
@@ -783,26 +753,26 @@
      )
    #+end_src
 ** undo
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package undo-tree
      :ensure t
      :diminish undo-tree-mode
      :bind ("C-x u" . undo-tree-visualize)
      :config
      (global-undo-tree-mode))
-   #+END_SRC
+   #+end_src
 ** input assistent
 *** company-mode
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package company
       :ensure t
       :defer t
       :diminish (company-mode global-company-mode)
       :init
       (global-company-mode))
-    #+END_SRC
+    #+end_src
 *** yasnippet
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package yasnippet
       :ensure t
       :diminish yas-minor-mode
@@ -825,9 +795,9 @@
       :ensure t
       :config (yas-reload-all))
 
-    #+END_SRC
+    #+end_src
 *** multiple cursors
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package multiple-cursors
       :ensure t
       :bind (("C-S-c C-S-c" . mc/edit-lines)
@@ -844,9 +814,9 @@
                   (define-key mc/keymap (kbd "C-z n") 'mc/insert-numbers)
                   (define-key mc/keymap (kbd "C-z l") 'mc/insert-letters)
                   )))
-    #+END_SRC
+    #+end_src
 *** quotation
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package ciel
       :ensure t
       :bind
@@ -860,16 +830,16 @@
       (add-hook 'org-mode-hook #'embrace-org-mode-hook))
 
     (electric-pair-mode)
-    #+END_SRC
+    #+end_src
 *** indentation
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq-default indent-tabs-mode nil)
 
     (use-package aggressive-indent
       :ensure t
       :mode ("aggressive-indent-mode")
       :diminish aggressive-indent-mode)
-    #+END_SRC
+    #+end_src
 ** atomic chrome
    #+begin_src emacs-lisp
    (use-package atomic-chrome :ensure t
@@ -885,7 +855,7 @@
     (shackle-rule-add '("^\\*Help\\*" :regexp t :select t :align bottom :size 0.6)))
   #+end_src
 
-  #+BEGIN_SRC emacs-lisp
+  #+begin_src emacs-lisp
   (use-package google-translate
     :ensure t
     :bind (("C-c t" . google-translate-at-point)
@@ -1048,7 +1018,7 @@
 
     (add-hook 'nov-mode-hook 'my-nov-mode-hook)
     (add-hook 'nov-post-html-render-hook 'my-nov-post-html-render-hook))
-  #+END_SRC
+  #+end_src
 * writing
 ** generate static site
    #+begin_src emacs-lisp
@@ -1067,7 +1037,7 @@
      (setq easy-hugo-basedir "~/hugo/"))
    #+end_src
 
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package cobalt
      :ensure t
      :bind (("C-z c d" . cobalt-deploy)
@@ -1118,7 +1088,7 @@
        (magit-status cobalt-dest-base)
        )
      )
-   #+END_SRC
+   #+end_src
 ** lilypond
    #+begin_src emacs-lisp
    (use-package lilypond-mode
@@ -1146,7 +1116,7 @@
 * organizer
 ** org-mode
 *** general
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org
       :ensure org-plus-contrib
       :bind
@@ -1214,7 +1184,7 @@
 
       ;; (add-hook 'org-agenda-finalize-hook 'my:org-agenda-time-grid-spacing)
       )
-    #+END_SRC
+    #+end_src
 
 *** appearence
     #+begin_src emacs-lisp
@@ -1235,7 +1205,7 @@
     (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
     #+end_src
 
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org-bullets
       :ensure t
       :defer t
@@ -1268,7 +1238,7 @@
                     (set-face-attribute 'default nil :family temp-family)
                     )
                   ))
-    #+END_SRC
+    #+end_src
 
     #+begin_src emacs-lisp
     (use-package org-fancy-priorities
@@ -1305,7 +1275,7 @@
     #+end_src
 *** efficiency
 **** agenda
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package org-agenda
        :bind ("C-c a" . org-agenda)
        :after org
@@ -1351,7 +1321,7 @@
            ad-do-it))
 
        )
-     #+END_SRC
+     #+end_src
 
      #+begin_src emacs-lisp
      (use-package org-super-agenda
@@ -1374,7 +1344,7 @@
        )
      #+end_src
 **** capture
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package org-capture
        :bind ("C-c c" . org-capture)
        :after org
@@ -1383,9 +1353,9 @@
          (let ((split-width-threshold nil))
            ad-do-it))
        (load (locate-stuff-file "org-capture-templates") t))
-     #+END_SRC
+     #+end_src
 **** pomodoro
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package org-pomodoro
        :ensure t
        :after org
@@ -1400,15 +1370,15 @@
        (setq org-pomodoro-long-break-sound (locate-stuff-file "long-break-sound.mp3"))
        (setq org-pomodoro-audio-player "/usr/bin/mpv")
        )
-     #+END_SRC
+     #+end_src
 **** kanban
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package org-kanban
        :ensure t
        :defer t)
-     #+END_SRC
+     #+end_src
 **** appointment
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package appt
        :defer t
        :config
@@ -1435,14 +1405,14 @@
                     (if (string= (buffer-file-name) (expand-file-name
                                                      (locate-contents-file "gtd/event.gtd.org")))
                         (z/org-agenda-to-appt)))))
-     #+END_SRC
+     #+end_src
 **** time clocking
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (add-hook 'org-clock-in-hook 'save-buffer)
      (add-hook 'org-clock-out-hook 'save-buffer)
-     #+END_SRC
+     #+end_src
 *** babel
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package ob-restclient
       :ensure t
       :defer t)
@@ -1468,7 +1438,7 @@
     (setq org-src-fontify-natively t)
     (setq org-src-tab-acts-natively t)
     (setq org-edit-src-content-indentation 0)
-    #+END_SRC
+    #+end_src
 
     #+begin_src emacs-lisp
     ;; https://emacs.stackexchange.com/questions/44914/choose-individual-startup-visibility-of-org-modes-source-blocks
@@ -1494,7 +1464,7 @@
      (function individual-visibility-source-blocks))
     #+end_src
 *** projects and publish
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq org-projects-base (locate-contents-file "org/"))
     (setq org-projects-publish (locate-contents-file "orgp/"))
 
@@ -1530,9 +1500,9 @@
       )
 
     (define-key org-mode-map "\C-c\C-xh" 'z/org-init-project-directory)
-    #+END_SRC
+    #+end_src
 *** export
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (setq org-tpl-directory (locate-stuff-file "orgtemplate/"))
 
     (setq org-html-head-include-default-style nil)
@@ -1671,9 +1641,9 @@
                           ("\\.x?html?\\'" . "firefox %s")
                           ("\\.pdf\\'" . "xreader %s")
                           ("\\.jpg\\'" . "xviewer %s")))
-    #+END_SRC
+    #+end_src
 *** org-protocol
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     ;; ;; Save following snippet to .reg file to register protocal in windows
     ;; ;; ------------
     ;; ;; REGEDIT4
@@ -1690,9 +1660,9 @@
     ;; ;; http://kb.mozillazine.org/Register_protocol
     (use-package org-protocol
       :defer t)
-    #+END_SRC
+    #+end_src
 *** link types
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     ;; Thunderlink support
     ;; https://addons.thunderbird.net/en-us/thunderbird/addon/thunderlink/
     ;; (org-add-link-type "thunderlink" 'org-thunderlink-open)
@@ -1703,9 +1673,9 @@
     ;; (defun org-thunderlink-open (link)
     ;;   (message link)
     ;;   (start-process-shell-command "thunderbird" nil (format "%s -thunderlink thunderlink:%s" thunderlink-thunderbird link)))
-    #+END_SRC
+    #+end_src
 *** refile
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (add-hook
      'org-mode-hook
      (lambda ()
@@ -1718,9 +1688,9 @@
     (setq org-refile-use-outline-path 'file)
     (setq org-outline-path-complete-in-steps nil)
     (setq org-refile-allow-creating-parent-nodes 'confirm)
-    #+END_SRC
+    #+end_src
 *** crypt
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org-crypt
       :defer t
       :bind
@@ -1732,15 +1702,15 @@
       (setq org-tags-exclude-from-inheritance (quote ("crypt")))
       (setq org-crypt-key "zoubibo@amiunique.net")
       (setq auto-save-default nil))
-    #+END_SRC
+    #+end_src
 *** drill
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org-drill-table
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** extension
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package z-org-checkbox
       :config
       (z/checked-to-todo-enable)
@@ -1749,9 +1719,9 @@
     (use-package z-org-repeat
       :config
       (z/org-repeat-enable))
-    #+END_SRC
+    #+end_src
 ** calender
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (setq diary-file (locate-runtimes-file "diary"))
    (unless (file-exists-p diary-file) (write-region nil nil diary-file))
    (setq view-diary-entries-initially t)
@@ -1816,10 +1786,10 @@
        (cfw:open-calendar-buffer :contents-sources sources)
        )
      )
-   #+END_SRC
+   #+end_src
 ** note taking
 *** deft
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package deft
       :ensure t
       :bind 
@@ -1832,9 +1802,9 @@
       (setq deft-new-file-format "%Y-%m-%dT%H%M")
       (setq deft-auto-save-interval 0)
       )
-    #+END_SRC
+    #+end_src
 *** org-journal
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org-journal
       :ensure t
       :bind
@@ -1843,9 +1813,9 @@
       (setq org-journal-dir (locate-contents-file "organizer/journal"))
       (setq org-journal-file-type 'weekly)
       (setq org-journal-cache-file (locate-runtimes-file "org-journal.cache")))
-    #+END_SRC
+    #+end_src
 *** diary-manager
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package diary-manager
       :ensure t
       :bind
@@ -1855,9 +1825,9 @@
       (setq diary-manager-location (locate-contents-file "organizer/diary"))
       (setq diary-manager-enable-git-integration nil)
       (setq diary-manager-entry-extension ".org.gpg"))
-    #+END_SRC
+    #+end_src
 *** org-brain
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package org-brain
       :ensure t
       :bind
@@ -1869,7 +1839,7 @@
             org-capture-templates)
       (setq org-brain-visualize-default-choices 'all)
       (setq org-brain-title-max-length 12))
-    #+END_SRC
+    #+end_src
 *** org-roam
     #+begin_src emacs-lisp
     (use-package org-roam
@@ -1929,11 +1899,11 @@
     (use-package org-roam-compat  :defer t)
     #+end_src
 *** simplenote2
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package simplenote2
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** zote
     #+begin_src emacs-lisp
     (use-package zote
@@ -1950,7 +1920,7 @@
     #+end_src
 
 ** ledger
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package ledger-mode
      :ensure t
      :mode "\\.ledger$" 
@@ -1960,9 +1930,9 @@
 
    (use-package ledger-capture
      :defer t)
-   #+END_SRC
+   #+end_src
 ** todochiku
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    ;; (require-package 'todochiku)
    ;; (if *is-windows*
    ;;     (setq todochiku-command "C:/Program Files (x86)/full phat/Snarl/tools/heysnarl.exe")
@@ -1982,7 +1952,7 @@
    ;;     (t (list "-i" icon "-t"
    ;;              (if sticky "0" (int-to-string (* 1000 todochiku-timeout)))
    ;;              title message))))
-   #+END_SRC
+   #+end_src
 ** password store
    #+begin_src emacs-lisp
    (use-package pass
@@ -1991,7 +1961,7 @@
    #+end_src
 * development
 ** common tasks
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package compile
      :after (shackle)
      :bind ("<f12>" . compile)
@@ -2010,7 +1980,7 @@
 
    (use-package flymake
      :defer t)
-   #+END_SRC
+   #+end_src
 
    #+begin_src emacs-lisp
    ;; (use-package helm-xref
@@ -2060,7 +2030,7 @@
      :ensure t)
    #+end_src
 ** version control
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package magit
      :ensure t
      :after (centaur-tabs shackle)
@@ -2098,9 +2068,9 @@
    (use-package git-timemachine
      :ensure t
      :commands (git-timemachine git-timemachine-toggle))
-   #+END_SRC
+   #+end_src
 ** database
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package edbi
      :defer t
      :ensure t
@@ -2111,11 +2081,11 @@
    (use-package edbi-database-url
      :ensure t
      :commands (edbi-database-url))
-   #+END_SRC
+   #+end_src
 ** web
 *** editing 
 **** input assistent
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package ac-html
        :ensure t
        :defer t)
@@ -2141,9 +2111,9 @@
               html-mode-map
               ("C-c b" . web-beautify-html))
        :after (js2-mode json-mode css-mode sgml-mode))
-     #+END_SRC
+     #+end_src
 **** source files
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package web-mode
        :ensure t
        :defer t
@@ -2220,9 +2190,9 @@
        :ensure t
        :defer t
        :mode ("\\.apib\\'" . apib-mode))
-     #+END_SRC
+     #+end_src
 *** debugging
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package impatient-mode
       :ensure t
       :defer t)
@@ -2236,12 +2206,12 @@
         (switch-to-buffer (generate-new-buffer "*restclient*"))
         (restclient-mode))
       )
-    #+END_SRC
+    #+end_src
 
 ** other programming languages
 *** javascript
 **** editing
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package js2-mode
        :ensure t
        :defer t
@@ -2251,7 +2221,7 @@
        (add-hook 'js2-mode-hook '(lambda () (setq mode-name "JS2")))
        :config
        (setq js2-basic-offset 2))
-     #+END_SRC
+     #+end_src
 
      #+begin_src emacs-lisp
      (use-package rjsx-mode
@@ -2261,7 +2231,7 @@
        (add-hook 'rjsx-mode-hook 'emmet-mode))
      #+end_src
 **** interaction and debugging
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package js-comint
        :ensure t
        :defer t
@@ -2294,17 +2264,17 @@
      (use-package skewer-mode
        :ensure t
        :defer t)
-     #+END_SRC
+     #+end_src
 *** python
 **** editing
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package python
        :mode "python-mode"
        :config
        (setq python-indent-guess-indent-offset nil))
-     #+END_SRC
+     #+end_src
 **** virtual
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package python-environment
        :defer t
        :config
@@ -2328,9 +2298,9 @@
                        (jedi:stop-server)))))
        :config
        (pyvenv-activate (concat python-environment-directory "/py3jedi")))
-     #+END_SRC
+     #+end_src
 **** completion
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package company-jedi
        :ensure t
        :defer t
@@ -2348,9 +2318,9 @@
          )
 
        (add-hook 'python-mode-hook 'my/python-mode-hook))
-     #+END_SRC
+     #+end_src
 **** django
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package python-django
        :ensure t
        :after (shackle projectile)
@@ -2358,10 +2328,10 @@
        :config
        (shackle-rule-add '("manage.py shell\\*" :regexp t :select t :align bottom :size 0.3))
        (shackle-rule-add '("manage.py runserver" :regexp t :select t :align bottom :size 0.3)))
-     #+END_SRC
+     #+end_src
 *** ruby
 **** completion
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package robe
        :ensure t
        :defer t
@@ -2369,7 +2339,7 @@
        (add-hook 'ruby-mode-hook 'robe-mode)
        :config
        (add-hook 'robe-mode-hook 'ac-robe-setup))
-     #+END_SRC
+     #+end_src
 *** go
 **** reference
      configuration based on http://tleyden.github.io/blog/2014/05/22/configure-emacs-as-a-go-editor-from-scratch/
@@ -2379,7 +2349,7 @@
      #+END_EXAMPLE
 
 **** editing
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      (use-package go-mode
        :ensure t
        :defer t
@@ -2395,9 +2365,9 @@
                        (set (make-local-variable 'compile-command)
                             "go build -v && go test -v && go vet"))
                    )))
-     #+END_SRC
+     #+end_src
 **** completion
-     #+BEGIN_SRC emacs-lisp
+     #+begin_src emacs-lisp
      ;; (use-package go-autocomplete
      ;;   :ensure t
      ;;   :after go-mode)
@@ -2405,17 +2375,17 @@
      (use-package company-go
        :ensure t
        :after go-mode)
-     #+END_SRC
+     #+end_src
 *** solidity
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package solidity-mode
       :ensure t
       :mode ("\\.sol\\'" . solidity-mode)
       :config
       (setq c-basic-offset 4))
-    #+END_SRC
+    #+end_src
 *** rust
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package rust-mode
       :ensure t
       :defer t)
@@ -2429,9 +2399,9 @@
     (use-package cargo
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** lisp
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package paredit
       :ensure t
       :diminish paredit-mode
@@ -2458,9 +2428,9 @@
       :config
       (setq inferior-lisp-program "sbcl")
       (slime-setup '(slime-fancy)))
-    #+END_SRC
+    #+end_src
 *** php
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package php-mode
       :ensure t
       :mode ("\\.php\\'" . php-mode))
@@ -2472,19 +2442,19 @@
       (setq geben-pause-at-entry-line nil)
       (setq geben-display-window-function 'pop-to-buffer-same-window)
       (setq geben-temporary-file-directory (locate-runtimes-file "geben")))
-    #+END_SRC
+    #+end_src
 *** shader
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package shader-mode
       :ensure t
       :mode "shader-mode")
-    #+END_SRC
+    #+end_src
 *** dart
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package dart-mode
       :ensure t
       :mode "dart-mode")
-    #+END_SRC
+    #+end_src
 *** sql
     #+begin_src emacs-lisp
     (use-package sql-indent
@@ -2502,42 +2472,42 @@
     #+end_src
 ** other data formats
 *** json
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package json-mode
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** toml
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package toml-mode
       :ensure t
       :defer t
       :mode ("Cargo.lock\\'" . toml-mode))
-    #+END_SRC
+    #+end_src
 *** yaml
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package yaml-mode
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** markdown
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package markdown-mode
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** dockerfile
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package dockerfile-mode
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** terraform
-    #+BEGIN_SRC emacs-lisp
+    #+begin_src emacs-lisp
     (use-package terraform-mode
       :ensure t
       :defer t)
-    #+END_SRC
+    #+end_src
 *** gnuplot
     #+begin_src emacs-lisp
     (use-package gnuplot
@@ -2555,7 +2525,7 @@
     #+end_src
 * multimedia
 ** the emacs multimedia system
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package emms
      :ensure t
      :defer t
@@ -2565,10 +2535,10 @@
      (require 'emms-setup)
      (emms-standard)
      (emms-default-players))
-   #+END_SRC
+   #+end_src
 * interaction with other systems
 ** shell
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (use-package eshell
      :commands (eshell)
      :after (shackle)
@@ -2587,7 +2557,7 @@
      (setq exec-path-from-shell-check-startup-files nil)
      :config
      (exec-path-from-shell-initialize))
-   #+END_SRC
+   #+end_src
 
    #+begin_src emacs-lisp
    (use-package shell
@@ -2597,7 +2567,7 @@
      )
    #+end_src
 ** erc
-   #+BEGIN_SRC emacs-lisp
+   #+begin_src emacs-lisp
    (setq erc-log-channels-directory "~/.erc/logs/")
 
    (defun z/erc-generate-log-file-name (buffer target nick server port)
@@ -2650,7 +2620,7 @@
 
    (add-hook 'erc-server-PRIVMSG-functions 'fg/notify-privmsg t)
 
-   #+END_SRC
+   #+end_src
 ** telega
    #+begin_src emacs-lisp
    (use-package telega
