@@ -703,65 +703,13 @@
       :ensure t
       :config
       (setq shackle-rules
-            '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)
-              (magit-diff-mode :noselect t :align right :size 0.7)
-              ))
+            '(("\\`\\*helm.*?\\*\\'" :regexp t :align bottom :size 0.3)))
 
-      (defmacro shackle-rule-with-purpose-mode (shackle-rule)
-        "define shackle rule coexisting with purpose-mode."
-        ;; https://github.com/bmag/emacs-purpose/issues/157
-        ;; https://github.com/bmag/emacs-purpose/issues/124
-        `(progn
-           (add-to-list 'shackle-rules ,shackle-rule)
-           (add-to-list 'purpose-action-function-ignore-buffer-names (car ,shackle-rule)))
-        )
-
-      (shackle-rule-with-purpose-mode '("^\\*Help\\*" :regexp t :select t :align bottom :size 0.6))
-      (shackle-rule-with-purpose-mode '("^\\*shell\\*" :regexp t :select t :align bottom :size 0.3))
-      (shackle-rule-with-purpose-mode '("^\\*eshell\\*" :regexp t :select t :align bottom :size 0.3))
-      (shackle-rule-with-purpose-mode '("^\\*compilation\\*" :regexp t :select t :align bottom :size 0.3))
-      (shackle-rule-with-purpose-mode '("manage.py shell\\*" :regexp t :select t :align bottom :size 0.3))
-      (shackle-rule-with-purpose-mode '("manage.py runserver" :regexp t :select t :align bottom :size 0.3))
-      (shackle-rule-with-purpose-mode '("^\\*hackernews top stories\\*" :regexp t :select t :align left :size 0.7))
+      (defmacro shackle-rule-add (shackle-rule)
+        `(add-to-list 'shackle-rules ,shackle-rule))
+      
       (shackle-mode))
     #+END_SRC
-*** popwin
-    #+BEGIN_SRC emacs-lisp
-    ;; (use-package popwin
-    ;;   :ensure t
-    ;;   :bind-keymap ("C-z p" . popwin:keymap)
-    ;;   :config
-    ;;   (popwin-mode)
-    ;;   (push '("*Backtrace*" :height 15) popwin:special-display-config)
-    ;;   (push '("*Python*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("*jedi:doc*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("*Warnings*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("*Org Agenda*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("* Agenda Commands*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("*GEBEN<127.0.0.1:9000> output*" :position bottom :height 20) popwin:special-display-config)
-    ;;   (push '("*GEBEN<127.0.0.1:9000> context*" :position bottom :width 20) popwin:special-display-config)
-    ;;   (push '("*buffer selection*" :position bottom :width 20) popwin:special-display-config)
-    ;;   (push '("*SPEEDBAR*" :position left :width 20) popwin:special-display-config)
-    ;;   (push '("*Help*" :position bottom :width 20) popwin:special-display-config)
-    ;;   (push '("*js*" :position bottom :width 20) popwin:special-display-config))
-    #+END_SRC
-
-**** usage
-     | Key    | Command                             |
-     |--------+-------------------------------------|
-     | b      | popwin:popup-buffer                 |
-     | l      | popwin:popup-last-buffer            |
-     | o      | popwin:display-buffer               |
-     | C-b    | popwin:switch-to-last-buffer        |
-     | C-p    | popwin:original-pop-to-last-buffer  |
-     | C-o    | popwin:original-display-last-buffer |
-     | SPC    | popwin:select-popup-window          |
-     | s      | popwin:stick-popup-window           |
-     | 0      | popwin:close-popup-window           |
-     | f, C-f | popwin:find-file                    |
-     | e      | popwin:messages                     |
-     | C-u    | popwin:universal-display            |
-     | 1      | popwin:one-window                   |
 *** extension
     #+begin_src emacs-lisp
     (use-package screen-ext
@@ -930,6 +878,13 @@
      (atomic-chrome-start-server))
    #+end_src
 * reading
+  #+begin_src emacs-lisp
+  (use-package help
+    :after (shackle)
+    :config
+    (shackle-rule-add '("^\\*Help\\*" :regexp t :select t :align bottom :size 0.6)))
+  #+end_src
+
   #+BEGIN_SRC emacs-lisp
   (use-package google-translate
     :ensure t
@@ -995,8 +950,10 @@
 
   (use-package hackernews
     :ensure t
+    :after (shackle)
     :commands (hackernews)
     :config
+    (shackle-rule-add '("^\\*hackernews top stories\\*" :regexp t :select t :align left :size 0.7))
     (setq hackernews-visited-links-file (locate-runtimes-file "hackernews/visited-links.el")))
 
   (use-package elfeed
@@ -2036,8 +1993,10 @@
 ** common tasks
    #+BEGIN_SRC emacs-lisp
    (use-package compile
+     :after (shackle)
      :bind ("<f12>" . compile)
      :config
+     (shackle-rule-add '("^\\*compilation\\*" :regexp t :select t :align bottom :size 0.3))
      (setq compilation-scroll-output t)
      (defun colorize-compilation-buffer ()
        (toggle-read-only)
@@ -2104,11 +2063,17 @@
    #+BEGIN_SRC emacs-lisp
    (use-package magit
      :ensure t
+     :after (centaur-tabs shackle)
+     :hook (magit-diff-mode . centaur-tabs-local-mode)
      :init
      (setq auto-revert-check-vc-info t)
      :bind
      (("C-x g" . magit-status)
-      ("C-x M-g" . magit-dispatch-popup)))
+      ("C-x M-g" . magit-dispatch-popup))
+     :config
+     (shackle-rule-add '(magit-diff-mode :noselect t :align above :size 0.8))
+     (shackle-rule-add '("\\`\\magit:.*?\\'" :regexp t :align left :size 0.382))
+     )
 
    (use-package dired-k
      :ensure t :defer t)
@@ -2388,7 +2353,11 @@
      #+BEGIN_SRC emacs-lisp
      (use-package python-django
        :ensure t
-       :bind ("C-z j" . python-django-open-project))
+       :after (shackle projectile)
+       :bind (:map projectile-command-map ("n d" . python-django-open-project))
+       :config
+       (shackle-rule-add '("manage.py shell\\*" :regexp t :select t :align bottom :size 0.3))
+       (shackle-rule-add '("manage.py runserver" :regexp t :select t :align bottom :size 0.3)))
      #+END_SRC
 *** ruby
 **** completion
@@ -2602,7 +2571,9 @@
    #+BEGIN_SRC emacs-lisp
    (use-package eshell
      :commands (eshell)
+     :after (shackle)
      :config
+     (shackle-rule-add '("^\\*eshell\\*" :regexp t :select t :align bottom :size 0.3))
      (setq eshell-directory-name (locate-runtimes-file "eshell"))
      (add-hook 'eshell-mode-hook
                (lambda ()
@@ -2617,6 +2588,14 @@
      :config
      (exec-path-from-shell-initialize))
    #+END_SRC
+
+   #+begin_src emacs-lisp
+   (use-package shell
+     :after (shackle)
+     :config
+     (shackle-rule-add '("^\\*shell\\*" :regexp t :select t :align bottom :size 0.3))
+     )
+   #+end_src
 ** erc
    #+BEGIN_SRC emacs-lisp
    (setq erc-log-channels-directory "~/.erc/logs/")
