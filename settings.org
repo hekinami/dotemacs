@@ -563,27 +563,22 @@
 ** system file management
 *** dired
     #+begin_src emacs-lisp
-    (use-package dired-x :defer t)
+    (use-package dired-x
+      :defer t)
+
     (use-package dired-single
-      :ensure t :defer t)
+      :ensure t
+      :defer t)
 
-    (defun my-dired-init ()
-      "Bunch of stuff to run for dired, either immediately or when it's
-         loaded."
-      ;; <add other stuff here>
-      (define-key dired-mode-map [return] 'dired-single-buffer)
-      (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-      (define-key dired-mode-map "^"
-        (function
-         (lambda nil (interactive) (dired-single-buffer ".."))))
-      (define-key dired-mode-map (kbd "K") 'dired-k))
-
-    ;; if dired's already loaded, then the keymap will be bound
-    (if (boundp 'dired-mode-map)
-        ;; we're good to go; just add our bindings
-        (my-dired-init)
-      ;; it's not loaded yet, so add our bindings to the load-hook
-      (add-hook 'dired-load-hook 'my-dired-init))
+    (use-package dired
+      :bind
+      (:map dired-mode-map
+            ("K" . dired-k)
+            ("^" . (lambda nil (interactive) (dired-single-buffer "..")))
+            ("<return>" . dired-single-buffer)
+            ("<down-mouse-1>" . dired-single-buffer-mouse)
+            )
+      )
     #+end_src
 ** buffer management
    #+begin_src emacs-lisp
