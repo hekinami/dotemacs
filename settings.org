@@ -382,6 +382,10 @@
             ("http" . "127.0.0.1:8118")
             ("https" . "127.0.0.1:8118"))))
       )
+    (setq global-mode-string
+          '(:eval (unless (null url-proxy-services)
+                    (propertize (all-the-icons-octicon "globe")
+                                'face `(:foreground "green" :family ,(all-the-icons-octicon-family) :height 1.2) 'display '(raise -0.1)))))
     #+end_src
 *** emacs server
     #+begin_src emacs-lisp
