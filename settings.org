@@ -9,8 +9,6 @@
 
    (fset 'yes-or-no-p 'y-or-n-p)
    (set-time-zone-rule "GMT-8")
-   (setq user-full-name "Zou Bibo")
-   (setq user-mail-address "zoubibo@amiunique.net")
    #+end_src
 
 ** configuration helpers
@@ -2631,4 +2629,39 @@
          '(
            (:server "127.0.0.1" :port 1080 :enable t :type (:@type "proxyTypeSocks5"))))
      )
+   #+end_src
+** mail
+   #+begin_src emacs-lisp
+   (use-package smtpmail
+     :config
+     (setq user-full-name "Zou Bibo")
+     (setq user-mail-address "zoubibo@amiunique.net")
+     (setq smtpmail-smtp-server "smtp.zoho.com")
+     (setq smtpmail-smtp-service 465)
+     (setq smtpmail-stream-type 'ssl))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package notmuch :ensure t
+     :after (shackle)
+     :bind ((:map notmuch-hello-mode-map ("A" . notmuch-exec-offlineimap))
+            (:map notmuch-search-mode-map ("A" . notmuch-exec-offlineimap)))
+     :config
+     (setq notmuch-fcc-dirs nil)
+     (defun notmuch-exec-offlineimap ()
+       "execute offlineimap"
+       (interactive)
+       (set-process-sentinel
+        (start-process-shell-command "offlineimap"
+                                     "*offlineimap*"
+                                     "offlineimap -o")
+        '(lambda (process event)
+           (notmuch-refresh-all-buffers)
+           (let ((w (get-buffer-window "*offlineimap*")))
+             (when w
+               (with-selected-window w (recenter (window-end)))))))
+       (display-buffer "*offlineimap*"))
+     (shackle-rule-add '("^\\*offlineimap\\*" :regexp t :select t :align bottom :size 0.3))
+     )
+
    #+end_src
