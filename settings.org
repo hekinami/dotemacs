@@ -430,6 +430,12 @@
    (global-set-key (kbd "C-c $") 'toggle-truncate-lines)
    (global-set-key (kbd "<f1>") (lambda () (interactive)(switch-to-buffer "*scratch*")))
    #+end_src
+** libraries
+   #+begin_src emacs-lisp
+   (use-package shr
+     :config
+     (setq shr-color-visible-luminance-min 80))
+   #+end_src
 * navigation
 ** helm
    #+begin_src emacs-lisp
@@ -652,27 +658,31 @@
            "Organizer")
           ((memq major-mode '(org-mode org-agenda-mode diary-mode))
            "OrgMode")
+          ((or (derived-mode-p 'notmuch-show-mode)
+               (derived-mode-p 'notmuch-tree-mode)
+               (derived-mode-p 'notmuch-hello-mode)
+               (derived-mode-p 'notmuch-search-mode)
+               (derived-mode-p 'notmuch-message-mode))
+           "Notmuch")
           ((or (string-equal "*" (substring (buffer-name) 0 1))
                (memq major-mode '(magit-process-mode
                                   magit-status-mode
-                                magit-diff-mode
-                                magit-log-mode
-                                magit-file-mode
-                                magit-blob-mode
-                                magit-blame-mode
-                                )))
-         "Emacs")
-        ((derived-mode-p 'eshell-mode)
-         "EShell")
-        ((derived-mode-p 'emacs-lisp-mode)
-         "Elisp")
-        ((derived-mode-p 'dired-mode)
-         "Dired")
-        (t
-         (centaur-tabs-get-group-name (current-buffer))))))
+                                  magit-diff-mode
+                                  magit-log-mode
+                                  magit-file-mode
+                                  magit-blob-mode
+                                  magit-blame-mode
+                                  )))
+           "Emacs")
+          ((derived-mode-p 'eshell-mode)
+           "EShell")
+          ((derived-mode-p 'emacs-lisp-mode)
+           "Elisp")
+          ((derived-mode-p 'dired-mode)
+           "Dired")
+          (t
+           (centaur-tabs-get-group-name (current-buffer))))))
       )
-
-
     #+end_src
 *** winner
     #+begin_src emacs-lisp
