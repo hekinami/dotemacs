@@ -824,6 +824,10 @@
     #+end_src
 *** quotation
     #+begin_src emacs-lisp
+    (use-package paren
+      :config
+      (set-face-attribute 'show-paren-match nil :foreground "green" :underline t))
+
     (use-package ciel
       :ensure t
       :bind
