@@ -128,13 +128,15 @@
       :ensure t
       :hook (cnfonts-set-font-finish
              . (lambda (fontsizes-list)     ; https://github.com/seagle0128/doom-modeline/issues/278
-                 (set-fontset-font
-                  nil
-                  'cyrillic
+                 (set-fontset-font nil 'cyrillic
                   (font-spec :family "Fantasque Sans Mono"
                              :weight 'normal
                              :slant 'normal
                              :size 17))
+                 ;;; Transport and Map Symbols
+                 (set-fontset-font t (cons (decode-char 'ucs #x1F680)
+                                           (decode-char 'ucs #x1F6FF))
+                                   (font-spec :family "Code2003") nil 'append)
                  ))
       :config
       (cnfonts-enable))
