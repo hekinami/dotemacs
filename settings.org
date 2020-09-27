@@ -942,18 +942,21 @@
   (use-package elfeed
     :ensure t
     :commands (elfeed)
+    :hook (elfeed-show-mode . centaur-tabs-local-mode)
     :config
-    (use-package elfeed-org
+    (advice-add 'elfeed-kill-buffer :around
+              (lambda (orig-fun &rest args)
+                (apply orig-fun args)
+                (delete-window)))
+    (setq elfeed-show-entry-switch #'display-buffer)
+    (shackle-rule-add '("^\\*elfeed-entry\\*" :regexp t :select t :align bottom :size 0.6 :popup t :inhibit-window-quit)))
+
+  (use-package elfeed-org
       :ensure t
-      :defer t
+      :after (elfeed)
       :config
       (elfeed-org)
       (setq rmh-elfeed-org-files (list (locate-contents-file "others/elfeed.org"))))
-    (use-package elfeed-goodies
-      :ensure t
-      :defer t
-      :config
-      (elfeed-goodies/setup)))
 
   (use-package doc-view
     :init
