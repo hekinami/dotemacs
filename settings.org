@@ -2683,3 +2683,9 @@
      )
 
    #+end_src
+** aria2
+   #+begin_src emacs-lisp
+   (use-package aria2
+     :quelpa (aria2 :fetcher github :repo "hekinami/aria2.el")
+     :commands (aria2-downloads-list))
+   #+end_src
