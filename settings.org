@@ -638,6 +638,8 @@
       (calendar-mode . centaur-tabs-local-mode)
       (org-agenda-mode . centaur-tabs-local-mode)
       (helpful-mode . centaur-tabs-local-mode)
+      (lookup-summary-mode . centaur-tabs-local-mode)
+      (lookup-content-mode . centaur-tabs-local-mode)
       :config
       (setq centaur-tabs-set-icons t)
       (setq centaur-tabs-gray-out-icons 'buffer)
@@ -655,6 +657,10 @@
                (and (string-match-p (regexp-quote "/deft/") (or (buffer-file-name) ""))
                     (memq major-mode '(org-mode org-agenda-mode diary-mode))))
            "Deft")
+          ((or (string-equal "*NotDeft*" (buffer-name))
+               (and (string-match-p (regexp-quote "/roam/") (or (buffer-file-name) ""))
+                    (memq major-mode '(org-mode))))
+           "Roam")
           ((and (string-match-p (regexp-quote "/organizer/") (or (buffer-file-name) ""))
                 (memq major-mode '(org-mode org-agenda-mode diary-mode)))
            "Organizer")
@@ -666,6 +672,8 @@
                (derived-mode-p 'notmuch-search-mode)
                (derived-mode-p 'notmuch-message-mode))
            "Notmuch")
+          ((derived-mode-p 'vterm-mode)
+           "Vterm")
           ((or (string-equal "*" (substring (buffer-name) 0 1))
                (memq major-mode '(magit-process-mode
                                   magit-status-mode
@@ -869,52 +877,6 @@
   #+end_src
 
   #+begin_src emacs-lisp
-  (use-package google-translate
-    :ensure t
-    :bind (("C-c t" . google-translate-at-point)
-           ("C-c T" . google-translate-query-translate))
-    :init
-    (setq google-translate-base-url
-          "http://translate.google.cn/translate_a/single")
-    (setq google-translate-listen-url
-          "http://translate.google.cn/translate_tts")
-    (setq google-translate--tkk-url
-          "http://translate.google.cn/")  
-    )
-
-  (use-package engine-mode
-    :ensure t
-    :init
-    (engine/set-keymap-prefix (kbd "C-z C-s"))
-    (defengine github
-      "https://github.com/search?ref=simplesearch&q=%s"
-      :keybinding "g")
-
-    (defengine esdict.cn
-      "https://www.esdict.cn/dicts/es/%s"
-      :keybinding "e"
-      :browser 'eww-browse-url)
-
-    (defengine dict.cn
-      "https://dict.cn/%s"
-      :keybinding "d"
-      :browser 'eww-browse-url)
-
-    (defengine dictionary.com
-      "https://www.dictionary.com/browse/%s"
-      :keybinding "i"
-      :browser 'eww-browse-url)
-
-    (defengine bing
-      "https://cn.bing.com/search?q=%s"
-      :keybinding "b")
-
-    (defengine wikipedia
-      "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
-      :keybinding "w"
-      :docstring "Searchin' the wikis.")
-    (engine-mode t))
-
   (use-package irfc
     :ensure t
     :defer t
@@ -1675,7 +1637,18 @@
 
     ;; ;; http://kb.mozillazine.org/Register_protocol
     (use-package org-protocol
-      :defer t)
+      :defer t
+      :init
+      (require 'org-protocol)
+      (add-to-list 'org-protocol-protocol-alist
+                   '("Clip Buffer"
+                     :protocol "clipbuffer"
+                     :function clipbuffer-handler))
+
+      (defun clipbuffer-handler (info)
+        (with-current-buffer (get-buffer-create "*clipbuffer*")
+          (insert (format "%s\n" (plist-get info :text))))
+        ))
     #+end_src
 *** link types
     #+begin_src emacs-lisp
@@ -1819,6 +1792,17 @@
       (setq deft-auto-save-interval 0)
       )
     #+end_src
+*** notdeft
+    #+begin_src emacs-lisp
+    (use-package notdeft
+      :after (org-roam)
+      :quelpa (notdeft :fetcher github :repo "hasu/notdeft" :files ("*.el" "xapian"))
+      :config
+      (setq notdeft-directories `(,org-roam-directory))
+      (require 'notdeft-xapian-make)
+      (notdeft-xapian-make-program-when-uncurrent)
+      (setenv "XAPIAN_CJK_NGRAM" "1"))
+    #+end_src
 *** org-journal
     #+begin_src emacs-lisp
     (use-package org-journal
@@ -1866,16 +1850,37 @@
       :custom
       (org-roam-directory (locate-contents-file "roam/"))
       :config
-      ;; (require 'org-roam-protocol)
+      (require 'org-roam-protocol)
+
+      (setq org-roam-capture-templates '())
+      (defmacro roam-tpl-entry (tpl-entry)
+        `(add-to-list 'org-roam-capture-templates ,tpl-entry))
+
+      (roam-tpl-entry
+       '("d" "default" plain
+         #'org-roam-capture--get-point "%?"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+title: ${title}\n\n"
+         :unnarrowed t))
+
+      (roam-tpl-entry
+       '("r" "reading" plain
+         #'org-roam-capture--get-point "%?"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+title: ${title}\n#+roam_tags: reading\n\n"
+         :unnarrowed t))
+  
       :bind (:map org-roam-mode-map
-                  (("C-c n r l" . org-roam)
+                  (("C-c n r n" . notdeft)
+                   ("C-c n r l" . org-roam)
                    ("C-c n r f" . org-roam-find-file)
                    ("C-c n r j" . org-roam-jump-to-index)
                    ("C-c n r b" . org-roam-switch-to-buffer)
                    ("C-c n r c" . org-roam-capture)
                    ("C-c n r g" . org-roam-graph))
                   :map org-mode-map
-                  (("C-c n r i" . org-roam-insert))))
+                  (("C-c n r i" . org-roam-insert)
+                   ("C-c n r I" . org-roam-insert-immediate))))
     #+end_src
 
     #+begin_src emacs-lisp
@@ -1913,6 +1918,21 @@
     (use-package org-roam-faces  :defer t)
     (use-package org-roam-macs  :defer t)
     (use-package org-roam-compat  :defer t)
+    #+end_src
+*** org-kasten
+    #+begin_src emacs-lisp
+    (use-package org-kasten
+      :quelpa (org-kasten :fetcher github :repo "MordecaiMalignatus/org-kasten")
+      :config
+      (setq org-kasten-home "/home/hekinami/kasten/")
+      (add-hook 'org-mode-hook 'org-kasten-mode))
+    #+end_src
+*** zettelkasten
+    #+begin_src emacs-lisp
+    (use-package zettelkasten
+      :quelpa (zettelkasten :fetcher github :repo "ymherklotz/emacs-zettelkasten")
+      :config
+      (setq zettelkasten-directory "/home/hekinami/zettelkasten"))
     #+end_src
 *** simplenote2
     #+begin_src emacs-lisp
@@ -1974,6 +1994,68 @@
    (use-package pass
      :ensure t
      :commands (pass))
+   #+end_src
+* information
+** dictionary
+   #+begin_src emacs-lisp
+   (use-package lookup
+     :quelpa (lookup :fetcher github :repo "lookup2/lookup2" :files ("lisp/*.el" "texi/*.texi"))
+     :init
+     (setq lookup-window-height 10)
+     (setq lookup-search-agents
+           '((ndeb "/home/hekinami/Documents/EPWING/sanseido")
+             (ndeb "/home/hekinami/Documents/EPWING/KOJIEN")
+             (ndeb "/home/hekinami/Documents/EPWING/LDOCE5"))))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package google-translate
+     :ensure t
+     :bind (("C-c t" . google-translate-at-point)
+            ("C-c T" . google-translate-query-translate))
+     :init
+     (setq google-translate-base-url
+           "http://translate.google.cn/translate_a/single")
+     (setq google-translate-listen-url
+           "http://translate.google.cn/translate_tts")
+     (setq google-translate--tkk-url
+           "http://translate.google.cn/")  
+     )
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package engine-mode
+     :ensure t
+     :init
+     (engine/set-keymap-prefix (kbd "C-z C-s"))
+     (defengine github
+       "https://github.com/search?ref=simplesearch&q=%s"
+       :keybinding "g")
+
+     (defengine esdict.cn
+       "https://www.esdict.cn/dicts/es/%s"
+       :keybinding "e"
+       :browser 'eww-browse-url)
+
+     (defengine dict.cn
+       "https://dict.cn/%s"
+       :keybinding "d"
+       :browser 'eww-browse-url)
+
+     (defengine dictionary.com
+       "https://www.dictionary.com/browse/%s"
+       :keybinding "i"
+       :browser 'eww-browse-url)
+
+     (defengine bing
+       "https://cn.bing.com/search?q=%s"
+       :keybinding "b")
+
+     (defengine wikipedia
+       "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+       :keybinding "w"
+       :docstring "Searchin' the wikis.")
+     (engine-mode t))
    #+end_src
 * development
 ** common tasks
@@ -2688,4 +2770,15 @@
    (use-package aria2
      :quelpa (aria2 :fetcher github :repo "hekinami/aria2.el")
      :commands (aria2-downloads-list))
+   #+end_src
+** vterm
+   #+begin_src emacs-lisp
+   (use-package vterm
+     :ensure t
+     :commands (vterm)
+     :after (vtm))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package vtm :ensure t)
    #+end_src
