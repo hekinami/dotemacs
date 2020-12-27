@@ -43,21 +43,31 @@
     #+end_src
 ** package management
 *** package.el
+    #+name: tbl-elpa
+    | name            | url                                            |
+    |-----------------+------------------------------------------------|
+    | gnu-cn          | http://elpa.emacs-china.org/gnu/               |
+    | melpa-cn        | http://elpa.emacs-china.org/melpa/             |
+    | melpa-stable-cn | http://elpa.emacs-china.org/melpa-stable/      |
+    | marmalade-cn    | http://elpa.emacs-china.org/marmalade/         |
+    | org-cn          | http://elpa.emacs-china.org/org/               |
+    | sunrise-cn      | http://elpa.emacs-china.org/sunrise-commander/ |
+    | user42-cn       | http://elpa.emacs-china.org/user42/            |
+
+    #+name: tbl-elpa-unused
+    | name         | url                               |
+    |--------------+-----------------------------------|
+    | melpa        | http://melpa.org/packages/        |
+    | melpa-stable | http://stable.melpa.org/packages/ |
+    | org          | http://orgmode.org/elpa/          |
+
+    #+header: :var elpa=tbl-elpa
     #+begin_src emacs-lisp
     (setq package-enable-at-startup nil)
     (setq package-archives
-          '(("gnu-cn" . "http://elpa.emacs-china.org/gnu/")
-            ("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-            ("melpa-stable-cn" . "http://elpa.emacs-china.org/melpa-stable/")
-            ("marmalade-cn" . "http://elpa.emacs-china.org/marmalade/")
-            ("org-cn" . "http://elpa.emacs-china.org/org/")
-            ("sunrise-cn" . "http://elpa.emacs-china.org/sunrise-commander/")
-            ("user42-cn" . "http://elpa.emacs-china.org/user42/")
-            ;; ("melpa" . "http://melpa.org/packages/")
-            ;; ("org" . "http://orgmode.org/elpa/")
-            ;; ("melpa-stable" . "http://stable.melpa.org/packages/")
-            ))
+          (mapcar (lambda (item) (cons (car item) (cadr item))) elpa))
     #+end_src
+
 *** assistent
 **** a common function for installing package from elpa
      #+begin_src emacs-lisp
