@@ -125,11 +125,19 @@
     #+end_src
 *** theme
     #+begin_src emacs-lisp
-    (use-package badwolf-theme
+    ;; (use-package badwolf-theme
+    ;;   :ensure t
+    ;;   :config
+    ;;   (load-theme 'badwolf t)
+    ;;   (set-face-attribute 'default nil :foreground "#F8F8d2"))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package darktooth-theme
       :ensure t
       :config
-      (load-theme 'badwolf t)
-      (set-face-attribute 'default nil :foreground "#F8F8d2"))
+      (load-theme 'darktooth t)
+      )
     #+end_src
 
 *** fonts & icons
@@ -384,16 +392,23 @@
    #+end_src
 ** network
 *** proxy
-    #+begin_src emacs-lisp
+    #+name: tbl-proxies
+    | field    |          value |
+    |----------+----------------|
+    | no_proxy |      127.0.0.1 |
+    | http     | 127.0.0.1:8118 |
+    | https    | 127.0.0.1:8118 |
+
+    #+begin_src emacs-lisp :var proxies=tbl-proxies
+    (setq url-proxy-services-definition (mapcar (lambda (item) (cons (car item) (cadr item))) proxies))
+    
     (defun toggle-network-proxy nil
-      (interactive)
-      (if url-proxy-services
-          (setq url-proxy-services nil)
-        (setq url-proxy-services
-          '(("no_proxy" . "127.0.0.1")
-            ("http" . "127.0.0.1:8118")
-            ("https" . "127.0.0.1:8118"))))
-      )
+        (interactive)
+        (if url-proxy-services
+            (setq url-proxy-services nil)
+          (setq url-proxy-services url-proxy-services-definition))
+        )
+        
     (setq global-mode-string
           '(:eval (unless (null url-proxy-services)
                     (propertize (all-the-icons-octicon "globe")
@@ -650,6 +665,7 @@
       (helpful-mode . centaur-tabs-local-mode)
       (lookup-summary-mode . centaur-tabs-local-mode)
       (lookup-content-mode . centaur-tabs-local-mode)
+      (indium-repl-mode . centaur-tabs-local-mode)
       :config
       (setq centaur-tabs-set-icons t)
       (setq centaur-tabs-gray-out-icons 'buffer)
@@ -1177,20 +1193,20 @@
 *** appearence
     #+begin_src emacs-lisp
     (setq org-ellipsis " »")
-    (set-face-attribute 'org-ellipsis nil :underline nil :foreground "green")
-    ;; badwolf theme set outline-1 face (inherited by org-level-1) with height 1.2, use default value to reset it
-    (set-face-attribute 'outline-1 nil :height (plist-get face--attributes-unspecified :height))
-    (set-face-attribute 'org-document-title nil :height (plist-get face--attributes-unspecified :height))
-    (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-level-2 nil :underline nil :foreground "#e76f51" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-level-3 nil :underline nil :foreground "#f4a261" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold)
-    (set-face-attribute 'org-agenda-done nil :foreground "#666462")
-    (set-face-attribute 'org-upcoming-deadline nil :foreground "#edce85")
-    (set-face-attribute 'org-checkbox-statistics-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box nil)
-    (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
+    ;; (set-face-attribute 'org-ellipsis nil :underline nil :foreground "green")
+    ;; ;; badwolf theme set outline-1 face (inherited by org-level-1) with height 1.2, use default value to reset it
+    ;; (set-face-attribute 'outline-1 nil :height (plist-get face--attributes-unspecified :height))
+    ;; (set-face-attribute 'org-document-title nil :height (plist-get face--attributes-unspecified :height))
+    ;; (set-face-attribute 'org-level-1 nil :underline nil :foreground "#2a9d8f" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-level-2 nil :underline nil :foreground "#e76f51" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-level-3 nil :underline nil :foreground "#f4a261" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-level-4 nil :underline nil :foreground "#edce85" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold)
+    ;; (set-face-attribute 'org-agenda-done nil :foreground "#666462")
+    ;; (set-face-attribute 'org-upcoming-deadline nil :foreground "#edce85")
+    ;; (set-face-attribute 'org-checkbox-statistics-todo nil :underline nil :foreground "#b23a48" :slant 'normal :weight 'bold :box nil)
+    ;; (set-face-attribute 'org-checkbox-statistics-done nil :underline nil :foreground "#461220" :slant 'normal :weight 'bold :box nil)
     #+end_src
 
     #+begin_src emacs-lisp
@@ -2366,6 +2382,7 @@
        (setq indium-chrome-data-dir (expand-file-name (locate-runtimes-file "indium-chrome-profile")))
        :config
        (setq indium-chrome-executable "chrome")
+       (shackle-rule-add '("^\\*JS REPL\\*" :regexp t :select t :align bottom :size 0.3))
        (add-hook 'js2-mode-hook #'indium-interaction-mode)
        (add-hook 'web-mode-hook #'indium-interaction-mode))
 
