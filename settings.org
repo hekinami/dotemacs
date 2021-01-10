@@ -31,8 +31,23 @@
 
     (defun locate-tools-file (file)
       (let ((base (locate-user-emacs-file "tools/")))
-	(make-directory base t)
-	(concat base file)))
+        (make-directory base t)
+        (concat base file)))
+
+    ;;; https://www.emacswiki.org/emacs/BufferLocalKeys
+    (defun buffer-local-set-key (key func)
+      (interactive "KSet key on this buffer: \naCommand: ")
+      (let ((name (format "%s-magic" (buffer-name))))
+        (eval
+         `(define-minor-mode ,(intern name)
+            "Automagically built minor mode to define buffer-local keys."))
+        (let* ((mapname (format "%s-map" name))
+               (map (intern mapname)))
+          (unless (boundp (intern mapname))
+            (set map (make-sparse-keymap)))
+          (eval
+           `(define-key ,map ,key func)))
+        (funcall (intern name) t)))
     #+end_src
 *** time
     #+begin_src emacs-lisp
@@ -2786,6 +2801,10 @@
            (notmuch-refresh-all-buffers)
            (let ((w (get-buffer-window "*offlineimap*")))
              (when w
+               (with-current-buffer (get-buffer "*offlineimap*")
+                 (setq  buffer-read-only t)
+                 (buffer-local-set-key "q" 'kill-buffer-and-window)
+                 )
                (with-selected-window w (recenter (window-end)))))))
        (display-buffer "*offlineimap*"))
      (shackle-rule-add '("^\\*offlineimap\\*" :regexp t :select t :align bottom :size 0.3))
