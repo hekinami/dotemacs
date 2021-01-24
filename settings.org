@@ -425,9 +425,12 @@
         )
         
     (setq global-mode-string
-          '(:eval (unless (null url-proxy-services)
-                    (propertize (all-the-icons-octicon "globe")
-                                'face `(:foreground "green" :family ,(all-the-icons-octicon-family) :height 1.2) 'display '(raise -0.1)))))
+          '((:eval (unless (null url-proxy-services)
+                      (let ((map (make-sparse-keymap)))
+                        (define-key map [mode-line mouse-1] 'toggle-network-proxy)
+                        (propertize (all-the-icons-octicon "globe")
+                                    'face `(:foreground "green" :family ,(all-the-icons-octicon-family) :height 1.2) 'display '(raise -0.1)
+                                    'local-map map))))))
     #+end_src
 *** emacs server
     #+begin_src emacs-lisp
@@ -2035,6 +2038,25 @@
    (use-package pass
      :ensure t
      :commands (pass))
+   #+end_src
+** syncthing
+   #+begin_src emacs-lisp
+   (use-package syncthing
+     :config
+     (defun syncthing/resolve-syncthing-collision ()
+       (interactive)
+       (ibizaman/syncthing-resolve-conflicts org-directory))
+     (setcdr global-mode-string
+                  '((:eval (unless (null syncthing-collision-p)
+                               (let ((map (make-sparse-keymap)))
+                                 (define-key map [mode-line mouse-1] 'syncthing/resolve-syncthing-collision)
+                                 (propertize (format " %s" (all-the-icons-octicon "alert"))
+                                             'face `(:foreground "red" :family ,(all-the-icons-octicon-family) :height 1.2) 'display '(raise -0.1)
+                                             'local-map map))))) 
+                  )
+     (setq syncthing-collision-p (directory-files-recursively org-directory "\\.sync-conflict-"))
+     (run-with-idle-timer 10 t (lambda nil (setq syncthing-collision-p (directory-files-recursively org-directory "\\.sync-conflict-"))))
+     )
    #+end_src
 * information
 ** dictionary
