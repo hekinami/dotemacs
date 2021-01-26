@@ -2808,6 +2808,7 @@
    #+begin_src emacs-lisp
    (use-package notmuch :ensure t
      :after (shackle)
+     :demand t
      :bind ((:map notmuch-hello-mode-map ("A" . notmuch-exec-offlineimap))
             (:map notmuch-search-mode-map ("A" . notmuch-exec-offlineimap)))
      :config
@@ -2830,8 +2831,29 @@
                (with-selected-window w (recenter (window-end)))))))
        (display-buffer "*offlineimap*"))
      (shackle-rule-add '("^\\*offlineimap\\*" :regexp t :select t :align bottom :size 0.3))
+     
+     ;; https://github.com/tmearnest/notmuch-unread
+     (setq notmuch-unread-search-term "tag:unread")
+     (setq notmuch-unread-p nil)
+     (defun notmuch-unread-count ()
+       "Return the number of messages that match
+`notmuch-unread-search-term`."
+       (string-to-number
+        (replace-regexp-in-string
+         "\n" ""
+         (notmuch-command-to-string "count" notmuch-unread-search-term))))
+     (setcdr global-mode-string
+             '((:eval (when notmuch-unread-p
+                        (let ((map (make-sparse-keymap)))
+                          (define-key map [mode-line mouse-1] (lambda nil (interactive)
+                                                                (notmuch-search notmuch-unread-search-term)))
+                          (propertize (format " %s" (all-the-icons-octicon "mail"))
+                                      'face `(:foreground "yellow" :family ,(all-the-icons-octicon-family) :height 1.2) 'display '(raise -0.1)
+                                      'local-map map))))) 
+             )
+     (setq notmuch-unread-p (> (notmuch-unread-count) 0))
+     (run-with-idle-timer 10 t (lambda nil (setq notmuch-unread-p (> (notmuch-unread-count) 0))))
      )
-
    #+end_src
 ** aria2
    #+begin_src emacs-lisp
