@@ -2617,6 +2617,12 @@
       :ensure t
       :mode "dart-mode")
     #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package lsp-dart
+      :ensure t
+      :hook (dart-mode . lsp))
+    #+end_src
 *** sql
     #+begin_src emacs-lisp
     (use-package sql-indent
