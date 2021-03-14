@@ -1894,6 +1894,8 @@
       :custom
       (org-roam-directory (locate-contents-file "roam/"))
       :config
+      (setq org-roam-tag-sources '(prop vanilla all-directories))
+      
       (require 'org-roam-protocol)
 
       (setq org-roam-capture-templates '())
@@ -1921,7 +1923,13 @@
                    ("C-c n r j" . org-roam-jump-to-index)
                    ("C-c n r b" . org-roam-switch-to-buffer)
                    ("C-c n r c" . org-roam-capture)
-                   ("C-c n r g" . org-roam-graph))
+                   ("C-c n r g" . org-roam-graph)
+                   ("C-c n r d d" . org-roam-dailies-find-date)
+                   ("C-c n r d y" . org-roam-dailies-find-yesterday)
+                   ("C-c n r d t" . org-roam-dailies-find-today)
+                   ("C-c n r d D" . org-roam-dailies-find-directory)
+                   ("C-c n r d n" . org-roam-dailies-find-next-note)
+                   ("C-c n r d p" . org-roam-dailies-find-previous-note))
                   :map org-mode-map
                   (("C-c n r i" . org-roam-insert)
                    ("C-c n r I" . org-roam-insert-immediate))))
@@ -1941,14 +1949,6 @@
             org-roam-server-network-label-truncate t
             org-roam-server-network-label-truncate-length 60
             org-roam-server-network-label-wrap-length 20))
-    #+end_src
-
-    #+begin_src emacs-lisp
-    (use-package company-org-roam
-      :ensure t
-      :defer t
-      :config
-      (push 'company-org-roam company-backends))
     #+end_src
 
     #+begin_src emacs-lisp
