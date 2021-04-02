@@ -2145,6 +2145,7 @@
    #+begin_src emacs-lisp
    (use-package lookup
      :quelpa (lookup :fetcher github :repo "lookup2/lookup2" :files ("lisp/*.el" "texi/*.texi"))
+     :bind ("C-z C-s l" . lookup-word)
      :init
      (setq lookup-window-height 10)
      (setq lookup-search-agents
