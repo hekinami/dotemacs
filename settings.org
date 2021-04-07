@@ -713,6 +713,16 @@
     ;;     )) 
 
     #+end_src
+*** filetags
+    #+begin_src emacs-lisp
+    (use-package filetags
+      :quelpa (filetags :fetcher github :repo "hekinami/filetags.el")
+      :bind (:map dired-mode-map
+                  ("z" . filetags-dired-update-tags))
+      :init
+      (setq filetags-delimiter-between-filename-and-tags '("[" . "]"))
+      )
+    #+end_src
 ** buffer management
    #+begin_src emacs-lisp
    (use-package z-edit-ext
