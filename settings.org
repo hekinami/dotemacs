@@ -2256,12 +2256,6 @@
      (push 'company-capf company-backends)
      )
 
-   ;; (use-package company-lsp
-   ;;   :ensure t
-   ;;   :after (lsp-mode)
-   ;;   :config
-   ;;   (push 'company-lsp company-backends))
-
    (use-package lsp-ui
      :ensure t
      :after (lsp-mode))
