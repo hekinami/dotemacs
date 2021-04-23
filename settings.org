@@ -2262,6 +2262,7 @@
      :after (lsp-mode))
    #+end_src
 
+** dap-mode
    #+begin_src emacs-lisp
    (use-package dap-mode
      :ensure t
@@ -2269,6 +2270,21 @@
      :bind (("C-z d" . dap-hydra))
      :config
      (setq dap-auto-configure-features '(sessions locals controls tooltip)))
+   #+end_src
+   
+   #+begin_src emacs-lisp
+   (use-package dap-gdb-lldb
+     :after projectile
+     :config
+     (dap-gdb-lldb-setup)
+     (dap-register-debug-template
+      "Rust::GDB Run Configuration"
+      (list :type "gdb"
+            :request "launch"
+            :name "GDB::Run"
+            :gdbpath "rust-gdb"
+            :target "target/debug/${workspaceFolderBasename}"
+            :cwd "${workspaceFolder}")))
    #+end_src
 ** flycheck
    #+begin_src emacs-lisp
