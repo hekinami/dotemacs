@@ -776,6 +776,7 @@
       (lookup-summary-mode . centaur-tabs-local-mode)
       (lookup-content-mode . centaur-tabs-local-mode)
       (indium-repl-mode . centaur-tabs-local-mode)
+      (special-mode . centaur-tabs-local-mode)
       :config
       (setq centaur-tabs-set-icons t)
       (setq centaur-tabs-gray-out-icons 'buffer)
@@ -1984,7 +1985,7 @@
       :hook
       (after-init . org-roam-mode)
       :custom
-      (org-roam-directory (locate-contents-file "roam/"))
+      (org-roam-directory (locate-contents-file "organizer/roam/"))
       :config
       (setq org-roam-tag-sources '(prop vanilla all-directories))
       
@@ -2259,6 +2260,15 @@
    (use-package lsp-ui
      :ensure t
      :after (lsp-mode))
+   #+end_src
+
+   #+begin_src emacs-lisp
+   (use-package dap-mode
+     :ensure t
+     :hook ((dap-stopped-hook . (lambda (arg) (call-interactively #'dap-hydra))))
+     :bind (("C-z d" . dap-hydra))
+     :config
+     (setq dap-auto-configure-features '(sessions locals controls tooltip)))
    #+end_src
 ** flycheck
    #+begin_src emacs-lisp
@@ -2709,6 +2719,15 @@
     (use-package lsp-dart
       :ensure t
       :hook (dart-mode . lsp))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package flutter
+      :ensure t
+      :after dart-mode
+      :bind (:map dart-mode-map ("C-M-x" . #'flutter-run-or-hot-reload))
+      :custom
+      (flutter-sdk-path (getenv "FLUTTER_HOME")))
     #+end_src
 *** sql
     #+begin_src emacs-lisp
