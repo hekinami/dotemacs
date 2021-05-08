@@ -925,6 +925,12 @@
       :init
       (global-company-mode))
     #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package company-box
+      :ensure t
+      :hook (company-mode . company-box-mode))
+    #+end_src
 *** yasnippet
     #+begin_src emacs-lisp
     (use-package yasnippet
