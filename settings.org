@@ -1072,11 +1072,7 @@
     :defer t
     :config
     (pdf-tools-install))
-
-  (use-package org-pdfview
-    :ensure t
-    :defer t)
-
+  
   ;;; ------------------------------------------------------------
   ;;;
   ;;; xwidget webkit
@@ -2357,10 +2353,6 @@
      :config
      (setq edbi:query-result-fix-header nil)
      (setq edbi:ds-history-file (locate-runtimes-file ".edbi-ds-history")))
-
-   (use-package edbi-database-url
-     :ensure t
-     :commands (edbi-database-url))
    #+end_src
 ** web
 *** editing 
