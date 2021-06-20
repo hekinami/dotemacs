@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: component
-# key: c
-# --
-class ${classname} extends React.Component {
-    render() {
-        return <p>Component</p>;
-    }
-}

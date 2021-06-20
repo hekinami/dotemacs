@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: backbone stuff
-# key: bbs
-# --
-<!-- stuff for backbone -->
-<script src="./vendor/jquery/dist/jquery.js"></script>
-<script src="./vendor/underscore/underscore.js"></script>
-<script src="./vendor/backbone/backbone.js"></script>

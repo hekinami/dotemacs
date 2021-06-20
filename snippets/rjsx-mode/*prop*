@@ -1,4 +1,0 @@
-# key: p
-# name: prop
-# --
-{this.props.${propname}}

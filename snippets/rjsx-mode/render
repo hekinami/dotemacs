@@ -1,7 +1,0 @@
-# key: r
-# name: render
-# --
-ReactDOM.render(
-    <div></div>,
-    document.querySelector("#container")
-);
