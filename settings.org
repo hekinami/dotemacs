@@ -399,6 +399,7 @@
    (setq tramp-persistency-file-name (locate-runtimes-file "tramp"))
    (global-auto-revert-mode)
    (setq make-backup-files nil)
+   (setq create-lockfiles nil)
    (auto-compression-mode t)
    (auto-image-file-mode t)
    (setq auto-save-mode -1)
