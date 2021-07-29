@@ -1401,7 +1401,24 @@
       (setq org-appear-autolinks t)
       (setq org-appear-autoentities t)
       (setq org-appear-autosubmarkers t)
-      (setq org-pretty-entities t))
+      (setq org-pretty-entities t)
+      (setq org-pretty-entities-include-sub-superscripts nil))
+    #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package org-fragtog
+      :ensure t
+      :hook (org-mode . org-fragtog-mode)
+      :config
+      (setq org-preview-latex-process-alist '((imagemagick :programs ("xelatex" "convert") :description "pdf > png"
+                                                           :message "you need to install the programs: xelatex and imagemagick."
+                                                           :image-input-type "pdf" :image-output-type "png"
+                                                           :image-size-adjust (2.0 . 2.0)
+                                                           :latex-compiler ("xelatex -interaction nonstopmode -output-directory %o %f")
+                                                           :image-converter ("convert -density %D -trim -antialias %f -quality 100 %O"))))
+      (setq org-preview-latex-default-process 'imagemagick)
+      (setq org-format-latex-options '(:foreground default :background default :scale 2 :html-foreground "Black" :html-background "Transparent" :html-scale 1.0 :matchers ("begin" "$1" "$" "$$" "\\(" "\\[")))
+      ) 
     #+end_src
 *** efficiency
 **** agenda
@@ -1999,6 +2016,8 @@
       :defer t
       :hook
       (after-init . org-roam-mode)
+      :init
+      (setq org-roam-v2-ack t)
       :custom
       (org-roam-directory (locate-contents-file "organizer/roam/"))
       :config
