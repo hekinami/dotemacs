@@ -1,4 +1,4 @@
-* global
+e* global
 ** general
    #+begin_src emacs-lisp
    (setq custom-file (locate-user-emacs-file "custom.el"))
@@ -2013,16 +2013,30 @@
     #+begin_src emacs-lisp
     (use-package org-roam
       :ensure t
-      :defer t
-      :hook
-      (after-init . org-roam-mode)
       :init
       (setq org-roam-v2-ack t)
       :custom
-      (org-roam-directory (locate-contents-file "organizer/roam/"))
+      (org-roam-directory (file-truename (locate-contents-file "organizer/roam/")))
+      :bind (("C-c n r l" . org-roam-buffer-toggle)
+             ("C-c n r f" . org-roam-node-find)
+             ("C-c n r g" . org-roam-graph)
+             ("C-c n r i" . org-roam-node-insert)
+             ("C-c n r c" . org-roam-capture)
+             ("C-c n r n" . notdeft)
+             ("C-c n r r r" . org-roam-ref-add)
+             ("C-c n r r R" . org-roam-ref-remove)
+             ("C-c n r r a" . org-roam-alias-add)
+             ("C-c n r r A" . org-roam-alias-remove)
+             ;; Dailies
+             ("C-c n r d g d" . org-roam-dailies-goto-date)
+             ("C-c n r d g n" . org-roam-dailies-goto-next-note)
+             ("C-c n r d g p" . org-roam-dailies-goto-previous-note)
+             ("C-c n r d g t" . org-roam-dailies-goto-today)
+             ("C-c n r d g y" . org-roam-dailies-goto-yesterday)
+             ("C-c n r d T" . org-roam-dailies-goto-tomorrow)
+             ("C-c n r d D" . org-roam-dailies-find-directory))
       :config
-      (setq org-roam-tag-sources '(prop vanilla all-directories))
-      
+      (org-roam-setup)
       (require 'org-roam-protocol)
 
       (setq org-roam-capture-templates '())
@@ -2030,65 +2044,18 @@
         `(add-to-list 'org-roam-capture-templates ,tpl-entry))
 
       (roam-tpl-entry
-       '("d" "default" plain
-         #'org-roam-capture--get-point "%?"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+title: ${title}\n\n"
-         :unnarrowed t))
-
+       '("d" "default" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}")
+          :unnarrowed t)
+       )
+    
       (roam-tpl-entry
-       '("r" "reading" plain
-         #'org-roam-capture--get-point "%?"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+title: ${title}\n#+roam_tags: reading\n\n"
-         :unnarrowed t))
-  
-      :bind (:map org-roam-mode-map
-                  (("C-c n r n" . notdeft)
-                   ("C-c n r l" . org-roam)
-                   ("C-c n r f" . org-roam-find-file)
-                   ("C-c n r j" . org-roam-jump-to-index)
-                   ("C-c n r b" . org-roam-switch-to-buffer)
-                   ("C-c n r c" . org-roam-capture)
-                   ("C-c n r g" . org-roam-graph)
-                   ("C-c n r d d" . org-roam-dailies-find-date)
-                   ("C-c n r d y" . org-roam-dailies-find-yesterday)
-                   ("C-c n r d t" . org-roam-dailies-find-today)
-                   ("C-c n r d D" . org-roam-dailies-find-directory)
-                   ("C-c n r d n" . org-roam-dailies-find-next-note)
-                   ("C-c n r d p" . org-roam-dailies-find-previous-note))
-                  :map org-mode-map
-                  (("C-c n r i" . org-roam-insert)
-                   ("C-c n r I" . org-roam-insert-immediate))))
-    #+end_src
+       '("e" "default-encrypted" plain "%?"
+          :if-new (file+head "%<%Y%m%d%H%M%S>-${slug}.org.gpg" "#+title: ${title}")
+          :unnarrowed t)
+       )
 
-    #+begin_src emacs-lisp
-    (use-package org-roam-server
-      :ensure t
-      :defer t
-      :config
-      (setq org-roam-server-host "127.0.0.1"
-            org-roam-server-port 8080
-            org-roam-server-export-inline-images t
-            org-roam-server-authenticate nil
-            org-roam-server-network-poll t
-            org-roam-server-network-arrows nil
-            org-roam-server-network-label-truncate t
-            org-roam-server-network-label-truncate-length 60
-            org-roam-server-network-label-wrap-length 20))
-    #+end_src
-
-    #+begin_src emacs-lisp
-    (use-package org-roam-graph :defer t)
-    (use-package org-roam-doctor :defer t)
-    (use-package org-roam-db  :defer t)
-    (use-package org-roam-dailies  :defer t)
-    (use-package org-roam-capture  :defer t)
-    (use-package org-roam-completion  :defer t)
-    (use-package org-roam-buffer  :defer t)
-    (use-package org-roam-faces  :defer t)
-    (use-package org-roam-macs  :defer t)
-    (use-package org-roam-compat  :defer t)
+      )
     #+end_src
 *** org-kasten
     #+begin_src emacs-lisp
