@@ -1968,6 +1968,7 @@ e* global
       :quelpa (notdeft :fetcher github :repo "hasu/notdeft" :files ("*.el" "xapian"))
       :config
       (setq notdeft-directories `(,org-roam-directory))
+      (setq notdeft-allow-org-property-drawers t)
       (require 'notdeft-xapian-make)
       (notdeft-xapian-make-program-when-uncurrent)
       (setenv "XAPIAN_CJK_NGRAM" "1"))
