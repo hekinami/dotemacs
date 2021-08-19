@@ -15,3 +15,7 @@ cnfonts/*
 emms/*
 settings.el
 .cache/*
+org-roam.db
+.dap-breakpoints
+.lsp-eslint-choices
+.extension/*
