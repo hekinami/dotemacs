@@ -2028,6 +2028,7 @@
              ("C-c n r r R" . org-roam-ref-remove)
              ("C-c n r r a" . org-roam-alias-add)
              ("C-c n r r A" . org-roam-alias-remove)
+             ("C-c n r r i" . org-id-get-create)
              ;; Dailies
              ("C-c n r d g d" . org-roam-dailies-goto-date)
              ("C-c n r d g n" . org-roam-dailies-goto-next-note)
