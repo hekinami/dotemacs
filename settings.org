@@ -2059,6 +2059,16 @@
 
       )
     #+end_src
+
+    #+begin_src emacs-lisp
+    (use-package org-roam-ui :quelpa (org-roam-ui :fetcher github :repo "org-roam/org-roam-ui" :files ("*.el" "out"))
+      :config
+      (setq org-roam-ui-sync-theme t
+            org-roam-ui-follow t
+            org-roam-ui-update-on-save t
+            org-roam-ui-open-on-start t)
+      )
+    #+end_src
 *** org-kasten
     #+begin_src emacs-lisp
     (use-package org-kasten
